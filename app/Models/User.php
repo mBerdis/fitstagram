@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -18,9 +20,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'first_name',
+        'last_name',
+        'profile_picture'
     ];
 
     /**
@@ -44,5 +49,37 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function groupsOwned(): HasMany
+    {
+        return $this->hasMany(Group::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function friends(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function futureFriends(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
+
+
+    public function groupsMember(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class);
     }
 }

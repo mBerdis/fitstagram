@@ -19,6 +19,7 @@ const user = usePage().props.auth.user;
 const form = useForm({
     name: user.name,
     email: user.email,
+    profilePic: user.profile_picture
 });
 </script>
 
@@ -38,6 +39,11 @@ const form = useForm({
             @submit.prevent="form.patch(route('profile.update'))"
             class="mt-6 space-y-6"
         >
+            <!-- Display profile picture -->
+            <div>
+                <img :src="form.profilePic" alt="Profile Picture" class="w-32 h-32 rounded-full object-cover">
+            </div>
+
             <div>
                 <InputLabel for="name" value="Name" />
 
