@@ -140,17 +140,11 @@ function handleImageError() {
                                         <h2
                                             class="text-xl font-semibold text-black dark:text-white"
                                         >
-                                            Documentation
+                                            Past vedle pasti
                                         </h2>
 
                                         <p class="mt-4 text-sm/relaxed">
-                                            Laravel has wonderful documentation
-                                            covering every aspect of the
-                                            framework. Whether you are a
-                                            newcomer or have prior experience
-                                            with Laravel, we recommend reading
-                                            our documentation from beginning to
-                                            end.
+                                            Banálni vec která trvá když hodne, 2-3 minúty u jiných projektu
                                         </p>
                                     </div>
                                 </div>
@@ -196,7 +190,7 @@ function handleImageError() {
                                 <h2
                                     class="text-xl font-semibold text-black dark:text-white"
                                 >
-                                    Laracasts
+                                    Neřešitelný problém hoši
                                 </h2>
 
                                 <p class="mt-4 text-sm/relaxed">
