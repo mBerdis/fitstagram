@@ -15,7 +15,7 @@ class PostController extends Controller
     {
         $post = Post::with('owner')->get();
 
-        return Inertia::render('Feed/Post', [
+        return Inertia::render('Feed', [
             'posts' => $post
         ]);
     }
