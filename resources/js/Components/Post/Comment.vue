@@ -7,7 +7,7 @@ defineProps({
 <template>
   <div class="comment mt-2">
     <p class="text-gray-700 dark:text-gray-300">
-      <strong>{{ comment.author }}</strong>: {{ comment.content }}
+      <strong>{{ comment.user.username }}</strong>: {{ comment.message }}
     </p>
   </div>
 </template>

@@ -64,7 +64,7 @@ const closeOverlay = () => {
 
         <!-- Comments in the overlay as well -->
         <div class="comments-section mt-4">
-          <CommentsSection :comments="post" />
+          <CommentsSection :post="post" />
         </div>
       </div>
     </div>

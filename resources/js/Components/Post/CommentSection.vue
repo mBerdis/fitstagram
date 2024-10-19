@@ -23,9 +23,12 @@ const addComment = () => {
   <div class="comments-section mt-4">
     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Comments</h3>
 
-    <div v-for="(comment, index) in comments" :key="index">
-      <Comment :comment="comment" />
+    <div v-if="post.comments && post.comments.length > 0">
+        <div v-for="(comment, index) in post.comments" :key="index">
+            <Comment :comment="comment" />
+        </div>
     </div>
+    <p v-else>No comments available.</p>
 
     <!-- Add new comment form -->
     <div class="add-comment mt-4">

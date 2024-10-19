@@ -13,7 +13,7 @@ class PostController extends Controller
 {
     public function create(Request $request): Response
     {
-        $post = Post::with('owner')->get();
+        $post = Post::with('owner', 'comments', 'comments.user')->get();
 
         return Inertia::render('Feed', [
             'posts' => $post
