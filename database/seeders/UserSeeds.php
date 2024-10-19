@@ -23,6 +23,14 @@ class UserSeeds extends Seeder
             'last_name' => 'Koscelnik'
         ]);
 
-        $generatedUsers = User::factory()->count(9)->create();
+        $MarosBerdis_model = User::factory()->create([
+            'username' => 'xberdi01',
+            'email' => 'marosberdis@gmail.com',
+            'password' => 'ciscocisco',
+            'first_name' => 'Maroš',
+            'last_name' => 'Berdis'
+        ]);
+
+        $generatedUsers = User::factory()->count(8)->create();
     }
 }

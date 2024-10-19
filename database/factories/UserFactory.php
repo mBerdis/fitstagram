@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -23,6 +24,18 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        // Get the image contents from the URL
+        $imageContent = file_get_contents('https://thispersondoesnotexist.com/');
+
+        // Generate a unique name for the image
+        $imageName = uniqid() . '.jpg'; // Assuming it's a .jpg image
+
+        // Store the image in the 'uploads' directory within 'public'
+        Storage::disk('public')->put('uploads/' . $imageName, $imageContent);
+
+        // Return the image path (or you can save this path in your database)
+        $imagePath = '/storage/uploads/' . $imageName;
+
         return [
             'username' => fake()->userName(),
             'email' => fake()->unique()->safeEmail(),
@@ -31,7 +44,7 @@ class UserFactory extends Factory
             'last_name'=> fake()->name(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'profile_picture' => "https://thispersondoesnotexist.com/"
+            'profile_picture' => $imagePath
         ];
     }
 

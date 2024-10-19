@@ -6,7 +6,7 @@ AddHandler application/x-httpd-php82 .php
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-    
+
     # Redirect Trailing Slashes...
     RewriteRule ^(.*)/$ /$1 [L,R=301]
 
@@ -14,4 +14,7 @@ AddHandler application/x-httpd-php82 .php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    # Allow access to public storage folder
+    RewriteCond %{REQUEST_URI} !^/storage/
 </IfModule>
