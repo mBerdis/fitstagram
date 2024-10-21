@@ -28,6 +28,14 @@ return new class extends Migration
             $table->foreignId('group_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });
+
+
+        Schema::create('group_post', function (Blueprint $table) {
+            $table->id(); // Primary key
+
+            $table->foreignId('group_id')->constrained()->onDelete('cascade');
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+        });
     }
 
     /**
@@ -37,5 +45,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('groups');
         Schema::dropIfExists('group_user');
+        Schema::dropIfExists('group_post');
     }
 };

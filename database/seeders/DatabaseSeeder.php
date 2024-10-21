@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\Friend;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
 
             TagSeeds::class,
             GroupSeeds::class,
+            FriendSeeds::class,
         ]);
 
 
@@ -63,5 +65,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
         \Log::info("Created comments for post ID: " . $post->id);*/
+
     }
 }
