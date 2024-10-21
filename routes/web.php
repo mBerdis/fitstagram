@@ -26,5 +26,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/feed', [PostController::class, 'create'])->middleware(['auth', 'verified'])->name('feed');
+Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');
 
 require __DIR__.'/auth.php';
+require __DIR__.'/api.php';

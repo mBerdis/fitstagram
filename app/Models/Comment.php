@@ -17,7 +17,9 @@ class Comment extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'message'
+        'message',
+        'post_id',
+        'user_id',
     ];
 
     public function post(): BelongsTo
