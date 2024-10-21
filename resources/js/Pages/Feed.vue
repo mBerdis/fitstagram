@@ -11,7 +11,7 @@ defineProps({
 
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="feed" />
 
     <AuthenticatedLayout>
       <template #header>

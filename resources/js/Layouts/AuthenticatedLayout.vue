@@ -46,6 +46,12 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Feed
                                 </NavLink>
+                                <NavLink
+                                    :href="route('MyPage')"
+                                    :active="route().current('MyPage')"
+                                >
+                                    My Page
+                                </NavLink>
                             </div>
                         </div>
 
