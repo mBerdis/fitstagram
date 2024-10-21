@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,5 +27,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/feed', [PostController::class, 'create'])->middleware(['auth', 'verified'])->name('feed');
+Route::get('/MyPage', [UserController::class, 'create'])->middleware(['auth', 'verified'])->name('MyPage');
+//Route::get('/MyPage/{username}', [ProfileController::class, 'show'])->middleware('auth')->name('MyPage');
+
 
 require __DIR__.'/auth.php';

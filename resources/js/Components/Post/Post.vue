@@ -37,37 +37,37 @@ const closeOverlay = () => {
     <div
       class="absolute top-4 left-4 bg-black bg-opacity-50 p-2 rounded-lg flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     >
-      <Author :profilePic="post.owner.profile_picture" :username="post.owner.username" />
+      <Author v-if="post.owner && post.owner.profile_picture" :profilePic="post.owner.profile_picture" :username="post.owner.username" />
     </div>
   </div>
 
 
 
-    <!-- Image Overlay (appears when image is clicked) -->
-    <div v-if="isImageExpanded" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
-      <div class="relative w-11/12 max-w-4xl bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-        <!-- Close button -->
-        <button
-          class="absolute top-2 right-2 text-white text-2xl"
-          @click="closeOverlay"
-        >&times;</button>
+  <div v-if="isImageExpanded" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
+  <div class="relative w-11/12 max-w-7xl bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+    <button class="absolute top-2 right-2 text-white text-2xl" @click="closeOverlay">&times;</button>
 
-        <!-- Expanded image -->
+    <div class="flex flex-col md:flex-row">
+      <!-- Image section -->
+      <div class="">
         <img :src="selectedImage" alt="Expanded Post Photo" class="w-full rounded-lg" />
+      </div>
 
-        <!-- Image details and author information -->
+      <!-- Comments section -->
+      <div class="w-full md:w-1/2 md:ml-4 mt-4 md:mt-0">
         <div class="image-details mt-4">
-          <Author :profilePic="post.owner.profile_picture" :username="post.owner.username" />
+          <Author v-if="post.owner && post.owner.profile_picture" :profilePic="post.owner.profile_picture" :username="post.owner.username" />
           <p class="text-gray-700 dark:text-gray-300 mt-2">{{ post.description }}</p>
           <p class="text-gray-500 dark:text-gray-400 text-sm">{{ post.created_at }}</p>
         </div>
-
-        <!-- Comments in the overlay as well -->
-        <div class="comments-section mt-4">
+        <div class="comments-section">
           <CommentsSection :post="post" />
         </div>
       </div>
     </div>
+  </div>
+</div>
+
   </div>
 </template>
 
