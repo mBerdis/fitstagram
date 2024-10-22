@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import Post from '@/Components/Post/Post.vue';
 import UserHeader from './UserHeader.vue';
-import FriendList from './FriendList.vue';
+import FriendList from './UserList.vue';
 
 defineProps({
   user: Object,

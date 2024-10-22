@@ -2,12 +2,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import UserPage from '@/Components/User/UserPage.vue';
-import FriendList from '@/Components/User/FriendList.vue';
+import UserList from '@/Components/User/UserList.vue';
+import GroupList from '@/Components/Group/GroupList.vue';
 
 defineProps({
   user: Object,
   posts: Array,
-  friends: Array
+  friends: Array,
+  groups: Array
 });
 </script>
 
@@ -22,7 +24,11 @@ defineProps({
         </h2>
       </template>
 
-      <FriendList :friends="friends" />
+      <h1 class="text-gray-400">Friends</h1>
+      <UserList :users="friends" />
+
+      <h1 class="text-gray-400">Groups</h1>
+      <GroupList :groups="groups"/>
 
       <UserPage :user="user" :posts="posts"></UserPage>
 

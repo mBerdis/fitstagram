@@ -15,6 +15,7 @@ class UserController extends Controller
     {
         $user = auth()->user();
         $posts = $user->posts;
+        $groups = $user->groupsMember;
 
         // Extract friend IDs (exclude the current user id)
         $friendIDs = $user->friends->map(function($friend) use ($user) {
@@ -26,7 +27,8 @@ class UserController extends Controller
         return Inertia::render('MyPage', [
             'user' => $user,
             'posts' => $posts,
-            'friends' => $friends
+            'friends' => $friends,
+            'groups' => $groups
         ]);
     }
 }
