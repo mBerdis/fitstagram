@@ -1,5 +1,5 @@
 <script setup>
-import Author from './Author.vue';
+import UserListView from '../Generic/UserListView.vue';
 
 defineProps({
   comment: Object,
@@ -9,8 +9,9 @@ defineProps({
 <template>
   <div class="comment mt-3 flex items-start space-x-4">
     <!-- Use the Author component to display the user's profile picture and username -->
-    <Author :profilePic="comment.user.profile_picture" :username="comment.user.username" />
-    
+     <UserListView :user="comment.user"></UserListView>
+
+
     <!-- Add a colon after the Author component -->
     <span class="mt-1 text-gray-700 dark:text-gray-300">:</span>
 
