@@ -29,8 +29,8 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
-    public function groups(): HasMany
+    public function groups(): BelongsToMany
     {
-        return $this->hasMany(Group::class);
+        return $this->belongsToMany(Group::class);
     }
 }

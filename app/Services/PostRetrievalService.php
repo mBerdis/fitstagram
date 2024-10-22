@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
+use App\Models\Group;
 
 class PostRetrievalService
 {
@@ -43,7 +44,9 @@ class PostRetrievalService
     public function get_group_images($group_id)
     {
         // TODO:
-        return Post::with('owner', 'comments', 'comments.user')-where()->get();
+        return Post::with('owner', 'comments', 'comments.user')
+        ->whereIn('groups', $group_id)
+        ->get();
     }
 
     private function has_access($user_id): bool
