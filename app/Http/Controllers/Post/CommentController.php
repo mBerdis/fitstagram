@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Post;
 
-use App\Http\Controllers\Controller; // Make sure to include this
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Comment;
 
@@ -17,7 +17,7 @@ class CommentController extends Controller
             'user' => 'required|exists:users,id',
         ]);
 
-        
+
         $comment = Comment::create([
             'message' => $request->content,
             'post_id' => $request->post_id,

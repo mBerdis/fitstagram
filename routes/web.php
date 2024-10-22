@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\Group\GroupController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/feed', [PostController::class, 'create'])->middleware(['auth', 'verified'])->name('feed');
+Route::get('/groups', [GroupController::class, 'create'])->middleware(['auth', 'verified'])->name('groups');
+Route::get('/groups/{groupName}', [GroupController::class, 'detail'])->middleware(['auth', 'verified'])->name('group');
 Route::get('/MyPage', [UserController::class, 'create'])->middleware(['auth', 'verified'])->name('MyPage');
 //Route::get('/MyPage/{username}', [ProfileController::class, 'show'])->middleware('auth')->name('MyPage');
 
