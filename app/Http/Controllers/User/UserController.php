@@ -16,9 +16,17 @@ class UserController extends Controller
         $user = auth()->user();
         $posts = $user->posts;
 
+        // Extract friend IDs (exclude the current user id)
+        $friendIDs = $user->friends->map(function($friend) use ($user) {
+            return $friend->user1 == $user->id ? $friend->user2 : $friend->user1;
+        });
+
+        $friends = User::whereIn('id', $friendIDs)->get();
+
         return Inertia::render('MyPage', [
             'user' => $user,
             'posts' => $posts,
+            'friends' => $friends
         ]);
     }
 }

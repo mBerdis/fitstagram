@@ -2,10 +2,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import UserPage from '@/Components/User/UserPage.vue';
+import FriendList from '@/Components/User/FriendList.vue';
 
 defineProps({
   user: Object,
-  posts: Array
+  posts: Array,
+  friends: Array
 });
 </script>
 
@@ -19,13 +21,10 @@ defineProps({
           My Page
         </h2>
       </template>
+
+      <FriendList :friends="friends" />
+
       <UserPage :user="user" :posts="posts"></UserPage>
-
-
-
-
-
-
 
     </AuthenticatedLayout>
   </template>

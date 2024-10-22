@@ -68,7 +68,7 @@ class User extends Authenticatable
 
     public function friends(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Friend::class, 'user1');
     }
 
     public function futureFriends(): HasMany

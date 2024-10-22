@@ -2,10 +2,11 @@
 import { ref } from 'vue';
 import Post from '@/Components/Post/Post.vue';
 import UserHeader from './UserHeader.vue';
+import FriendList from './FriendList.vue';
 
 defineProps({
   user: Object,
-  posts: Array
+  posts: Array,
 });
 </script>
 
