@@ -38,33 +38,16 @@ class DatabaseSeeder extends Seeder
         $groups = Group::all();
 
 
-        /*foreach ($comments as $comment) {
-            $comment->user()->associate($users->random());
-            $comment->save();
-        }*/
-
-
-        /*foreach ($posts as $post) {
-            $comments = Comment::factory()->count(3)->create([
-                'post_id' => $post->id,
-                'user_id' => $users->random()->id
-            ]);
-        }*/
 
         foreach ($groups as $group) {
             $group->members()->attach($users->random(rand(1, 5)));
         }
 
-        /*$users = User::factory()->count(10)->create();
-        $posts = Post::factory()->count(10)->create();
-
-        foreach ($posts as $post) {
-            $comments = Comment::factory()->count(3)->create([
-                'post_id' => $post->id,
-                'user_id' => $users->random()->id
-            ]);
+        foreach ($groups as $group) {
+            $group->posts()->attach($posts->random(rand(1, 5)));
         }
-        \Log::info("Created comments for post ID: " . $post->id);*/
+
+
 
     }
 }

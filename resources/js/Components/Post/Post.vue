@@ -43,9 +43,9 @@ const closeOverlay = () => {
 
 
 
-  <div v-if="isImageExpanded" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
-  <div class="relative w-11/12 max-w-7xl bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-    <button class="absolute top-2 right-2 text-white text-2xl" @click="closeOverlay">&times;</button>
+  <div v-if="isImageExpanded" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50" @click="closeOverlay">
+  <div class="relative w-11/12 max-w-7xl  bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg" @click.stop>
+    <button class="absolute top-2 right-3 text-white text-3xl" @click="closeOverlay">&times;</button>
 
     <div class="flex flex-col md:flex-row">
       <!-- Image section -->
