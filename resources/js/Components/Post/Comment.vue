@@ -1,5 +1,5 @@
 <script setup>
-import Author from './Author.vue';
+import UserListView from '../Generic/UserListView.vue';
 
 defineProps({
   comment: Object,
@@ -9,7 +9,7 @@ defineProps({
 <template>
   <div class="comment mt-3 flex items-start space-x-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md">
     <!-- Author component with user profile picture and username -->
-    <Author :profilePic="comment.user.profile_picture" :username="comment.user.username" />
+    <UserListView :user="comment.user"/>
     
     <div class="flex-1">
       

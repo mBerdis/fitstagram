@@ -1,5 +1,7 @@
 <script setup>
 
+import { Link } from '@inertiajs/vue3'
+
 defineProps({
     user: {
         type: Object
@@ -11,9 +13,9 @@ defineProps({
 
 <template>
     <div class="flex items-center space-x-2" v-if="user.profilePic || user.username"  mb-1>
-        <a  class="flex items-center space-x-2 cursor-pointer">
+        <Link  class="flex items-center space-x-2 cursor-pointer" :href="route('user',user.username)" >
             <img class="w-9 h-9 rounded-full" :src="user.profile_picture"  />
             <label class="text-gray-400">{{ user.username }}</label>
-        </a>
+        </Link>
     </div>
   </template>

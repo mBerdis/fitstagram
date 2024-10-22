@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Group;
+use App\Models\User;
 
 class PostRetrievalService
 {
@@ -58,6 +59,18 @@ class PostRetrievalService
             return true;
         }
 
+        return false;
+
         // TODO: check if he is a friend
+    }
+
+    public function get_friends($user_id)
+    {
+        $user = User::findOrFail($user_id);
+        $friendIDs = $user->friends->map(function ($friend) use ($user) {
+            return $friend->user1 == $user->id ? $friend->user2 : $friend->user1;
+        });
+
+        return User::whereIn('id', $friendIDs)->get();
     }
 }
