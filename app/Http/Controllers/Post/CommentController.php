@@ -1,15 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\Post;
-
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Comment;
+use App\Services\UserAuthenticationService;
 
 class CommentController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request,UserAuthenticationService $authService)
     {
+        if (!$authService->role_access(UserRole::USER)) {
+            return back();
+        }
 
         $request->validate([
             'content' => 'required|string|max:255',

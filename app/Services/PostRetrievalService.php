@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Services;
-
+use App\Services\UserAuthenticationService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Group;
 use App\Models\User;
+use App\Enums\UserRole;
 
 class PostRetrievalService
 {
@@ -56,10 +57,11 @@ class PostRetrievalService
         $loggedUser = Auth::user();
         $friendIds = $loggedUser->friends->pluck('user2')->toArray();
 
-        if ($loggedUser->id == $user_id || PostRetrievalService::get_is_friend($user_id))
+        if ($loggedUser->id == $user_id || PostRetrievalService::get_is_friend($user_id) || UserAuthenticationService::role_access(UserRole::ADMIN))
         {
             return true;
         }
+
 
         return false;
     }
