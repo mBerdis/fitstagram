@@ -5,15 +5,22 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\PostRetrievalService;
+use App\Services\UserAuthenticationService;
 use App\Models\Post;
 use App\Models\User;
+use App\Enums\UserRole;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function create(PostRetrievalService $postService)
+    public function create(PostRetrievalService $postService,UserAuthenticationService $authService)
     {
+
+        if (!$authService->role_access(UserRole::SILENCED)) {
+            return back();
+        }
+
         $user = auth()->user();
         $posts = Post::with('owner','comments', 'comments.user')
         ->where('user_id', $user->id)

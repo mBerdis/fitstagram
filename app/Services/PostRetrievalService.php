@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Services;
-
+use App\Services\UserAuthenticationService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Group;
 use App\Models\User;
+use App\Enums\UserRole;
 use App\Enums\FriendStatus;
 
 class PostRetrievalService
@@ -13,16 +14,22 @@ class PostRetrievalService
     // returns posts to show at /feed page
     public function get_personal_feed()
     {
-        $user = Auth::user();
-        $friendIds = $user->friends->pluck('user2');
-        $groupIds = $user->groupsMember->pluck('id');
+        if (Auth::check())
+        {
+            $user = Auth::user();
+            $friendIds = $user->friends->pluck('user2');
+            $groupIds = $user->groupsMember->pluck('id');
 
+            return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
+            ->where('is_public', true)                                                      // get public posts
+            ->orWhereHas('owner', fn($query) => $query->whereIn('users.id', $friendIds))    // get posts from friends
+            ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))   // get posts from groups
+            ->orderBy('created_at')
+            ->get();
+        }
         return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
-        ->where('is_public', true)                                                      // get public posts
-        ->orWhereHas('owner', fn($query) => $query->whereIn('users.id', $friendIds))    // get posts from friends
-        ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))   // get posts from groups
-        ->orderBy('created_at')
-        ->get();
+            ->where('is_public', true)->orderBy('created_at')->get();
+
     }
 
     // returns posts to show at /profile page
@@ -54,15 +61,22 @@ class PostRetrievalService
 
     private function has_access($user_id): bool
     {
+        if (!Auth::check())
+        {
+            return false;
+        }
+
         $loggedUser = Auth::user();
         $friendIds = $loggedUser->friends->pluck('user2')->toArray();
 
-        if ($loggedUser->id == $user_id || PostRetrievalService::get_friend_status($user_id) == FriendStatus::FRIENDSHIP)
+        if ($loggedUser->id == $user_id
+        || PostRetrievalService::get_friend_status($user_id) == FriendStatus::FRIENDSHIP
+        || UserAuthenticationService::role_access(UserRole::ADMIN)
+        )
         {
             return true;
         }
 
-        return false;
     }
 
     public function get_friends($user_id)
@@ -77,6 +91,11 @@ class PostRetrievalService
 
     public function get_friend_status($user_id): FriendStatus
     {
+        if (!Auth::check())
+        {
+            return false;
+        }
+
         $loggedUser     = Auth::user();
         $friendIds      = $loggedUser->friends->pluck('user2')->toArray();
         $friendReqIds   = $loggedUser->friendRequests->pluck('pivot.user2')->toArray();
