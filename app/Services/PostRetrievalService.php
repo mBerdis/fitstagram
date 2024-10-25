@@ -77,6 +77,7 @@ class PostRetrievalService
             return true;
         }
 
+        return false;
     }
 
     public function get_friends($user_id)
@@ -93,7 +94,7 @@ class PostRetrievalService
     {
         if (!Auth::check())
         {
-            return false;
+            return FriendStatus::NONE;
         }
 
         $loggedUser     = Auth::user();
