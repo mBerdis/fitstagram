@@ -35,6 +35,7 @@ class UserController extends Controller
     {
         $user = User::where('username', $request->username)->firstOrFail();
         $posts = $postService->get_user_images($user->id);
+        $isFriend = $postService->get_is_friend($user->id);
 
         return Inertia::render('PublicUserPage', [
             'user' => $user,

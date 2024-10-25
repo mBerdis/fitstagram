@@ -8,7 +8,8 @@ import GenericFeed from '@/Components/Generic/GenericFeed.vue';
 
 defineProps({
     group: Object,
-    members: Array
+    members: Array,
+    posts: Array
 });
 </script>
 
