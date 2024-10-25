@@ -30,7 +30,7 @@ defineProps({
       <h1 class="text-gray-400">Groups</h1>
       <GroupList :groups="groups"/>
 
-      <UserPage :user="user" :posts="posts"></UserPage>
+      <UserPage :user="user" :posts="posts" :isFriend="4"></UserPage>
 
     </AuthenticatedLayout>
   </template>

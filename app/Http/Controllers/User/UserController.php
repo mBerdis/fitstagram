@@ -35,11 +35,34 @@ class UserController extends Controller
     {
         $user = User::where('username', $request->username)->firstOrFail();
         $posts = $postService->get_user_images($user->id);
-        $isFriend = $postService->get_is_friend($user->id);
+        $isFriend = $postService->get_friend_status($user->id);
 
         return Inertia::render('PublicUserPage', [
             'user' => $user,
             'posts' => $posts,
+            'isFriend' => $isFriend
         ]);
     }
+
+    public function sendFriendRequest(Request $request, PostRetrievalService $postService)
+    {
+        $request->validate([
+            'username' => 'required|string|exists:users,username',
+        ]);
+
+        $loggedUser = auth()->user();
+        $userToAdd = User::where('username', $request->username)->firstOrFail();
+
+        $friendRequests = $loggedUser->friendRequests->pluck('user_id')->toArray();
+
+        if (in_array($userToAdd->id, $friendRequests))
+        {
+            return back()->with('error', 'Friend request already sent.');
+        }
+
+        $loggedUser->friendRequests()->attach($userToAdd->id);
+
+        return back()->with('success', 'Friend request sent.');
+    }
+
 }

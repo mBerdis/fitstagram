@@ -74,11 +74,10 @@ class User extends Authenticatable
         return $this->hasMany(Friend::class, 'user1');
     }
 
-    public function futureFriends(): HasMany
+    public function friendRequests(): BelongsToMany
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class, 'friend_requests', 'user1', 'user2');
     }
-
 
 
     public function groupsMember(): BelongsToMany

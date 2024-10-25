@@ -52,6 +52,20 @@ return new class extends Migration
 
             $table->timestamps();
         });
+
+        Schema::create('friend_requests', function (Blueprint $table)
+        {
+            $table->id(); // Primary key
+
+            $table->unsignedBigInteger('user1');
+            $table->foreign('user1')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unsignedBigInteger('user2');
+            $table->foreign('user2')->references('id')->on('users')->onDelete('cascade');
+
+            $table->timestamps();
+        });
+
     }
 
     /**
@@ -63,5 +77,6 @@ return new class extends Migration
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('friends');
+        Schema::dropIfExists('friend_requests');
     }
 };

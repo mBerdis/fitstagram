@@ -6,6 +6,7 @@ import UserPage from '@/Components/User/UserPage.vue';
 defineProps({
   user: Object,
   posts: Array,
+  isFriend: Number,
 });
 </script>
 
@@ -15,7 +16,7 @@ defineProps({
 
     <AuthenticatedLayout>
 
-      <UserPage :user="user" :posts="posts"></UserPage>
+      <UserPage :user="user" :posts="posts" :isFriend="isFriend"></UserPage>
 
     </AuthenticatedLayout>
   </template>

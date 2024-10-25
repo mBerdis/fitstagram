@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Group;
 use App\Models\User;
+use App\Enums\FriendStatus;
 
 class PostRetrievalService
 {
@@ -56,7 +57,7 @@ class PostRetrievalService
         $loggedUser = Auth::user();
         $friendIds = $loggedUser->friends->pluck('user2')->toArray();
 
-        if ($loggedUser->id == $user_id || PostRetrievalService::get_is_friend($user_id))
+        if ($loggedUser->id == $user_id || PostRetrievalService::get_friend_status($user_id) == FriendStatus::FRIENDSHIP)
         {
             return true;
         }
@@ -74,11 +75,16 @@ class PostRetrievalService
         return User::whereIn('id', $friendIDs)->get();
     }
 
-    public function get_is_friend($user_id): bool
+    public function get_friend_status($user_id): FriendStatus
     {
-        $loggedUser = Auth::user();
-        $friendIds = $loggedUser->friends->pluck('user2')->toArray();
+        $loggedUser     = Auth::user();
+        $friendIds      = $loggedUser->friends->pluck('user2')->toArray();
+        $friendReqIds   = $loggedUser->friendRequests->pluck('pivot.user2')->toArray();
 
-        return in_array($user_id, $friendIds);
+        if ($loggedUser->id == $user_id)       return FriendStatus::THATS_ME;
+        if (in_array($user_id, $friendIds))    return FriendStatus::FRIENDSHIP;
+        if (in_array($user_id, $friendReqIds)) return FriendStatus::REQUEST_PENDING;
+
+        return FriendStatus::NONE;
     }
 }

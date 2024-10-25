@@ -8,12 +8,13 @@ import GenericFeed from '../Generic/GenericFeed.vue';
 defineProps({
   user: Object,
   posts: Array,
+  isFriend: Number,
 });
 </script>
 
 <template>
  <div class="">
-    <UserHeader :user="user" />
+    <UserHeader :user="user" :isFriend="isFriend" />
 
     <GenericFeed :posts="posts" />
 

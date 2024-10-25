@@ -1,9 +1,19 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, useId } from 'vue';
+import { Link } from '@inertiajs/vue3'
 
 defineProps({
   user: Object,
+  isFriend: Number,
 });
+
+const FriendshipStatus = {
+    NONE: 0,
+    REQUEST_PENDING: 1,
+    FRIENDSHIP: 2,
+    THATS_ME:3,
+};
+
 </script>
 
 <template>
@@ -20,6 +30,28 @@ defineProps({
             <p class="text-gray-600 dark:text-gray-300">{{ user.username }}</p>
             <p class="text-gray-500 dark:text-gray-400">{{ user.email }}</p>
         </div>
+
+        <div>
+            <label v-if="isFriend === FriendshipStatus.FRIENDSHIP" class="text-gray-400">Friend</label>
+            <label v-else-if="isFriend === FriendshipStatus.REQUEST_PENDING" class="text-gray-400">Friend request sent.</label>
+            <Link
+                v-else-if="isFriend === FriendshipStatus.NONE"
+                class="flex items-center space-x-2 cursor-pointer bg-blue"
+
+                :href="route('user.friendRequest', user.username)"
+                :data="{
+                    username: user.username,
+                }"
+                :only="['isFriend']"
+                as="button"
+                type="button"
+            >
+                Add friend
+            </Link>
+
+        </div>
+
+
         </div>
     </div>
 
@@ -27,4 +59,8 @@ defineProps({
 </template>
 
 <style scoped>
+.bg-blue {
+    background-color: #3b82f6;
+    padding: 1rem;
+}
 </style>
