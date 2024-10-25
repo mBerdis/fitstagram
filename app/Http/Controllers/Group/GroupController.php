@@ -26,11 +26,12 @@ class GroupController extends Controller
         $groupName  = $request->groupName;
         $group      = Group::firstWhere('name', $groupName);
         $members    = $group->members;
-        $posts      = $group->posts;
+        $posts      = $postService->get_group_images($group->id);
 
         return Inertia::render('GroupDetail', [
             'group' => $group,
-            'members' => $members
+            'members' => $members,
+            'posts' => $posts
         ]);
     }
 }

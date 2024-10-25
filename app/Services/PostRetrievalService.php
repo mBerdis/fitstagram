@@ -13,11 +13,13 @@ class PostRetrievalService
     public function get_personal_feed()
     {
         $user = Auth::user();
+        $friendIds = $user->friends->pluck('user2');
+        $groupIds = $user->groupsMember->pluck('id');
 
         return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
-        //->where('is_public', '==', true)    // get public posts
-        //->orWhere()                         // get posts from friends
-        //->orWhere()                         // get posts from a group which user is a member of
+        ->where('is_public', true)                                                      // get public posts
+        ->orWhereHas('owner', fn($query) => $query->whereIn('users.id', $friendIds))    // get posts from friends
+        ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))   // get posts from groups
         ->orderBy('created_at')
         ->get();
     }
@@ -44,24 +46,22 @@ class PostRetrievalService
     // returns posts to show at /profile page
     public function get_group_images($group_id)
     {
-        // TODO:
         return Post::with('owner', 'comments', 'comments.user')
-        ->whereIn('groups', $group_id)
+        ->whereHas('groups', fn($query) => $query->where('groups.id', $group_id))
         ->get();
     }
 
     private function has_access($user_id): bool
     {
         $loggedUser = Auth::user();
+        $friendIds = $loggedUser->friends->pluck('user2')->toArray();
 
-        if ($loggedUser->id == $user_id)
+        if ($loggedUser->id == $user_id || PostRetrievalService::get_is_friend($user_id))
         {
             return true;
         }
 
         return false;
-
-        // TODO: check if he is a friend
     }
 
     public function get_friends($user_id)
@@ -72,5 +72,13 @@ class PostRetrievalService
         });
 
         return User::whereIn('id', $friendIDs)->get();
+    }
+
+    public function get_is_friend($user_id): bool
+    {
+        $loggedUser = Auth::user();
+        $friendIds = $loggedUser->friends->pluck('user2')->toArray();
+
+        return in_array($user_id, $friendIds);
     }
 }
