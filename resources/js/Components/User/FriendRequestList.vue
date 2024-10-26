@@ -6,21 +6,6 @@ const props = defineProps({
   friendRequests: Array,
 });
 
-const handleAccept = (requestId) => {
-  router.post(route('friendRequest.accept', requestId), {}, {
-    onSuccess: () => {
-      console.log('Friend request accepted');
-    },
-  });
-};
-
-const handleDecline = (requestId) => {
-  router.post(route('friendRequest.decline', requestId), {}, {
-    onSuccess: () => {
-      console.log('Friend request declined');
-    },
-  });
-};
 </script>
 
 <template>
@@ -65,9 +50,6 @@ const handleDecline = (requestId) => {
             >
                 Decline
             </Link>
-<!--
-          <button @click="handleAccept(request.id)" class="px-3 py-1 bg-green-500 text-white rounded-md">Accept</button>
-          <button @click="handleDecline(request.id)" class="px-3 py-1 bg-red-500 text-white rounded-md">Decline</button> -->
         </div>
       </div>
     </div>
