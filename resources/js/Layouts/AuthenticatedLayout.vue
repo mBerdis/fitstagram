@@ -33,6 +33,7 @@ const isAuthenticated = !!props.auth.user; // Check if the user is authenticated
                                 <template v-if="isAuthenticated">
                                     <NavLink :href="route('MyPage')" :active="route().current('MyPage')">My Page</NavLink>
                                     <NavLink :href="route('groups')" :active="route().current('groups')">Groups</NavLink>
+                                    <NavLink :href="route('NewPost')" :active="route().current('NewPost')">New Post</NavLink>
                                 </template>
                             </div>
                         </div>
@@ -75,7 +76,7 @@ const isAuthenticated = !!props.auth.user; // Check if the user is authenticated
                             </template>
                         </div>
 
-                        
+
                     </div>
                 </div>
             </nav>
