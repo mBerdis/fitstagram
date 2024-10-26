@@ -16,6 +16,13 @@ return new class extends Migration
             $table->string('name')->unique(); // Tag name (unique)
             $table->timestamps(); // Created_at and updated_at
         });
+
+        Schema::create('post_tag', function (Blueprint $table) {
+            $table->id(); // Primary key
+
+            $table->foreignId('tag_id')->constrained()->onDelete('cascade');
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+        });
     }
 
     /**
@@ -24,5 +31,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('tags');
+        Schema::dropIfExists('post_tag');
     }
 };

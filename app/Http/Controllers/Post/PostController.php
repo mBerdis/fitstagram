@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Group;
+use App\Models\Tag;
 use App\Models\Comment;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -72,14 +73,27 @@ class PostController extends Controller
             ]);
         }
 
-        /*
-        const form = useForm({
-            photo: null,
-            photoUrl: '',
-            description: '',
-            group_ids: [],
-            is_public: true,
-        });*/
+        foreach ($request->group_ids as $group_id) {
+            $group = Group::find($group_id);
+            if ($group) {
+                $group->posts()->attach($post);
+            }
+        }
+
+        preg_match_all('/#(\w+)/', $request->description, $matches);
+        // Get unique
+        $tags = array_unique($matches[1]);
+        $tags = array_map('trim', $tags);
+
+        foreach ($tags as $tag_name) {
+            $db_tag = Tag::where('name', $tag_name)->first();
+            if ($db_tag === null) {
+                $db_tag = Tag::create([
+                    'name' => $tag_name,
+                ]);
+            }
+            $db_tag->posts()->attach($post->id);
+        }
 
         return back();
     }
