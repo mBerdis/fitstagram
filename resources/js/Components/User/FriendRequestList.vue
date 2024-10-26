@@ -36,8 +36,38 @@ const handleDecline = (requestId) => {
           <p class="text-gray-500 text-sm">{{ request.username }}</p>
         </div>
         <div class="flex space-x-2">
+            <Link
+                class="px-3 py-1 bg-green-500 text-white rounded-md"
+
+                href="friendRequest/accept"
+                method="post"
+                :data="{
+                    id: request.id,
+                }"
+                :only="['friendRequests']"
+                as="button"
+                type="button"
+            >
+                Accept
+            </Link>
+
+            <Link
+                class="px-3 py-1 bg-red-500 text-white rounded-md"
+
+                href="friendRequest/decline"
+                method="post"
+                :data="{
+                    id: request.id,
+                }"
+                :only="['friendRequests']"
+                as="button"
+                type="button"
+            >
+                Decline
+            </Link>
+<!--
           <button @click="handleAccept(request.id)" class="px-3 py-1 bg-green-500 text-white rounded-md">Accept</button>
-          <button @click="handleDecline(request.id)" class="px-3 py-1 bg-red-500 text-white rounded-md">Decline</button>
+          <button @click="handleDecline(request.id)" class="px-3 py-1 bg-red-500 text-white rounded-md">Decline</button> -->
         </div>
       </div>
     </div>

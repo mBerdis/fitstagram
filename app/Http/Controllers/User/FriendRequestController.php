@@ -11,31 +11,52 @@ use App\Models\User;
 use App\Enums\UserRole;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Enums\FriendStatus;
 
 class FriendRequestController extends Controller
 {
-    public function accept($id)
+    public function accept(Request $request)
     {
+        $request->validate([
+            'id' => 'required|exists:users,id',
+        ]);
+
+        $id = $request->input('id');
         $loggedUser = auth()->user();
         $user = User::findOrFail($id);
+
+        $friends = $loggedUser->friends->pluck('user_id')->toArray();
+
+        if (in_array($user->id, $friends))
+        {
+            return back()->with('error', 'Already friends.');
+        }
 
         // Create bothways friendship
         $loggedUser->friends()->attach($user->id);
         $user->friends()->attach($loggedUser->id);
 
         // Remove friend request
-        $loggedUser->friendRequests()->detach($user->id);
+        $loggedUser->receivedFriendRequests()->detach($user->id);
 
-        return back()->with('success', 'Friend request accepted.');
+        return back()->with([
+            'success' => 'Friend request accepted.',
+            'isFriend' => FriendStatus::FRIENDSHIP
+        ]);
     }
 
-    public function decline($id)
+    public function decline(Request $request)
     {
+        $request->validate([
+            'id' => 'required|exists:users,id',
+        ]);
+
+        $id = $request->input('id');
         $loggedUser = auth()->user();
         $user = User::findOrFail($id);
 
         // Remove friend request
-        $loggedUser->friendRequests()->detach($user->id);
+        $loggedUser->receivedFriendRequests()->detach($user->id);
 
         return back()->with('success', 'Friend request declined.');
     }
