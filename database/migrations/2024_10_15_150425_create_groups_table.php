@@ -22,13 +22,21 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
-        Schema::create('group_user', function (Blueprint $table) {
+        Schema::create('group_join_requests', function (Blueprint $table)
+        {
             $table->id(); // Primary key
 
             $table->foreignId('group_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });
 
+
+        Schema::create('group_user', function (Blueprint $table) {
+            $table->id(); // Primary key
+
+            $table->foreignId('group_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        });
 
         Schema::create('group_post', function (Blueprint $table) {
             $table->id(); // Primary key
@@ -44,6 +52,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('groups');
+        Schema::dropIfExists('group_join_requests');
         Schema::dropIfExists('group_user');
         Schema::dropIfExists('group_post');
     }
