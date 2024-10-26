@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Group\GroupController;
+use App\Http\Controllers\Group\GroupJoinController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\FriendRequestController;
 use Illuminate\Foundation\Application;
@@ -22,6 +23,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/feed', [PostController::class, 'create'])->name('feed');
+Route::get('/NewPost', [PostController::class, 'render_create_post'])->middleware(['auth', 'verified'])->name('NewPost');
 Route::get('/groups', [GroupController::class, 'create'])->middleware(['auth', 'verified'])->name('groups');
 Route::get('/groups/{groupName}', [GroupController::class, 'detail'])->middleware(['auth', 'verified'])->name('group');
 
@@ -33,6 +35,14 @@ Route::post('/friendRequest/decline', [FriendRequestController::class, 'decline'
 Route::post('/unfriend', [FriendRequestController::class, 'unfriend'])->name('unfriend')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');
+
+
+
+Route::get('/groups/join', [GroupJoinController::class, 'send_request'])->middleware(['auth', 'verified'])->name('group.join');
+Route::get('/groups/leave', [GroupJoinController::class, 'remove_member'])->middleware(['auth', 'verified'])->name('group.leave');
+Route::get('/groups/requests/accept', [GroupJoinController::class, 'accept'])->middleware(['auth', 'verified'])->name('group.request.accept');
+Route::get('/groups/requests/decline', [GroupJoinController::class, 'decline'])->middleware(['auth', 'verified'])->name('group.request.decline');
+
 
 require __DIR__.'/auth.php';
 require __DIR__.'/api.php';

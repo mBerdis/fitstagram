@@ -29,6 +29,11 @@ class Group extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function joinRequests(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'group_join_requests', 'group_id', 'user_id');
+    }
+
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class);

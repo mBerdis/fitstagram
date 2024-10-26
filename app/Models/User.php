@@ -80,9 +80,9 @@ class User extends Authenticatable
     }
 
     public function receivedFriendRequests(): BelongsToMany
-{
-    return $this->belongsToMany(User::class, 'friend_requests', 'user2', 'user1');
-}
+    {
+        return $this->belongsToMany(User::class, 'friend_requests', 'user2', 'user1');
+    }
 
 
     public function groupsMember(): BelongsToMany
