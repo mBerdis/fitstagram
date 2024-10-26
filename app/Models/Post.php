@@ -16,7 +16,8 @@ class Post extends Model
 
     protected $fillable = [
         'photo',
-        'is_public'
+        'is_public',
+        'user_id',
     ];
 
     public function owner(): BelongsTo

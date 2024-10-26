@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/feed', [PostController::class, 'create'])->name('feed');
+Route::get('/NewPost', [PostController::class, 'render_create_post'])->middleware(['auth', 'verified'])->name('NewPost');
 Route::get('/groups', [GroupController::class, 'create'])->middleware(['auth', 'verified'])->name('groups');
 Route::get('/groups/{groupName}', [GroupController::class, 'detail'])->middleware(['auth', 'verified'])->name('group');
 
