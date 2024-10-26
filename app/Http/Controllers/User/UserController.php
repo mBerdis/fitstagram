@@ -28,12 +28,14 @@ class UserController extends Controller
         ->get();
         $groups = $user->groupsMember;
         $friends = $user->friends;
+        $friendRequests = $user->receivedFriendRequests()->get();
 
         return Inertia::render('MyPage', [
             'user' => $user,
             'posts' => $posts,
             'friends' => $friends,
-            'groups' => $groups
+            'groups' => $groups,
+            'friendRequests' => $friendRequests
         ]);
     }
 
