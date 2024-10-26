@@ -8,10 +8,11 @@ defineProps({
 });
 
 const FriendshipStatus = {
-    NONE: 0,
-    REQUEST_PENDING: 1,
-    FRIENDSHIP: 2,
-    THATS_ME:3,
+    NONE:              0,
+    REQUEST_PENDING:   1,
+    FRIENDSHIP:        2,
+    REQUEST_RECEIVED:  3,
+    THATS_ME:          4,
 };
 
 </script>
@@ -61,6 +62,19 @@ const FriendshipStatus = {
                 type="button"
             >
                 Add friend
+            </Link>
+
+            <Link
+                v-else-if="isFriend === FriendshipStatus.REQUEST_RECEIVED"
+                class="flex items-center space-x-2 cursor-pointer bg-blue"
+                href="/friendRequest/accept"
+                method="post"
+                :data="{ id: user.id }"
+                :only="['isFriend']"
+                as="button"
+                type="button"
+            >
+                Accept Friend Request
             </Link>
 
             <label v-else-if="isFriend === FriendshipStatus.REQUEST_PENDING" class="text-gray-400">Friend request sent.</label>

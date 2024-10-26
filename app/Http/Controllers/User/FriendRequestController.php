@@ -70,17 +70,35 @@ class FriendRequestController extends Controller
         $loggedUser = auth()->user();
         $userToAdd = User::where('username', $request->username)->firstOrFail();
 
-        $friendRequests = $loggedUser->friendRequests->pluck('user_id')->toArray();
+        
+        $receivedRequests = $loggedUser->receivedFriendRequests->pluck('id')->toArray();
 
-        if (in_array($userToAdd->id, $friendRequests))
-        {
+        if (in_array($userToAdd->id, $receivedRequests)) {
+            
+            $loggedUser->friends()->attach($userToAdd->id);
+            $userToAdd->friends()->attach($loggedUser->id);
+
+            
+            $loggedUser->receivedFriendRequests()->detach($userToAdd->id);
+
+            return back()->with([
+                'success' => 'Friend request accepted automatically.',
+                'isFriend' => FriendStatus::FRIENDSHIP
+            ]);
+        }
+
+        
+        $sentRequests = $loggedUser->friendRequests->pluck('id')->toArray();
+        if (in_array($userToAdd->id, $sentRequests)) {
             return back()->with('error', 'Friend request already sent.');
         }
 
+        
         $loggedUser->friendRequests()->attach($userToAdd->id);
 
         return back()->with('success', 'Friend request sent.');
     }
+
 
     public function unfriend(Request $request)
     {
