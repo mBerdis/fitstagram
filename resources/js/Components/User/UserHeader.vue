@@ -32,8 +32,22 @@ const FriendshipStatus = {
         </div>
 
         <div>
-            <label v-if="isFriend === FriendshipStatus.FRIENDSHIP" class="text-gray-400">Friend</label>
-            <label v-else-if="isFriend === FriendshipStatus.REQUEST_PENDING" class="text-gray-400">Friend request sent.</label>
+            <Link
+                v-if="isFriend === FriendshipStatus.FRIENDSHIP"
+                class="flex items-center space-x-2 cursor-pointer bg-blue"
+
+                href="/unfriend"
+                method="post"
+                :data="{
+                    id: user.id,
+                }"
+                :only="['isFriend']"
+                as="button"
+                type="button"
+            >
+                Unfriend
+            </Link>
+
             <Link
                 v-else-if="isFriend === FriendshipStatus.NONE"
                 class="flex items-center space-x-2 cursor-pointer bg-blue"
@@ -48,6 +62,8 @@ const FriendshipStatus = {
             >
                 Add friend
             </Link>
+
+            <label v-else-if="isFriend === FriendshipStatus.REQUEST_PENDING" class="text-gray-400">Friend request sent.</label>
 
         </div>
 

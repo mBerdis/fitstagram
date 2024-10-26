@@ -98,7 +98,7 @@ class PostRetrievalService
         }
 
         $loggedUser     = Auth::user();
-        $friendIds      = $loggedUser->friends->pluck('user2')->toArray();
+        $friendIds      = $loggedUser->friends->pluck('pivot.user2')->toArray();
         $friendReqIds   = $loggedUser->friendRequests->pluck('pivot.user2')->toArray();
 
         if ($loggedUser->id == $user_id)       return FriendStatus::THATS_ME;

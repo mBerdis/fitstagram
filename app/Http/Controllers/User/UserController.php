@@ -27,8 +27,7 @@ class UserController extends Controller
         ->orderBy('created_at')
         ->get();
         $groups = $user->groupsMember;
-
-        $friends = $postService->get_friends($user->id);
+        $friends = $user->friends;
 
         return Inertia::render('MyPage', [
             'user' => $user,
@@ -50,26 +49,4 @@ class UserController extends Controller
             'isFriend' => $isFriend
         ]);
     }
-
-    public function sendFriendRequest(Request $request, PostRetrievalService $postService)
-    {
-        $request->validate([
-            'username' => 'required|string|exists:users,username',
-        ]);
-
-        $loggedUser = auth()->user();
-        $userToAdd = User::where('username', $request->username)->firstOrFail();
-
-        $friendRequests = $loggedUser->friendRequests->pluck('user_id')->toArray();
-
-        if (in_array($userToAdd->id, $friendRequests))
-        {
-            return back()->with('error', 'Friend request already sent.');
-        }
-
-        $loggedUser->friendRequests()->attach($userToAdd->id);
-
-        return back()->with('success', 'Friend request sent.');
-    }
-
 }

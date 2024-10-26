@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Group\GroupController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\FriendRequestController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,7 +27,10 @@ Route::get('/groups/{groupName}', [GroupController::class, 'detail'])->middlewar
 
 Route::get('/MyPage', [UserController::class, 'create'])->middleware(['auth', 'verified'])->name('MyPage');
 Route::get('/user/{username}', [UserController::class, 'detail'])->name('user');
-Route::get('/user/friendRequest/{username}', [UserController::class, 'sendFriendRequest'])->middleware(['auth', 'verified'])->name('user.friendRequest');
+Route::get('/user/friendRequest/{username}', [FriendRequestController::class, 'send'])->middleware(['auth', 'verified'])->name('user.friendRequest');
+Route::post('/friendRequest/accept/{id}', [FriendRequestController::class, 'accept'])->name('friendRequest.accept')->middleware(['auth', 'verified']);
+Route::post('/friendRequest/decline/{id}', [FriendRequestController::class, 'decline'])->name('friendRequest.decline')->middleware(['auth', 'verified']);
+Route::post('/unfriend', [FriendRequestController::class, 'unfriend'])->name('unfriend')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');
 

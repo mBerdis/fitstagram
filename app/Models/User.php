@@ -69,9 +69,9 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
-    public function friends(): HasMany
+    public function friends(): BelongsToMany
     {
-        return $this->hasMany(Friend::class, 'user1');
+        return $this->belongsToMany(User::class, 'friends', 'user1', 'user2');
     }
 
     public function friendRequests(): BelongsToMany
