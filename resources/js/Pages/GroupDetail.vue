@@ -7,13 +7,15 @@ import GroupList from '@/Components/Group/GroupList.vue';
 import GenericFeed from '@/Components/Generic/GenericFeed.vue';
 import { Link } from '@inertiajs/vue3'
 import PopupWindow from '@/Components/Generic/PopupWindow.vue';
+import GroupRequestsList from '@/Components/Group/GroupRequestsList.vue';
 
 defineProps({
     group: Object,
     members: Array,
     posts: Array,
     membership_status: Number,
-    logged_user_id: Number
+    logged_user_id: Number,
+    join_requests: Array
 });
 
 const MembershipStatus = {
@@ -77,12 +79,16 @@ const MembershipStatus = {
     </template>
 
 
-        <PopupWindow>
-            <template #button>
-            Show Members
-            </template>
+        <PopupWindow v-if="membership_status >= MembershipStatus.MEMBER">
+            <template #button> Members </template>
 
             <UserList :users="members" />
+        </PopupWindow>
+
+        <PopupWindow v-if="membership_status === MembershipStatus.OWNER">
+            <template #button> Requests </template>
+
+            <GroupRequestsList :join_requests="join_requests"/>
         </PopupWindow>
 
 

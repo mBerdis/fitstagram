@@ -41,14 +41,23 @@ class GroupController extends Controller
         $members    = $group->members;
         $posts      = $postService->get_group_images($group->id);
         $status     = $groupService->get_membership_status($group->id);
-        $loggedUserID = Auth()->user()->id;
+        $loggedUserID = Auth()->check() ? Auth()->user()->id : -1;
+
+
+        $joinRequests = null;   // dont grab requests for all users
+
+        if ($status === GroupMembership::OWNER)
+        {
+            $joinRequests = $group->joinRequests;
+        }
 
         return Inertia::render('GroupDetail', [
             'group' => $group,
             'members' => $members,
             'posts' => $posts,
             'membership_status' => $status->value,
-            'logged_user_id' => $loggedUserID
+            'logged_user_id' => $loggedUserID,
+            'join_requests' => $joinRequests
         ]);
     }
 }
