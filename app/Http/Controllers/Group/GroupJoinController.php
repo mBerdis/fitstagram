@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\PostRetrievalService;
 use App\Models\Group;
+use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Enums\UserRole;
@@ -65,7 +66,7 @@ class GroupJoinController extends Controller
         $group = Group::findOrFail($request->input('group_id'));
         $user  = auth()->user();
 
-        $groupRequests = $group->joinRequests->pluck('user_id')->toArray();
+        $groupRequests = $group->joinRequests->pluck('id')->toArray();
 
         if (in_array($user->id, $groupRequests))
         {

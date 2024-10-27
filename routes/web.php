@@ -38,10 +38,10 @@ Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->n
 
 
 
-Route::get('/groups/join', [GroupJoinController::class, 'send_request'])->middleware(['auth', 'verified'])->name('group.join');
-Route::get('/groups/leave', [GroupJoinController::class, 'remove_member'])->middleware(['auth', 'verified'])->name('group.leave');
-Route::get('/groups/requests/accept', [GroupJoinController::class, 'accept'])->middleware(['auth', 'verified'])->name('group.request.accept');
-Route::get('/groups/requests/decline', [GroupJoinController::class, 'decline'])->middleware(['auth', 'verified'])->name('group.request.decline');
+Route::post('/groups/join', [GroupJoinController::class, 'send_request'])->middleware(['auth', 'verified'])->name('group.join');
+Route::post('/groups/leave', [GroupJoinController::class, 'remove_member'])->middleware(['auth', 'verified'])->name('group.leave');
+Route::post('/groups/requests/accept', [GroupJoinController::class, 'accept'])->middleware(['auth', 'verified'])->name('group.request.accept');
+Route::post('/groups/requests/decline', [GroupJoinController::class, 'decline'])->middleware(['auth', 'verified'])->name('group.request.decline');
 
 
 require __DIR__.'/auth.php';

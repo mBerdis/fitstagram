@@ -21,7 +21,7 @@ class GroupManagmentService
         $loggedUser     = Auth::user();
 
         $memberIds      = $group->members->pluck('id')->toArray();
-        $memberReqIds   = $group->joinRequests->pluck('user_id')->toArray();
+        $memberReqIds   = $group->joinRequests->pluck('id')->toArray();
 
         if ($loggedUser->id == $group->owner->id)       return GroupMembership::OWNER;
         if (in_array($loggedUser->id, $memberIds))      return GroupMembership::MEMBER;

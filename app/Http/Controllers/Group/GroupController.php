@@ -41,13 +41,14 @@ class GroupController extends Controller
         $members    = $group->members;
         $posts      = $postService->get_group_images($group->id);
         $status     = $groupService->get_membership_status($group->id);
-
-        dd($status);
+        $loggedUserID = Auth()->user()->id;
 
         return Inertia::render('GroupDetail', [
             'group' => $group,
             'members' => $members,
             'posts' => $posts,
+            'membership_status' => $status->value,
+            'logged_user_id' => $loggedUserID
         ]);
     }
 }
