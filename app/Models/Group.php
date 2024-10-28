@@ -21,7 +21,8 @@ class Group extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name'
+        'name',
+        'user_id'
     ];
 
     public function owner(): BelongsTo
