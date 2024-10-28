@@ -22,7 +22,7 @@ const isAuthenticated = !!props.auth.user; // Check if the user is authenticated
                         <div class="flex">
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
-                                    <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                                    <ApplicationLogo class="block h-16 w-auto fill-current text-gray-800 dark:text-gray-200" />
                                 </Link>
                             </div>
 

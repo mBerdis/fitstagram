@@ -60,4 +60,27 @@ class GroupController extends Controller
             'join_requests' => $joinRequests
         ]);
     }
+
+
+    public function create_group(Request $request, UserAuthenticationService $authService)
+    {
+        if (!$authService->role_access(UserRole::USER)) {
+            return back();
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:'.Group::class,
+        ]);
+
+        $user = auth()->user();
+
+        $group = Group::create([
+            'name' => $request->name,
+            'user_id' => $user->id,
+        ]);
+
+        $group->members()->attach($user);
+
+        return Inertia::location(route('group', ['groupName' => $group->name]));
+    }
 }

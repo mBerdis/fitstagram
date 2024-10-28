@@ -44,5 +44,7 @@ Route::post('/groups/requests/accept', [GroupJoinController::class, 'accept'])->
 Route::post('/groups/requests/decline', [GroupJoinController::class, 'decline'])->middleware(['auth', 'verified'])->name('group.request.decline');
 
 
+Route::post('/groups/join', [GroupController::class, 'create_group'])->middleware(['auth', 'verified'])->name('group.create');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/api.php';

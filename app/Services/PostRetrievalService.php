@@ -24,6 +24,7 @@ class PostRetrievalService
             ->where('is_public', true)                                                      // get public posts
             ->orWhereHas('owner', fn($query) => $query->whereIn('users.id', $friendIds))    // get posts from friends
             ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))   // get posts from groups
+            ->orWhereHas('owner', fn($query) => $query->where('users.id', $user->id))       // get logged users private posts
             ->orderBy('created_at')
             ->get();
         }
@@ -100,7 +101,7 @@ class PostRetrievalService
         $loggedUser     = Auth::user();
         $friendIds      = $loggedUser->friends->pluck('pivot.user2')->toArray();
         $friendReqIds   = $loggedUser->friendRequests->pluck('pivot.user2')->toArray();
-        $receivedReqIds = $loggedUser->receivedFriendRequests->pluck('pivot.user1')->toArray(); 
+        $receivedReqIds = $loggedUser->receivedFriendRequests->pluck('pivot.user1')->toArray();
 
         if ($loggedUser->id == $user_id)            return FriendStatus::THATS_ME;
         if (in_array($user_id, $friendIds))         return FriendStatus::FRIENDSHIP;
