@@ -118,4 +118,29 @@ class PostController extends Controller
 
         return redirect()->route('MyPage');
     }
+
+    public function delete_post(Request $request,UserAuthenticationService $authService)
+    {
+        if (!$authService->role_access(UserRole::USER)) {
+            return back();
+        }
+        $user = auth()->user();
+
+        $request->validate([
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $post = Post::findOrFail($request->post_id);
+
+        // verify user has rights
+        if ( !($post->owner->id === $user->id)                  // is not author and
+             && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
+        {
+            return back()->with('error', 'User has not sufficient edit rights.');
+        }
+
+        $post->delete();
+
+        return back()->with('success', 'Post removed.');
+    }
 }

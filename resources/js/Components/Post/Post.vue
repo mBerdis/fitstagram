@@ -1,12 +1,26 @@
 <script setup>
-import { ref } from 'vue'; // Import ref to handle reactive data
+import { ref, computed } from 'vue'; // Import ref to handle reactive data
 
 import UserListView from '../Generic/UserListView.vue';
 import CommentsSection from './CommentSection.vue';
+import { Link, usePage } from '@inertiajs/vue3';
 
-defineProps({
+const data = defineProps({
   post: Object, // Expecting the post object as a prop
 });
+
+const { props } = usePage();
+const loggedUserRole = computed(() => {
+  return props.auth?.user?.role ?? null; // Return null if role is not available
+});
+
+const roleOptions = [
+  { label: 'Banned', value: 0 },
+  { label: 'Silent', value: 1 },
+  { label: 'User', value: 2 },
+  { label: 'Mod', value: 3 },
+  { label: 'Admin', value: 4 },
+];
 
 // Data to control the image overlay
 const isImageExpanded = ref(false); // Controls the overlay visibility
@@ -22,6 +36,12 @@ const expandImage = (imageUrl) => {
 const closeOverlay = () => {
   isImageExpanded.value = false;
 };
+
+const canDelete = () => {
+    return loggedUserRole !== null && loggedUserRole >= 3
+    || data.post.user_id === props.auth?.user?.id;
+}
+
 </script>
 
 <template>
@@ -47,6 +67,22 @@ const closeOverlay = () => {
   <div v-if="isImageExpanded" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50" @click="closeOverlay">
   <div class="relative w-11/12 max-w-7xl  bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg" @click.stop>
     <button class="absolute top-2 right-3 text-white text-3xl" @click="closeOverlay">&times;</button>
+
+    <Link v-if="canDelete()"
+            class="px-3 py-1 bg-red-500 text-white rounded-md"
+
+            href="/post/delete"
+            method="delete"
+            :data="{
+                post_id: post.id
+            }"
+            :only="['posts']"
+            :preserveScroll="true"
+            as="button"
+            type="button"
+        >
+            Remove
+    </Link>
 
     <div class="flex flex-col md:flex-row">
       <!-- Image section -->

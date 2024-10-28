@@ -40,7 +40,7 @@ Route::post('/unfriend', [FriendRequestController::class, 'unfriend'])->name('un
 Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');
 Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
 
-
+Route::delete('/post/delete', [PostController::class, 'delete_post'])->middleware(['auth', 'verified'])->name('post.delete');
 
 Route::post('/groups/join', [GroupJoinController::class, 'send_request'])->middleware(['auth', 'verified'])->name('group.join');
 Route::post('/groups/leave', [GroupJoinController::class, 'remove_member'])->middleware(['auth', 'verified'])->name('group.leave');
