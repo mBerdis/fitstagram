@@ -1,16 +1,34 @@
 <script setup>
 import { ref } from 'vue';
-import { useForm, usePage } from '@inertiajs/vue3'; // Import usePage
+import { useForm, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
-const { props } = usePage(); // Get page props
-const isAuthenticated = !!props.auth.user; // Check if the user is authenticated
+const { props } = usePage();
+const isAuthenticated = !!props.auth.user; 
+
+const search = ref(''); 
+
+const submitSearch = () =>
+{
+    if (search.value)
+    {
+        router.visit('/search', {
+            method: 'get',
+            data: { query: search.value },
+            replace: false,
+            preserveState: false,
+            preserveScroll: false,
+        });
+    }
+};
+
 </script>
 
 <template>
@@ -36,6 +54,23 @@ const isAuthenticated = !!props.auth.user; // Check if the user is authenticated
                                     <NavLink :href="route('NewPost')" :active="route().current('NewPost')">New Post</NavLink>
                                 </template>
                             </div>
+                        </div>
+
+                        <!-- Centered Search Bar -->
+                        <div class="flex-grow flex items-center justify-center">
+                            <form @submit.prevent="submitSearch" class="relative w-full max-w-md">
+                                <input
+                                    v-model="search"
+                                    type="text"
+                                    placeholder="Search..."
+                                    class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                />
+                                <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1111 5a6 6 0 016 6z" />
+                                    </svg>
+                                </button>
+                            </form>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">

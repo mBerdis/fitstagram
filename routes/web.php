@@ -9,6 +9,7 @@ use App\Http\Controllers\User\FriendRequestController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Searchbar\SearchBarController;
 
 Route::get('/', [PostController::class, 'create']);
 
@@ -35,6 +36,7 @@ Route::post('/friendRequest/decline', [FriendRequestController::class, 'decline'
 Route::post('/unfriend', [FriendRequestController::class, 'unfriend'])->name('unfriend')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');
+Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
 
 
 
