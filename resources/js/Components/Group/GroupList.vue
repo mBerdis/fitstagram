@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue';
 import GroupListView from '../Generic/GroupListView.vue';
 
 defineProps({

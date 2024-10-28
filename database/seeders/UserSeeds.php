@@ -20,7 +20,8 @@ class UserSeeds extends Seeder
             'email' => 'xkosco01@example.com',
             'password' => 'secret',
             'first_name' => 'Matej',
-            'last_name' => 'Koscelnik'
+            'last_name' => 'Koscelnik',
+            'role' => 4
         ]);
 
         $MarosBerdis_model = User::factory()->create([

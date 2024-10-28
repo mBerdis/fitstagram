@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Post;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\PostRetrievalService;
@@ -48,22 +48,51 @@ class PostController extends Controller
 
     public function store_post(Request $request,UserAuthenticationService $authService)
     {
-
-
         if (!$authService->role_access(UserRole::USER)) {
             return back();
         }
         $user = auth()->user();
 
         $request->validate([
-            'description' => 'string|max:255'
+            'description' => 'nullable|string|max:255',
+            'photoUrl' => 'nullable|url',
+            'group_ids' => 'nullable|array',
+            'group_ids.*' => 'integer',
+            'is_public' => 'boolean',
         ]);
+
+        $imagePath = null;
+
+        if ($request->filled('photoUrl') && filter_var($request->photoUrl, FILTER_VALIDATE_URL)) {
+            $imagePath = $request->photoUrl;
+        }
+
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $imageName = uniqid();
+            Storage::disk('public')->put('uploads/' . $imageName, file_get_contents($photo));
+            $imagePath = '/storage/uploads/' . $imageName;
+        }
 
         $post = Post::create([
             'user_id' => $user->id,
-            'photo' => $request->photoUrl,
+            'photo' => $imagePath,
             'is_public' => $request->is_public,
         ]);
+
+        if ($request->group_ids != null) {
+            foreach ($request->group_ids as $group_id) {
+                $group = Group::find($group_id);
+                if ($group) {
+                    $group->posts()->attach($post);
+                }
+            }
+        }
+
+        // skip making description
+        if ($request->description == null) {
+            return redirect()->route('MyPage');
+        }
 
         if (strlen($request->description) > 0) {
             $comment = Comment::create([
@@ -73,15 +102,7 @@ class PostController extends Controller
             ]);
         }
 
-        foreach ($request->group_ids as $group_id) {
-            $group = Group::find($group_id);
-            if ($group) {
-                $group->posts()->attach($post);
-            }
-        }
-
         preg_match_all('/#(\w+)/', $request->description, $matches);
-        // Get unique
         $tags = array_unique($matches[1]);
         $tags = array_map('trim', $tags);
 
@@ -95,6 +116,6 @@ class PostController extends Controller
             $db_tag->posts()->attach($post->id);
         }
 
-        return back();
+        return redirect()->route('MyPage');
     }
 }

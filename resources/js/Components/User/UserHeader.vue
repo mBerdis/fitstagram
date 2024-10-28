@@ -1,8 +1,9 @@
 <script setup>
-import { ref, useId } from 'vue';
-import { Link } from '@inertiajs/vue3'
+import { ref, computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3'
 
-defineProps({
+const data = defineProps({
   user: Object,
   isFriend: Number,
 });
@@ -14,6 +15,27 @@ const FriendshipStatus = {
     REQUEST_RECEIVED:  3,
     THATS_ME:          4,
 };
+
+const { props } = usePage();
+const loggedUserRole = computed(() => {
+  return props.auth?.user?.role ?? null; // Return null if role is not available
+});
+
+const roleOptions = [
+  { label: 'Banned', value: 0 },
+  { label: 'Silent', value: 1 },
+  { label: 'User', value: 2 },
+  { label: 'Mod', value: 3 },
+  { label: 'Admin', value: 4 },
+];
+
+function handleRoleChange(newRole) {
+    router.post(route('user.updateRole'), { role: newRole , id: data.user.id });
+}
+
+function handleDeleteUser() {
+    router.post(route('user.delete'), { id: data.user.id });
+}
 
 </script>
 
@@ -83,6 +105,22 @@ const FriendshipStatus = {
 
 
         </div>
+    </div>
+
+    <div v-if="loggedUserRole !== null && loggedUserRole >= 3" class="mt-4">
+        <label for="role-select" class="text-gray-400 font-semibold">Change User Role:</label>
+        <select id="role-select" v-model="user.role" @change="handleRoleChange(user.role)" class="bg-gray-700 text-white rounded p-2 mt-2">
+            <option v-for="option in roleOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+            </option>
+        </select>
+    </div>
+
+    <!-- Delete User Button -->
+    <div v-if="loggedUserRole !== null && loggedUserRole >= 4" class="mt-4">
+        <button @click="handleDeleteUser" class="bg-red-600 text-white rounded p-2">
+            Delete User
+        </button>
     </div>
 
   </div>
