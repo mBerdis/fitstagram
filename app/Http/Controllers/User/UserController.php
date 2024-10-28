@@ -51,4 +51,33 @@ class UserController extends Controller
             'isFriend' => $isFriend
         ]);
     }
+
+    public function updateRole(Request $request,UserAuthenticationService $authService)
+    {
+        if ($authService->role_access(UserRole::MODERATOR)) {
+
+            $request->validate([
+                'role' => 'required|integer|min:0|max:4',
+            ]);
+
+            if ($request->role > auth()->user()->role->value ) {
+                return;
+            }
+
+            $user = User::findOrFail($request->id);
+
+            $user->role = $request->role;
+            $user->save();
+        }
+        return;
+    }
+
+    public function delete(Request $request,UserAuthenticationService $authService)
+    {
+        if ($authService->role_access(UserRole::ADMIN)) {
+            $user = User::findOrFail($request->id);
+            $user->delete();
+        }
+        return redirect()->route('feed');
+    }
 }
