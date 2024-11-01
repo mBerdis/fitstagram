@@ -1,23 +1,53 @@
 <script setup>
+import { ref, computed } from 'vue';
 import UserListView from '../Generic/UserListView.vue';
+import { Link, usePage } from '@inertiajs/vue3';
 
-defineProps({
+const data = defineProps({
   comment: Object,
 });
+
+const { props } = usePage();
+const loggedUserRole = computed(() => {
+  return props.auth?.user?.role ?? null; // Return null if role is not available
+});
+
+const canDelete = () => {
+    console.log(loggedUserRole);
+    return (loggedUserRole.value !== null && loggedUserRole.value >= 3)
+    || data.comment.user_id === props.auth?.user?.id;
+}
+
 </script>
 
 <template>
   <div class="comment mt-3 flex items-start space-x-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md">
     <!-- Author component with user profile picture and username -->
     <UserListView :user="comment.user"/>
-    
+
     <div class="flex-1">
-      
+
 
       <!-- Display the comment message -->
       <p class="mt-1 text-gray-700 dark:text-gray-300 break-words">
         {{ comment.message }}
       </p>
+
+      <Link v-if="canDelete()"
+            class="px-3 py-1 bg-red-500 text-white rounded-md"
+
+            href="/comment/delete"
+            method="delete"
+            :data="{
+                comment_id: comment.id
+            }"
+
+            :preserveScroll="true"
+            as="button"
+            type="button"
+        >
+            Remove
+    </Link>
     </div>
   </div>
 </template>

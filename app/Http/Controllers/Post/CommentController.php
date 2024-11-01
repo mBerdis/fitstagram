@@ -30,5 +30,28 @@ class CommentController extends Controller
 
         return back();
     }
+
+    public function delete_comment(Request $request, UserAuthenticationService $authService)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'comment_id' => 'required|exists:comments,id',
+        ]);
+
+        $comment = Comment::findOrFail($request->comment_id);
+
+        // verify user has rights
+        if ( !($comment->user->id === $user->id)                  // is not author and
+             && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
+        {
+            return back()->with('error', 'User has unsufficient edit rights.');
+        }
+
+        $comment->delete();
+
+        return back()->with('success', 'Comment removed.');
+    }
+
 }
 

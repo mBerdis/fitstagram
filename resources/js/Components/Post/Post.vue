@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'; // Import ref to handle reactive data
+import { ref, computed } from 'vue';
 
 import UserListView from '../Generic/UserListView.vue';
 import CommentsSection from './CommentSection.vue';
@@ -38,7 +38,7 @@ const closeOverlay = () => {
 };
 
 const canDelete = () => {
-    return loggedUserRole !== null && loggedUserRole >= 3
+    return loggedUserRole.value !== null && loggedUserRole.value >= 3
     || data.post.user_id === props.auth?.user?.id;
 }
 

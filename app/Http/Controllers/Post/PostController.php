@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Post;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Services\PostRetrievalService;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function render_create_post(Request $request,UserAuthenticationService $authService): Response
+    public function render_create_post(Request $request, UserAuthenticationService $authService): Response|RedirectResponse
     {
         if (!$authService->role_access(UserRole::USER)) {
             return back();
@@ -121,9 +122,6 @@ class PostController extends Controller
 
     public function delete_post(Request $request,UserAuthenticationService $authService)
     {
-        if (!$authService->role_access(UserRole::USER)) {
-            return back();
-        }
         $user = auth()->user();
 
         $request->validate([
@@ -136,7 +134,7 @@ class PostController extends Controller
         if ( !($post->owner->id === $user->id)                  // is not author and
              && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
         {
-            return back()->with('error', 'User has not sufficient edit rights.');
+            return back()->with('error', 'User has unsufficient edit rights.');
         }
 
         $post->delete();

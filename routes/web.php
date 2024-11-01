@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Group\GroupController;
 use App\Http\Controllers\Group\GroupJoinController;
 use App\Http\Controllers\User\UserController;
@@ -41,6 +42,7 @@ Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->n
 Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
 
 Route::delete('/post/delete', [PostController::class, 'delete_post'])->middleware(['auth', 'verified'])->name('post.delete');
+Route::delete('/comment/delete', [CommentController::class, 'delete_comment'])->middleware(['auth', 'verified'])->name('comment.delete');
 
 Route::post('/groups/join', [GroupJoinController::class, 'send_request'])->middleware(['auth', 'verified'])->name('group.join');
 Route::post('/groups/leave', [GroupJoinController::class, 'remove_member'])->middleware(['auth', 'verified'])->name('group.leave');
