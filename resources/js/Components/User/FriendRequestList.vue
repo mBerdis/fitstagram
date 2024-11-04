@@ -29,7 +29,7 @@ const props = defineProps({
                 :data="{
                     id: request.id,
                 }"
-                :only="['friendRequests']"
+                :only="['friendRequests', 'friends']"
                 as="button"
                 type="button"
             >
