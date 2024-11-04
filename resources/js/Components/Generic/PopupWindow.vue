@@ -15,7 +15,7 @@ export default {
       <!-- Toggle Button -->
       <button
         @click="showContent = !showContent"
-        class="px-4 py-2 bg-blue-500 text-white rounded-md"
+        class="px-4 py-0 text-black rounded-md border border-black hover:bg-black transition duration-500 ease-in-out hover:text-white hover:fill-white"
       >
         <slot name="button">Show Content</slot> <!-- Use named slot for button text -->
       </button>

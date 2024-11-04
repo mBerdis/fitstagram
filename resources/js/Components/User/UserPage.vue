@@ -9,12 +9,15 @@ defineProps({
   user: Object,
   posts: Array,
   isFriend: Number,
+  friends: Array,
+  groups: Array,
+  friendRequests: Array
 });
 </script>
 
 <template>
  <div class="">
-    <UserHeader :user="user" :isFriend="isFriend" />
+    <UserHeader :user="user" :isFriend="isFriend" :friends="friends" :groups="groups" :friendRequests="friendRequests"/>
 
     <GenericFeed :posts="posts" />
 

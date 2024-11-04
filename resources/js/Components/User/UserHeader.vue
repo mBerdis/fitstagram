@@ -2,10 +2,20 @@
 import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3'
+import PopupWindow from '../Generic/PopupWindow.vue';
+import UserList from './UserList.vue';
+import GroupList from '../Group/GroupList.vue';
+import FriendRequestList from './FriendRequestList.vue';
+import GroupIcon from '../Icons/GroupIcon.vue';
+import FriendsIcon from '../Icons/FriendsIcon.vue';
+import AddFriendIcon from '../Icons/AddFriendIcon.vue';
 
 const data = defineProps({
   user: Object,
   isFriend: Number,
+  friends: Array,
+  groups: Array,
+  friendRequests: Array
 });
 
 const FriendshipStatus = {
@@ -41,69 +51,84 @@ function handleDeleteUser() {
 
 <template>
  <div class="">
-
     <div class="max-w-4xl mx-auto p-4">
-        <div class="flex items-center space-x-5">
-        <!-- User Profile Picture -->
-        <img :src="user.profile_picture" alt="Profile Picture" class="w-40 h-40 rounded-full object-cover" />
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-5">
+                <!-- User Profile Picture -->
+                <img :src="user.profile_picture" alt="Profile Picture" class="w-40 h-40 rounded-full object-cover" />
 
-        <!-- User Info -->
-        <div>
-            <h1 class="text-gray-300 text-3xl font-bold">{{ user.first_name }} {{ user.last_name }}</h1>
-            <p class="text-gray-600 dark:text-gray-300">{{ user.username }}</p>
-            <p class="text-gray-500 dark:text-gray-400">{{ user.email }}</p>
-        </div>
+                <!-- User Info -->
+                <div>
+                    <h1 class="text-gray-300 text-3xl font-bold">{{ user.first_name }} {{ user.last_name }}</h1>
+                    <p class="text-gray-600 dark:text-gray-300">{{ user.username }}</p>
+                    <p class="text-gray-500 dark:text-gray-400">{{ user.email }}</p>
+                </div>
+            </div>
 
-        <div>
-            <Link
-                v-if="isFriend === FriendshipStatus.FRIENDSHIP"
-                class="flex items-center space-x-2 cursor-pointer bg-blue"
+            <div class="flex items-center space-x-4">
+                <!-- Popup Buttons -->
+                <div class="flex space-x-4">
+                    <PopupWindow v-if="friends">
+                        <template #button> <FriendsIcon/> </template>
+                        <UserList :users="friends" />
+                    </PopupWindow>
 
-                href="/unfriend"
-                method="post"
-                :data="{
-                    id: user.id,
-                }"
-                :only="['isFriend']"
-                as="button"
-                type="button"
-            >
-                Unfriend
-            </Link>
+                    <PopupWindow v-if="friendRequests">
+                        <template #button> <AddFriendIcon/> </template>
+                        <FriendRequestList :friendRequests="friendRequests" />
+                    </PopupWindow>
 
-            <Link
-                v-else-if="isFriend === FriendshipStatus.NONE"
-                class="flex items-center space-x-2 cursor-pointer bg-blue"
+                    <PopupWindow v-if="groups">
+                        <template #button> <GroupIcon/> </template>
+                        <GroupList :groups="groups"/>
+                    </PopupWindow>
+                </div>
 
-                :href="route('user.friendRequest', user.username)"
-                :data="{
-                    username: user.username,
-                }"
-                :only="['isFriend']"
-                as="button"
-                type="button"
-            >
-                Add friend
-            </Link>
+                <!-- Friend Actions -->
+                <div>
+                    <Link
+                        v-if="isFriend === FriendshipStatus.FRIENDSHIP"
+                        class="flex items-center space-x-2 cursor-pointer bg-blue"
 
-            <Link
-                v-else-if="isFriend === FriendshipStatus.REQUEST_RECEIVED"
-                class="flex items-center space-x-2 cursor-pointer bg-blue"
-                href="/friendRequest/accept"
-                method="post"
-                :data="{ id: user.id }"
-                :only="['isFriend']"
-                as="button"
-                type="button"
-            >
-                Accept Friend Request
-            </Link>
+                        href="/unfriend"
+                        method="post"
+                        :data="{ id: user.id }"
+                        :only="['isFriend']"
+                        as="button"
+                        type="button"
+                    >
+                        Unfriend
+                    </Link>
 
-            <label v-else-if="isFriend === FriendshipStatus.REQUEST_PENDING" class="text-gray-400">Friend request sent.</label>
+                    <Link
+                        v-else-if="isFriend === FriendshipStatus.NONE"
+                        class="flex items-center space-x-2 cursor-pointer bg-blue"
 
-        </div>
+                        :href="route('user.friendRequest', user.username)"
+                        :data="{ username: user.username }"
+                        :only="['isFriend']"
+                        as="button"
+                        type="button"
+                    >
+                        Add friend
+                    </Link>
 
+                    <Link
+                        v-else-if="isFriend === FriendshipStatus.REQUEST_RECEIVED"
+                        class="flex items-center space-x-2 cursor-pointer bg-blue"
+                        href="/friendRequest/accept"
+                        method="post"
+                        :data="{ id: user.id }"
+                        :only="['isFriend']"
+                        as="button"
+                        type="button"
+                    >
+                        Accept Friend Request
+                    </Link>
 
+                    <label v-else-if="isFriend === FriendshipStatus.REQUEST_PENDING" class="text-gray-400">Friend request sent.</label>
+                </div>
+            </div>
         </div>
     </div>
 

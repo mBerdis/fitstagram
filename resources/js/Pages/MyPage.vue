@@ -26,16 +26,7 @@ defineProps({
         </h2>
       </template>
 
-      <h1 class="text-gray-400">Friends</h1>
-      <UserList :users="friends" />
-
-      <h1 class="text-gray-400">Groups</h1>
-      <GroupList :groups="groups"/>
-
-      <h1 class="text-gray-400">Friend Requests</h1>
-      <FriendRequestList :friendRequests="friendRequests" />
-
-      <UserPage :user="user" :posts="posts" :isFriend="4"></UserPage>
+      <UserPage :user="user" :posts="posts" :isFriend="4" :friends="friends" :groups="groups" :friendRequests="friendRequests"></UserPage>
 
     </AuthenticatedLayout>
   </template>

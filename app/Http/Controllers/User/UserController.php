@@ -22,10 +22,7 @@ class UserController extends Controller
         }
 
         $user = auth()->user();
-        $posts = Post::with('owner','comments', 'comments.user')
-        ->where('user_id', $user->id)
-        ->orderBy('created_at')
-        ->get();
+        $posts = $user->posts()->with('owner','comments', 'comments.user')->get();
         $groups = $user->groupsMember;
         $friends = $user->friends;
         $friendRequests = $user->receivedFriendRequests()->get();
