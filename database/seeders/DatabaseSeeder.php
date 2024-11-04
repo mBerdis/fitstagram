@@ -40,7 +40,11 @@ class DatabaseSeeder extends Seeder
 
 
         foreach ($groups as $group) {
-            $group->members()->attach($users->random(rand(1, 5)));
+            $group->members()->attach($group->owner);
+
+            // non owner users
+            $randomUsers = $users->where('id', '!=', $group->owner)->random(rand(1, 5));
+            $group->members()->attach($randomUsers);
         }
 
         foreach ($groups as $group) {

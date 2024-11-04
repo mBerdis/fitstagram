@@ -9,6 +9,8 @@ import { Link } from '@inertiajs/vue3'
 import PopupWindow from '@/Components/Generic/PopupWindow.vue';
 import GroupRequestsList from '@/Components/Group/GroupRequestsList.vue';
 import GroupIcon from '@/Components/Icons/GroupIcon.vue';
+import FriendsIcon from '@/Components/Icons/FriendsIcon.vue';
+import AddFriendIcon from '@/Components/Icons/AddFriendIcon.vue';
 
 defineProps({
     group: Object,
@@ -34,62 +36,71 @@ const MembershipStatus = {
 
     <AuthenticatedLayout>
       <template #header>
-        <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 flex items-center space-x-2">
-            <GroupIcon/>
-            {{ group.name }}
-        </h2>
+        <div class="max-w-4xl mx-auto p-1">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 flex items-center space-x-2">
+                    <GroupIcon/>
+                    {{ group.name }}
+                </h2>
 
-        <Link
-            v-if="membership_status === MembershipStatus.MEMBER"
-            class="flex items-center space-x-2 cursor-pointer bg-blue"
+            <div class="flex items-center space-x-4">
+                <!-- Member status Buttons -->
+                <div>
+                    <Link
+                        v-if="membership_status === MembershipStatus.MEMBER"
+                        class="flex items-center space-x-2 cursor-pointer bg-blue"
 
-            href="/groups/leave"
-            method="post"
-            :data="{
-                group_id: group.id,
-                user_id: logged_user_id
-            }"
-            :only="['membership_status']"
-            as="button"
-            type="button"
-        >
-            Leave
-        </Link>
+                        href="/groups/leave"
+                        method="post"
+                        :data="{
+                            group_id: group.id,
+                            user_id: logged_user_id
+                        }"
+                        :only="['membership_status']"
+                        as="button"
+                        type="button"
+                    >
+                        Leave
+                    </Link>
 
-        <Link
-            v-else-if="membership_status === MembershipStatus.NONE"
-            class="flex items-center space-x-2 cursor-pointer bg-blue"
+                    <Link
+                        v-else-if="membership_status === MembershipStatus.NONE"
+                        class="flex items-center space-x-2 cursor-pointer bg-blue"
 
-            href="/groups/join"
-            method="post"
-            :data="{
-                group_id: group.id,
-            }"
-            :only="['membership_status']"
-            as="button"
-            type="button"
-        >
-            Join
-        </Link>
+                        href="/groups/join"
+                        method="post"
+                        :data="{
+                            group_id: group.id,
+                        }"
+                        :only="['membership_status']"
+                        as="button"
+                        type="button"
+                    >
+                        Join
+                    </Link>
 
-        <label v-else-if="membership_status === MembershipStatus.REQUEST_PENDING" class="text-gray-400">Join request sent.</label>
-        <label v-else-if="membership_status === MembershipStatus.OWNER" class="text-gray-400">You own this group.</label>
+                    <label v-else-if="membership_status === MembershipStatus.REQUEST_PENDING" class="text-gray-400">Join request sent.</label>
+                    <label v-else-if="membership_status === MembershipStatus.OWNER" class="text-gray-400">You own this group.</label>
+                </div>
+
+                <!-- Popup Buttons -->
+                <div class="flex space-x-4">
+                    <PopupWindow v-if="members">
+                        <template #button> <FriendsIcon/> </template>
+                        <UserList :users="members" />
+                    </PopupWindow>
+
+                    <PopupWindow v-if="join_requests">
+                        <template #button> <AddFriendIcon/> </template>
+                        <GroupRequestsList :join_requests="join_requests"/>
+                    </PopupWindow>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     </template>
-
-
-        <PopupWindow v-if="membership_status >= MembershipStatus.MEMBER">
-            <template #button> Members </template>
-
-            <UserList :users="members" />
-        </PopupWindow>
-
-        <PopupWindow v-if="membership_status === MembershipStatus.OWNER">
-            <template #button> Requests </template>
-
-            <GroupRequestsList :join_requests="join_requests"/>
-        </PopupWindow>
-
-
 
 
       <GenericFeed :posts="posts" />

@@ -59,7 +59,7 @@ function handleDeleteUser() {
 
                 <!-- User Info -->
                 <div>
-                    <h1 class="text-gray-300 text-3xl font-bold">{{ user.first_name }} {{ user.last_name }}</h1>
+                    <h1 class="text-black-300 text-3xl font-bold">{{ user.first_name }} {{ user.last_name }}</h1>
                     <p class="text-gray-600 dark:text-gray-300">{{ user.username }}</p>
                     <p class="text-gray-500 dark:text-gray-400">{{ user.email }}</p>
                 </div>

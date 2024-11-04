@@ -38,18 +38,19 @@ class GroupController extends Controller
     {
         $groupName  = $request->groupName;
         $group      = Group::firstWhere('name', $groupName);
-        $members    = $group->members;
         $posts      = $postService->get_group_images($group->id);
         $status     = $groupService->get_membership_status($group->id);
         $loggedUserID = Auth()->check() ? Auth()->user()->id : -1;
 
-
+        $members      = null;   // dont grab members for all users
         $joinRequests = null;   // dont grab requests for all users
 
         if ($status === GroupMembership::OWNER)
-        {
             $joinRequests = $group->joinRequests;
-        }
+
+        if ($status->value >= GroupMembership::MEMBER->value)
+            $members = $group->members;
+
 
         return Inertia::render('GroupDetail', [
             'group' => $group,

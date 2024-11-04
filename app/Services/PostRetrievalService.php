@@ -52,7 +52,7 @@ class PostRetrievalService
         ->get();
     }
 
-    // returns posts to show at /profile page
+    // returns posts to show at /group page
     public function get_group_images($group_id)
     {
         return Post::with('owner', 'comments', 'comments.user')
