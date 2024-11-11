@@ -84,4 +84,23 @@ class GroupController extends Controller
 
         return Inertia::location(route('group', ['groupName' => $group->name]));
     }
+
+    public function delete_group(Request $request, UserAuthenticationService $authService, GroupManagmentService $groupService)
+    {
+        $request->validate([
+            'group_id' => 'required|exists:groups,id',
+        ]);
+
+        $group          = Group::findOrFail($request->group_id);
+        $status         = $groupService->get_membership_status($group->id);
+        $loggedUserID   = Auth()->check() ? Auth()->user()->id : -1;
+
+        if (! ($status->value === GroupMembership::OWNER->value) &&
+            !$authService->role_access(UserRole::MODERATOR))
+            return back()->with('error', 'Insufficient rights.');
+
+        $group->delete();
+
+        return Inertia::location(route('groups'));
+    }
 }

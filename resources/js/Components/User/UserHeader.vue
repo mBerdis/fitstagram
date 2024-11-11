@@ -115,9 +115,8 @@ function handleDeleteUser() {
                             </option>
                         </select>
                     </div>
-
+                </div>
             </div>
-        </div>
 
             <div class="flex items-center space-x-4">
                 <!-- Popup Buttons -->
