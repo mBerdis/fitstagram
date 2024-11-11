@@ -14,10 +14,7 @@ defineProps({
 <template>
     <Head title="My Page" />
 
-    <AuthenticatedLayout>
+    <UserPage :user="user" :posts="posts" :isFriend="isFriend"></UserPage>
 
-      <UserPage :user="user" :posts="posts" :isFriend="isFriend"></UserPage>
-
-    </AuthenticatedLayout>
   </template>
 

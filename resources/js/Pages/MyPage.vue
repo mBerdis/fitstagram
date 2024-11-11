@@ -19,15 +19,6 @@ defineProps({
 <template>
     <Head title="My Page" />
 
-    <AuthenticatedLayout>
-      <template #header>
-        <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-          My Page
-        </h2>
-      </template>
-
-      <UserPage :user="user" :posts="posts" :isFriend="4" :friends="friends" :groups="groups" :friendRequests="friendRequests"></UserPage>
-
-    </AuthenticatedLayout>
+    <UserPage :user="user" :posts="posts" :isFriend="4" :friends="friends" :groups="groups" :friendRequests="friendRequests"></UserPage>
   </template>
 

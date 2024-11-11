@@ -12,6 +12,6 @@ defineProps({
 
 <template>
     <div class="flex items-center space-x-2" mb-1>
-        <Link :href="route('group', group.name)"  class="text-gray-400" >{{ group.name }} </Link>
+        <Link :href="route('group', group.name)"  class="text-gray-600" >{{ group.name }} </Link>
     </div>
 </template>

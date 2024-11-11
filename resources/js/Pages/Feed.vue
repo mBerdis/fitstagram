@@ -1,12 +1,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import Post from '@/Components/Post/Post.vue';
 import GenericFeed from '@/Components/Generic/GenericFeed.vue';
 
-defineProps({
+const props = defineProps({
     posts: Object,
   });
+
+console.log(props.posts);
 
 </script>
 
@@ -21,7 +23,35 @@ defineProps({
         </h2>
       </template>
 
-      <GenericFeed :posts="posts" />
+      <GenericFeed :posts="posts.data" />
+
+
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        <Link
+            v-if="posts.prev_page_url"
+            class="flex items-center space-x-2 cursor-pointer bg-blue"
+
+            :href="posts.prev_page_url"
+            :only="['posts']"
+            as="button"
+            type="button"
+        >
+            Previous
+        </Link>
+
+      <Link
+            v-if="posts.next_page_url"
+            class="flex items-center space-x-2 cursor-pointer bg-blue"
+
+            :href="posts.next_page_url"
+            :only="['posts']"
+            as="button"
+            type="button"
+        >
+            Next
+        </Link>
+    </div>
 
     </AuthenticatedLayout>
   </template>

@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
+import UserListView from '../Generic/UserListView.vue';
+import AcceptIcon from '../Icons/AcceptIcon.vue';
+import CancelIcon from '../Icons/CancelIcon.vue';
 
 const props = defineProps({
   friendRequests: Array,
@@ -9,35 +12,17 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="max-w-md mx-auto p-4 bg-white rounded-lg shadow-lg">
-    <h2 class="text-xl font-semibold mb-4">Friend Requests</h2>
-    <div v-if="friendRequests.length === 0" class="text-gray-500">
+<div v-if="friendRequests.length === 0" class="text-gray-500">
       No friend requests.
     </div>
     <div v-else>
       <div v-for="request in friendRequests" :key="request.id" class="flex items-center justify-between p-2 border-b">
-        <div>
-          <h3 class="font-medium">{{ request.first_name }} {{ request.last_name }}</h3>
-          <p class="text-gray-500 text-sm">{{ request.username }}</p>
-        </div>
-        <div class="flex space-x-2">
-            <Link
-                class="px-3 py-1 bg-green-500 text-white rounded-md"
+        <UserListView :user="request" />
 
-                href="friendRequest/accept"
-                method="post"
-                :data="{
-                    id: request.id,
-                }"
-                :only="['friendRequests', 'friends']"
-                as="button"
-                type="button"
-            >
-                Accept
-            </Link>
-
+        <div class="flex space-x-3">
             <Link
-                class="px-3 py-1 bg-red-500 text-white rounded-md"
+                class="px-2 py-0.5 text-black rounded-md h-11 flex items-center justify-center
+                border border-black hover:bg-red-500 transition duration-300 ease-in-out hover:text-white"
 
                 href="friendRequest/decline"
                 method="post"
@@ -48,14 +33,28 @@ const props = defineProps({
                 as="button"
                 type="button"
             >
-                Decline
+                <CancelIcon/>
+            </Link>
+
+            <Link
+                class="px-2 py-0.5 text-black rounded-md h-11 flex items-center justify-center
+                border border-black hover:bg-green-500 transition duration-300 ease-in-out hover:text-white hover:fill-green-500"
+
+                href="friendRequest/accept"
+                method="post"
+                :data="{
+                    id: request.id,
+                }"
+                :only="['friendRequests', 'friends']"
+                as="button"
+                type="button"
+            >
+                <AcceptIcon/>
             </Link>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
-/* Add any additional styling if needed */
 </style>

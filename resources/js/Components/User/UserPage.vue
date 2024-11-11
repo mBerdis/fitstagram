@@ -4,6 +4,7 @@ import Post from '@/Components/Post/Post.vue';
 import UserHeader from './UserHeader.vue';
 import FriendList from './UserList.vue';
 import GenericFeed from '../Generic/GenericFeed.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 defineProps({
   user: Object,
@@ -17,9 +18,16 @@ defineProps({
 
 <template>
  <div class="">
-    <UserHeader :user="user" :isFriend="isFriend" :friends="friends" :groups="groups" :friendRequests="friendRequests"/>
+    <AuthenticatedLayout>
+      <template #header>
+        <UserHeader :user="user" :isFriend="isFriend" :friends="friends" :groups="groups" :friendRequests="friendRequests"/>
+      </template>
 
-    <GenericFeed :posts="posts" />
+
+      <GenericFeed :posts="posts" />
+    </AuthenticatedLayout>
+
+
 
   </div>
 </template>

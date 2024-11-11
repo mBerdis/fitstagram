@@ -12,10 +12,9 @@ export default {
 
 <template>
     <div>
-      <!-- Toggle Button -->
       <button
         @click="showContent = !showContent"
-        class="px-4 py-0 text-black rounded-md border border-black hover:bg-black transition duration-500 ease-in-out hover:text-white hover:fill-white"
+        class="px-2 py-2 h-14 text-black flex items-center justify-center rounded-md border border-black hover:bg-black transition duration-500 ease-in-out hover:text-white hover:fill-white"
       >
         <slot name="button">Show Content</slot> <!-- Use named slot for button text -->
       </button>
@@ -28,8 +27,12 @@ export default {
 
       <div
         v-if="showContent"
-        class="fixed inset-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-sky-900 rounded-lg shadow-lg p-6 z-50 max-w-lg w-full h-[400px] overflow-y-auto"
+        class="fixed inset-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-200 rounded-lg shadow-lg p-6 z-50 max-w-lg w-full h-[400px] overflow-y-auto"
         >
+        <h1 class="text-center text-xl">
+            <slot name="title"></slot>
+        </h1>
+
         <slot />
       </div>
 

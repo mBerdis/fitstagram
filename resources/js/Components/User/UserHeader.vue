@@ -9,6 +9,8 @@ import FriendRequestList from './FriendRequestList.vue';
 import GroupIcon from '../Icons/GroupIcon.vue';
 import FriendsIcon from '../Icons/FriendsIcon.vue';
 import AddFriendIcon from '../Icons/AddFriendIcon.vue';
+import TrashIcon from '../Icons/TrashIcon.vue';
+import UserListView from '../Generic/UserListView.vue';
 
 const data = defineProps({
   user: Object,
@@ -51,109 +53,127 @@ function handleDeleteUser() {
 
 <template>
  <div class="">
-    <div class="max-w-4xl mx-auto p-4">
+    <div class="max-w-4xl mx-auto">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-5">
                 <!-- User Profile Picture -->
-                <img :src="user.profile_picture" alt="Profile Picture" class="w-40 h-40 rounded-full object-cover" />
+                <img :src="user.profile_picture" alt="Profile Picture" class="w-28 h-28 rounded-full object-cover" />
 
                 <!-- User Info -->
                 <div>
                     <h1 class="text-black-300 text-3xl font-bold">{{ user.first_name }} {{ user.last_name }}</h1>
                     <p class="text-gray-600 dark:text-gray-300">{{ user.username }}</p>
-                    <p class="text-gray-500 dark:text-gray-400">{{ user.email }}</p>
-                </div>
+
+                    <!-- Friend Actions -->
+                    <div>
+                        <Link
+                            v-if="isFriend === FriendshipStatus.FRIENDSHIP"
+                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2"
+                            as="button" type="button"
+
+                            method="post"
+                            href="/unfriend"
+                            :data="{ id: user.id }"
+                            :only="['isFriend']"
+                        >
+                            Unfriend
+                        </Link>
+
+                        <Link
+                            v-else-if="isFriend === FriendshipStatus.NONE"
+                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2"
+                            as="button" type="button"
+
+                            :href="route('user.friendRequest', user.username)"
+                            :data="{ username: user.username }"
+                            :only="['isFriend']"
+                        >
+                            Add friend
+                        </Link>
+
+                        <Link
+                            v-else-if="isFriend === FriendshipStatus.REQUEST_RECEIVED"
+                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2"
+                            as="button" type="button"
+
+                            method="post"
+                            href="/friendRequest/accept"
+                            :data="{ id: user.id }"
+                            :only="['isFriend']"
+                        >
+                            Accept Friend Request
+                        </Link>
+
+                        <label v-else-if="isFriend === FriendshipStatus.REQUEST_PENDING" class="text-gray-600">Friend request sent.</label>
+                    </div>
+
+                    <div v-if="loggedUserRole !== null && loggedUserRole >= 3" class="pt-2">
+                        <label for="role-select" class="text-gray-400 font-semibold">User Role:</label>
+                        <select id="role-select" v-model="user.role" @change="handleRoleChange(user.role)" class="bg-gray-600 text-white rounded ml-1">
+                            <option v-for="option in roleOptions" :key="option.value" :value="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+
             </div>
+        </div>
 
             <div class="flex items-center space-x-4">
                 <!-- Popup Buttons -->
                 <div class="flex space-x-4">
                     <PopupWindow v-if="friends">
                         <template #button> <FriendsIcon/> </template>
-                        <UserList :users="friends" />
+                        <template #title> Friends </template>
+
+                        <div v-for="user in friends" :key="friends.id" class="flex items-center justify-between p-2 border-b">
+                            <UserListView :user="user" />
+
+                            <Link
+                                class="px-1 py-1 text-black rounded-md h-11 flex items-center justify-center
+                                border border-black hover:bg-red-500 transition duration-300 ease-in-out hover:text-white"
+                                as="button" type="button"
+
+                                method="post"
+                                href="/unfriend"
+                                :data="{
+                                    id: user.id,
+                                }"
+                                :only="['friends']"
+                            >
+                                <TrashIcon/>
+                            </Link>
+                        </div>
                     </PopupWindow>
 
                     <PopupWindow v-if="friendRequests">
                         <template #button> <AddFriendIcon/> </template>
+                        <template #title> Friend Requests </template>
                         <FriendRequestList :friendRequests="friendRequests" />
                     </PopupWindow>
 
                     <PopupWindow v-if="groups">
                         <template #button> <GroupIcon/> </template>
+                        <template #title> Groups </template>
                         <GroupList :groups="groups"/>
                     </PopupWindow>
-                </div>
 
-                <!-- Friend Actions -->
-                <div>
-                    <Link
-                        v-if="isFriend === FriendshipStatus.FRIENDSHIP"
-                        class="flex items-center space-x-2 cursor-pointer bg-blue"
+                    <button
+                        v-if="loggedUserRole !== null && loggedUserRole >= 4"
+                        @click="handleDeleteUser"
+                        class="px-2 py-2 h-14 text-black rounded-md flex items-center justify-center
+                        border border-black hover:bg-red-500 transition duration-300 ease-in-out hover:text-white">
+                        <TrashIcon/>
+                    </button>
 
-                        href="/unfriend"
-                        method="post"
-                        :data="{ id: user.id }"
-                        :only="['isFriend']"
-                        as="button"
-                        type="button"
-                    >
-                        Unfriend
-                    </Link>
-
-                    <Link
-                        v-else-if="isFriend === FriendshipStatus.NONE"
-                        class="flex items-center space-x-2 cursor-pointer bg-blue"
-
-                        :href="route('user.friendRequest', user.username)"
-                        :data="{ username: user.username }"
-                        :only="['isFriend']"
-                        as="button"
-                        type="button"
-                    >
-                        Add friend
-                    </Link>
-
-                    <Link
-                        v-else-if="isFriend === FriendshipStatus.REQUEST_RECEIVED"
-                        class="flex items-center space-x-2 cursor-pointer bg-blue"
-                        href="/friendRequest/accept"
-                        method="post"
-                        :data="{ id: user.id }"
-                        :only="['isFriend']"
-                        as="button"
-                        type="button"
-                    >
-                        Accept Friend Request
-                    </Link>
-
-                    <label v-else-if="isFriend === FriendshipStatus.REQUEST_PENDING" class="text-gray-400">Friend request sent.</label>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div v-if="loggedUserRole !== null && loggedUserRole >= 3" class="mt-4">
-        <label for="role-select" class="text-gray-400 font-semibold">Change User Role:</label>
-        <select id="role-select" v-model="user.role" @change="handleRoleChange(user.role)" class="bg-gray-700 text-white rounded p-2 mt-2">
-            <option v-for="option in roleOptions" :key="option.value" :value="option.value">
-                {{ option.label }}
-            </option>
-        </select>
-    </div>
-
-    <!-- Delete User Button -->
-    <div v-if="loggedUserRole !== null && loggedUserRole >= 4" class="mt-4">
-        <button @click="handleDeleteUser" class="bg-red-600 text-white rounded p-2">
-            Delete User
-        </button>
     </div>
 
   </div>
 </template>
 
 <style scoped>
-.bg-blue {
-    background-color: #3b82f6;
-    padding: 1rem;
-}
+
 </style>
