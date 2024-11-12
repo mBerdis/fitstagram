@@ -7,13 +7,11 @@ defineProps({
 </script>
 
 <template>
- <div class="">
-
-    <div v-for="group in groups" :key="groups.id" class="flex-1 min-w-[400px] mx-2 mb-4">
-              <GroupListView :group="group" />
-    </div>
-
-  </div>
+        <div class="flex-1 min-w-[400px] mx-2 mb-4">
+            <div v-for="group in groups" :key="groups.id" class="flex-1 min-w-[400px] mx-2 mb-4">
+                    <GroupListView :group="group" />
+            </div>
+        </div>
 </template>
 
 <style scoped>

@@ -9,6 +9,7 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import AddPhotoIcon from '@/Components/Icons/AddPhotoIcon.vue';
+import GroupDiscoveryView from '@/Components/Group/GroupDiscoveryView.vue';
 
 defineProps({
   groups: Array
@@ -147,7 +148,8 @@ const submit = () => {
         </div>
       </template>
 
-      <GroupList :groups="groups"/>
+      <GroupDiscoveryView :groups="groups"/>
+
 
     </AuthenticatedLayout>
   </template>
