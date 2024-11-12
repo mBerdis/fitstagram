@@ -22,7 +22,9 @@ class Group extends Model
      */
     protected $fillable = [
         'name',
-        'user_id'
+        'user_id',
+        'profile_picture',
+        'description',
     ];
 
     public function owner(): BelongsTo

@@ -50,9 +50,7 @@ const canDelete = () => {
         <div class="max-w-4xl mx-auto">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-5">
-
-                <!-- #TODO add a group pic -->
-                <GroupIcon/>
+                    <img :src="group.profile_picture" alt="Group Profile Picture" class="w-28 h-28 rounded-full object-cover" />
 
                     <div class="flex items-center space-x-4">
                         <!-- Member status Buttons -->
@@ -60,6 +58,10 @@ const canDelete = () => {
                             <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 flex items-center space-x-2">
                                 {{ group.name }}
                             </h2>
+
+                            <p>
+                                {{ group.description }}
+                            </p>
 
                             <Link
                                 v-if="membership_status === MembershipStatus.MEMBER"

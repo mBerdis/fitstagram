@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Group;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Services\PostRetrievalService;
 use App\Models\Group;
 use Inertia\Inertia;
@@ -71,13 +72,24 @@ class GroupController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255|unique:'.Group::class,
+            'description' => 'nullable|string|max:255',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $imageName = uniqid();
+            Storage::disk('public')->put('uploads/' . $imageName, file_get_contents($photo));
+            $imagePath = '/storage/uploads/' . $imageName;
+        }
 
         $user = auth()->user();
 
         $group = Group::create([
             'name' => $request->name,
             'user_id' => $user->id,
+            'profile_picture' => $imagePath,
+            'description' => $request->description,
         ]);
 
         $group->members()->attach($user);

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id(); // Primary key
             $table->unsignedBigInteger('user_id'); // Foreign key to users table
             $table->string('name');
+            $table->string('description')->nullable();
+            $table->string('profile_picture');
 
             $table->timestamps(); // Created_at and updated_at columns
 

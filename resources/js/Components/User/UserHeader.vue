@@ -68,7 +68,7 @@ function handleDeleteUser() {
                     <div>
                         <Link
                             v-if="isFriend === FriendshipStatus.FRIENDSHIP"
-                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2"
+                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2 hover:bg-gray-800"
                             as="button" type="button"
 
                             method="post"
@@ -81,7 +81,7 @@ function handleDeleteUser() {
 
                         <Link
                             v-else-if="isFriend === FriendshipStatus.NONE"
-                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2"
+                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2 hover:bg-gray-800"
                             as="button" type="button"
 
                             :href="route('user.friendRequest', user.username)"
@@ -93,7 +93,7 @@ function handleDeleteUser() {
 
                         <Link
                             v-else-if="isFriend === FriendshipStatus.REQUEST_RECEIVED"
-                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2"
+                            class="cursor-pointer bg-gray-600 text-gray-200 rounded p-2 hover:bg-gray-800"
                             as="button" type="button"
 
                             method="post"
