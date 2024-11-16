@@ -26,10 +26,10 @@ class PostRetrievalService
             ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))   // get posts from groups
             ->orWhereHas('owner', fn($query) => $query->where('users.id', $user->id))       // get logged users private posts
             ->orderBy('created_at')
-            ->paginate(4);
+            ->paginate(20);
         }
         return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
-            ->where('is_public', true)->orderBy('created_at')->paginate(4);
+            ->where('is_public', true)->orderBy('created_at')->paginate(20);
 
     }
 

@@ -10,7 +10,9 @@ use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Enums\UserRole;
+use App\Enums\GroupMembership;
 use App\Services\UserAuthenticationService;
+use App\Services\GroupManagmentService;
 
 class GroupJoinController extends Controller
 {
@@ -78,7 +80,7 @@ class GroupJoinController extends Controller
         return back()->with('success', 'Friend request sent.');
     }
 
-    public function remove_member(Request $request)
+    public function remove_member(Request $request, GroupManagmentService $groupService, UserAuthenticationService $authService)
     {
         $request->validate([
             'group_id' => 'required|exists:groups,id',
@@ -87,6 +89,16 @@ class GroupJoinController extends Controller
 
         $group = Group::findOrFail($request->input('group_id'));
         $user  = User::findOrFail($request->input('user_id'));
+
+        $loggedUserID = Auth()->check() ? Auth()->user()->id : -1;
+        $status = $groupService->get_membership_status($group->id);
+
+        // verify user has rights
+        if ( !($status === GroupMembership::OWNER)              // is not owner and
+            && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
+        {
+            return back()->with('error', 'User has unsufficient edit rights.');
+        }
 
         $group->members()->detach($user->id);
 

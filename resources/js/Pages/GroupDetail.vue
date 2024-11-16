@@ -111,7 +111,7 @@ const canDelete = () => {
                                 <div v-for="user in members" :key="members.id" class="flex items-center justify-between p-2 border-b">
                                     <UserListView :user="user" />
 
-                                    <Link
+                                    <Link v-if="canDelete()"
                                         class="px-1 py-1 text-black rounded-md h-11 flex items-center justify-center
                                         border border-black hover:bg-red-500 transition duration-300 ease-in-out hover:text-white"
                                         as="button" type="button"

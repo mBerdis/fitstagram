@@ -35,7 +35,7 @@ class GroupController extends Controller
         ]);
     }
 
-    public function detail(Request $request, PostRetrievalService $postService, GroupManagmentService $groupService): Response
+    public function detail(Request $request, PostRetrievalService $postService, GroupManagmentService $groupService, UserAuthenticationService $authService): Response
     {
         $groupName  = $request->groupName;
         $group      = Group::firstWhere('name', $groupName);
@@ -46,11 +46,17 @@ class GroupController extends Controller
         $members      = null;   // dont grab members for all users
         $joinRequests = null;   // dont grab requests for all users
 
-        if ($status === GroupMembership::OWNER)
+        if ($status === GroupMembership::OWNER ||
+            $authService->role_access(UserRole::MODERATOR))
+        {
             $joinRequests = $group->joinRequests;
+        }
 
-        if ($status->value >= GroupMembership::MEMBER->value)
+        if ($status->value >= GroupMembership::MEMBER->value ||
+            $authService->role_access(UserRole::MODERATOR))
+        {
             $members = $group->members;
+        }
 
 
         return Inertia::render('GroupDetail', [

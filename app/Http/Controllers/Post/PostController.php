@@ -120,7 +120,7 @@ class PostController extends Controller
         return redirect()->route('MyPage');
     }
 
-    public function delete_post(Request $request,UserAuthenticationService $authService)
+    public function delete_post(Request $request, UserAuthenticationService $authService)
     {
         $user = auth()->user();
 
