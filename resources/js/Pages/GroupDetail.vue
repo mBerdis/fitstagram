@@ -34,7 +34,6 @@ const loggedUserRole = computed(() => {
 });
 
 const canDelete = () => {
-    console.log(loggedUserRole);
     return (loggedUserRole.value !== null && loggedUserRole.value >= 3)
     || data.membership_status === MembershipStatus.OWNER;
 }
@@ -157,7 +156,7 @@ const canDelete = () => {
     </template>
 
 
-      <GenericFeed :posts="posts" />
+      <GenericFeed :posts="posts" :viewed_from_group="group.id" :group_role="membership_status" />
 
     </AuthenticatedLayout>
   </template>

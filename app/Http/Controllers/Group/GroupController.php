@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Services\PostRetrievalService;
 use App\Models\Group;
+use App\Models\Post;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Enums\UserRole;
@@ -120,5 +121,29 @@ class GroupController extends Controller
         $group->delete();
 
         return Inertia::location(route('groups'));
+    }
+
+    public function remove_post(Request $request, UserAuthenticationService $authService, GroupManagmentService $groupService)
+    {
+        $request->validate([
+            'group_id' => 'required|exists:groups,id',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $group          = Group::findOrFail($request->group_id);
+        $post           = Post::findOrFail($request->post_id);
+
+        $status         = $groupService->get_membership_status($group->id);
+        $loggedUserID   = Auth()->check() ? Auth()->user()->id : -1;
+
+        if (! ($status->value === GroupMembership::OWNER->value) &&
+            ! ($post->owner->id === $loggedUserID) &&
+            !$authService->role_access(UserRole::MODERATOR))
+            return back()->with('error', 'Insufficient rights.');
+
+        $post->groups()->detach($group);
+        $group->posts()->detach($post);
+
+        return back()->with('success', 'Post removed from the group.');
     }
 }
