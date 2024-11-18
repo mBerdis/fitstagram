@@ -47,6 +47,7 @@ Route::delete('/comment/delete', [CommentController::class, 'delete_comment'])->
 Route::post('/groups/join', [GroupJoinController::class, 'send_request'])->middleware(['auth', 'verified'])->name('group.join');
 Route::post('/groups/leave', [GroupJoinController::class, 'remove_member'])->middleware(['auth', 'verified'])->name('group.leave');
 Route::delete('/groups/delete', [GroupController::class, 'delete_group'])->middleware(['auth', 'verified'])->name('group.delete');
+Route::delete('/groups/post/remove', [GroupController::class, 'remove_post'])->middleware(['auth', 'verified'])->name('group.post.remove');
 Route::post('/groups/requests/accept', [GroupJoinController::class, 'accept'])->middleware(['auth', 'verified'])->name('group.request.accept');
 Route::post('/groups/requests/decline', [GroupJoinController::class, 'decline'])->middleware(['auth', 'verified'])->name('group.request.decline');
 

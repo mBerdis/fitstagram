@@ -7,7 +7,16 @@ import { Link, usePage } from '@inertiajs/vue3';
 
 const data = defineProps({
   post: Object, // Expecting the post object as a prop
+  viewed_from_group: Number, // group ID, present if post was viewed though group detail page, used for removing post from group
+  group_role: Number         // group role, present if post was viewed though group detail page, used for removing post from group
 });
+
+const MembershipStatus = {
+    NONE:              0,
+    REQUEST_PENDING:   1,
+    MEMBER:            2,
+    OWNER:             3,
+};
 
 const { props } = usePage();
 const loggedUserRole = computed(() => {
@@ -38,8 +47,17 @@ const closeOverlay = () => {
 };
 
 const canDelete = () => {
-    return loggedUserRole.value !== null && loggedUserRole.value >= 3
+    return (loggedUserRole.value !== null && loggedUserRole.value >= 3)
     || data.post.user_id === props.auth?.user?.id;
+}
+
+const canRemoveFromGroup = () => {
+    const isViewedFromGroup = data.viewed_from_group !== undefined;
+    const isGroupOwner = data.group_role === MembershipStatus.OWNER;
+    const isPostOwner = data.post.user_id === props.auth?.user?.id;
+    const isAtLeastMod = loggedUserRole.value !== null && loggedUserRole.value >= 3;
+
+    return isViewedFromGroup && (isGroupOwner || isPostOwner || isAtLeastMod);
 }
 
 </script>
@@ -81,7 +99,24 @@ const canDelete = () => {
             as="button"
             type="button"
         >
-            Remove
+            Delete
+    </Link>
+
+    <Link v-if="canRemoveFromGroup()"
+            class="px-3 py-1 bg-red-500 text-white rounded-md"
+
+            href="/groups/post/remove"
+            method="delete"
+            :data="{
+                post_id: post.id,
+                group_id: viewed_from_group
+            }"
+            :only="['posts']"
+            :preserveScroll="true"
+            as="button"
+            type="button"
+        >
+            Remove from group
     </Link>
 
     <div class="flex flex-col md:flex-row">
