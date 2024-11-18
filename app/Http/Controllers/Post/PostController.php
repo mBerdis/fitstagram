@@ -62,6 +62,10 @@ class PostController extends Controller
             'is_public' => 'boolean',
         ]);
 
+        if ($request->description == null) {
+            $request->description = "";
+        }
+
         $imagePath = null;
 
         if ($request->filled('photoUrl') && filter_var($request->photoUrl, FILTER_VALIDATE_URL)) {
@@ -79,6 +83,8 @@ class PostController extends Controller
             'user_id' => $user->id,
             'photo' => $imagePath,
             'is_public' => $request->is_public,
+            'description' => $request->description,
+            'like_count' => 0
         ]);
 
         if ($request->group_ids != null) {
@@ -90,18 +96,6 @@ class PostController extends Controller
             }
         }
 
-        // skip making description
-        if ($request->description == null) {
-            return redirect()->route('MyPage');
-        }
-
-        if (strlen($request->description) > 0) {
-            $comment = Comment::create([
-                'message' => $request->description,
-                'post_id' => $post->id,
-                'user_id' => $user->id,
-            ]);
-        }
 
         preg_match_all('/#(\w+)/', $request->description, $matches);
         $tags = array_unique($matches[1]);
@@ -132,7 +126,7 @@ class PostController extends Controller
 
         // verify user has rights
         if ( !($post->owner->id === $user->id)                  // is not author and
-             && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
+             && !$authService->role_access(UserRole::MODERATOR)) // is not at least mod
         {
             return back()->with('error', 'User has unsufficient edit rights.');
         }
