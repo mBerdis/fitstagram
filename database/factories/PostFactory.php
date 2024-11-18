@@ -34,6 +34,8 @@ class PostFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id,
             'photo' => $imagePath,
             'is_public' => fake()->boolean(),
+            'description' => fake()->realText(50) . fake()->emoji(),
+            'like_count' => 0
         ];
     }
 }

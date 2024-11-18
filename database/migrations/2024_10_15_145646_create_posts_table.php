@@ -15,10 +15,18 @@ return new class extends Migration
             $table->id(); // Primary key
             $table->string('photo')->nullable(); // Photo column
             $table->boolean('is_public')->default(false); // Is public column
+            $table->text('description');
+            $table->unsignedInteger('like_count');
             $table->timestamps(); // Created_at and updated_at columns
 
             // Define the foreign key constraint
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        });
+
+        Schema::create('post_user', function (Blueprint $table) { // liked posts
+            $table->id(); // Primary key
+            $table->foreignId('user_id');
+            $table->foreignId('post_id');
         });
     }
 
@@ -28,5 +36,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('posts');
+        Schema::dropIfExists('post_liked');
     }
 };

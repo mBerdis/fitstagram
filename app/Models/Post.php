@@ -18,6 +18,8 @@ class Post extends Model
         'photo',
         'is_public',
         'user_id',
+        'description',
+        'like_count'
     ];
 
     public function owner(): BelongsTo
@@ -33,6 +35,11 @@ class Post extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function liked_by(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 
     public function groups(): BelongsToMany

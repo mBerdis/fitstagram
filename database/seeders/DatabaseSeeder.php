@@ -51,6 +51,13 @@ class DatabaseSeeder extends Seeder
             $group->posts()->attach($posts->random(rand(1, 5)));
         }
 
+        foreach ($posts as $post) {
+            $post->tags()->attach($tags->random(rand(1,5)));
+        }
+
+        foreach ($users as $user) {
+            $user->liked()->attach($posts->random(rand(1, 5)));
+        }
 
 
     }
