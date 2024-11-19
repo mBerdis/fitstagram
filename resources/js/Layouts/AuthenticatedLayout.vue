@@ -16,7 +16,7 @@ const search = ref('');
 
 const submitSearch = () =>
 {
-    if (search.value)
+    if (search.value && search.value != "#")
     {
         router.visit('/search', {
             method: 'get',

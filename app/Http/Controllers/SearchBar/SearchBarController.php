@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Tag;
+use App\Models\Post;
 
 class SearchBarController extends Controller
 {
@@ -15,39 +16,49 @@ class SearchBarController extends Controller
     {
         $query = $request->query('query', '');
 
-        // Split the query into words
         $terms = explode(' ', $query);
 
-        // Filter out terms that start with '#' and remove the '#' character
-        $tagTerms = array_map(fn($term) => ltrim($term, '#'), array_filter($terms, fn($term) => str_starts_with($term, '#')));
+        $tagTerms = array_map(fn($term) => ltrim($term, '#'), array_filter($terms, fn($term) => str_contains($term, '#')));
 
-
-        // Check if there are tag terms to search
         if (!empty($tagTerms)) {
-            $tagQuery = Tag::query();
-            
+            $postsQuery = Post::query();
+        
             foreach ($tagTerms as $term) {
-                $tagQuery->orWhere('name', 'like', '%' . $term . '%');
+                $postsQuery->whereHas('tags', fn($q) => $q->where('name', 'like',  $term ));
             }
-
+        
+            $posts = $postsQuery->with('owner', 'comments', 'tags')->paginate(10);
+        
+            return Inertia::render('TagPosts', [
+                'tag' => implode(', ', $tagTerms), // Zobrazí hľadané tagy
+                'posts' => $posts,
+            ]);
+        }
+         else {
             $results = [
-                'users' => [], 
-                'groups' => [],
-                'tags' => $tagQuery->get(),
-            ];
-        } else {
-            // Perform a standard search if no tags are specified
-            $results = [
-                'users' => User::where('username', 'like', '%' . $query . '%')->get(), 
+                'users' => User::where('username', 'like', '%' . $query . '%')->get(),
                 'groups' => Group::where('name', 'like', '%' . $query . '%')->get(),
-                'tags' => Tag::where('name', 'like', '%' . $query . '%')->get(),
+                'tags' => Tag::where('name', 'like', '%' . $query . '%')->with('posts')->get()->map(function ($tag) {
+                    $post = $tag->posts()->first();
+                    $tag->picture = $post?->photo ?? '/default-tag-image.png';
+                    return $tag;
+                }),
             ];
         }
-
 
         return Inertia::render('SearchResults', [
             'initialQuery' => $query,
             'results' => $results,
+        ]);
+    }
+
+    public function showPostsByTag(Request $request, Tag $tag)
+    {
+        $posts = $tag->posts()->with('owner', 'comments', 'tags')->paginate(10);
+
+        return Inertia::render('TagPosts', [
+            'tag' => $tag->name,
+            'posts' => $posts,
         ]);
     }
 }

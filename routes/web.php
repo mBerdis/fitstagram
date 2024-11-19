@@ -40,6 +40,7 @@ Route::post('/unfriend', [FriendRequestController::class, 'unfriend'])->name('un
 
 Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');
 Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
+Route::get('/tag/{tag:name}', [SearchBarController::class, 'showPostsByTag'])->name('tag.posts');
 
 Route::post('/post/toggle_like', [PostController::class, 'toggle_like'])->middleware(['auth', 'verified'])->name('post.toggle_like');
 Route::delete('/post/delete', [PostController::class, 'delete_post'])->middleware(['auth', 'verified'])->name('post.delete');
