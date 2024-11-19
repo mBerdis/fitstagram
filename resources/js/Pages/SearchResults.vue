@@ -19,6 +19,7 @@ const noResults = results.value.users.length === 0 && results.value.groups.lengt
                 Search Results for "{{ initialQuery }}" . . .
             </h2>
             
+            
 
             <!-- Users Section -->
             <div v-if="results.users.length" class="mb-6">
