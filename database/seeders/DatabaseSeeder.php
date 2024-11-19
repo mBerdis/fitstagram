@@ -55,9 +55,13 @@ class DatabaseSeeder extends Seeder
             $post->tags()->attach($tags->random(rand(1,5)));
         }
 
-        foreach ($users as $user) {
-            $user->liked()->attach($posts->random(rand(1, 5)));
+        foreach ($posts as $post) {
+            $num_of_likes = rand(2, 6);
+            $post->like_count = $num_of_likes;
+            $post->liked_by()->attach($users->random($num_of_likes)->pluck('id'));
+            $post->save();
         }
+
 
 
     }

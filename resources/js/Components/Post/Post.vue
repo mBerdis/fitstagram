@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 
 import UserListView from '../Generic/UserListView.vue';
 import CommentsSection from './CommentSection.vue';
+import Like from './Like.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const data = defineProps({
@@ -10,6 +11,7 @@ const data = defineProps({
   viewed_from_group: Number, // group ID, present if post was viewed though group detail page, used for removing post from group
   group_role: Number         // group role, present if post was viewed though group detail page, used for removing post from group
 });
+
 
 const MembershipStatus = {
     NONE:              0,
@@ -78,6 +80,10 @@ const canRemoveFromGroup = () => {
     >
       <UserListView :user="post.owner" />
     </div>
+    <!-- Like Button (Bottom-Right Corner) -->
+    <div class="absolute bottom-4 right-4">
+        <Like :post="post" />
+      </div>
   </div>
 
 

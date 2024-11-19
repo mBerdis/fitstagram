@@ -26,7 +26,13 @@ class PostRetrievalService
             ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))   // get posts from groups
             ->orWhereHas('owner', fn($query) => $query->where('users.id', $user->id))       // get logged users private posts
             ->orderBy('created_at')
-            ->paginate(20);
+            ->paginate(20)
+            ->through(function ($post) use ($user) { // Use `through` for pagination-aware mapping
+                // Add an attribute to each post indicating if the user liked it
+                $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
+                unset($post->liked_by); // Ensure liked_by relationship is not included in the response
+                return $post;
+            });
         }
         return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
             ->where('is_public', true)->orderBy('created_at')->paginate(20);

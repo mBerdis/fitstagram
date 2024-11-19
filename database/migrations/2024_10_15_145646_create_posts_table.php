@@ -27,6 +27,7 @@ return new class extends Migration
             $table->id(); // Primary key
             $table->foreignId('user_id');
             $table->foreignId('post_id');
+            $table->timestamps();
         });
     }
 

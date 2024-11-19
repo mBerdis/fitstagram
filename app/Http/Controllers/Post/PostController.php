@@ -29,6 +29,35 @@ class PostController extends Controller
         ]);
     }
 
+    public function toggle_like(Request $request, UserAuthenticationService $authService)
+    {
+        if (!$authService->role_access(UserRole::SILENCED)) {
+            return;
+        }
+
+        $validated = $request->validate([
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $post = Post::find($validated['post_id']);
+        $user = $request->user();
+
+        if (!$post) {
+            return;
+        }
+
+        if ($post->liked_by()->where('user_id', $user->id)->exists()) {
+            $post->liked_by()->detach($user->id);
+            $post->like_count--;
+        } else {
+            $post->liked_by()->attach($user->id);
+            $post->like_count++;
+        }
+        $post->save();
+
+        return;
+    }
+
     public function render_create_post(Request $request, UserAuthenticationService $authService): Response|RedirectResponse
     {
         if (!$authService->role_access(UserRole::USER)) {
