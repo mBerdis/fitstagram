@@ -22,7 +22,7 @@ class UserController extends Controller
         }
 
         $user = auth()->user();
-        $posts = $user->posts()->with('owner','comments', 'comments.user')->get();
+        $posts = $postService->get_user_images($user->id);
         $groups = $user->groupsMember;
         $friends = $user->friends;
         $friendRequests = $user->receivedFriendRequests()->get();

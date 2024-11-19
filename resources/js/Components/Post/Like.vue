@@ -33,7 +33,7 @@ function toggleLike(event) {
   <div class="flex items-center space-x-2">
     <!-- Like Button using <Link> -->
     <Link
-      class="px-3 py-1 rounded-md"
+      class="px-1 py-0.5 rounded-md"
       :class="liked ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700'"
       href="/post/toggle_like"
       method="post"
@@ -42,16 +42,23 @@ function toggleLike(event) {
       as="button"
       @click="toggleLike"
     >
-      <span>
-        <i class="fa" :class="liked ? 'fa-heart text-red-500' : 'fa-heart-o text-gray-500'"></i>
-      </span>
+        <!-- SVG Heart Icon -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-5 h-5"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+        :class="liked ? 'text-white' : 'text-gray-500'"
+      >
+        <path
+          :d="liked
+            ? 'M12 20l5-3c2-2 4-3 4-8 0-2-1-4-4-4-4 0-4 3-5 4-1-1-1-4-5-4C4 5 3 7 3 9c0 5 2 6 4 8l5 3Z'
+            : 'M12 20l5-3c2-2 4-3 4-8 0-2-1-4-4-4-4 0-4 3-5 4-1-1-1-4-5-4C4 5 3 7 3 9c0 5 2 6 4 8l5 3Z'"
+        />
+      </svg>
     </Link>
   </div>
 </template>
 
 <style scoped>
-/* Optional styling */
-button {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
 </style>

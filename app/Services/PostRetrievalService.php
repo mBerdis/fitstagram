@@ -42,28 +42,36 @@ class PostRetrievalService
     // returns posts to show at /profile page
     public function get_user_images($user_id)
     {
-        if (PostRetrievalService::has_access($user_id))
-        {
-            // show public and private posts since logged user has access to them
-            return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
-            ->whereHas('owner', fn($query) => $query->where('user_id', $user_id))
-            ->orderBy('created_at')
-            ->get();
+        $user = Auth::user() ?? (object) ['id' => -1]; // Assign a dummy user object with id -1 for unsigned users
+
+        $query = Post::with('owner', 'comments', 'comments.user')
+            ->whereHas('owner', fn($query) => $query->where('id', $user_id))
+            ->orderBy('created_at');
+
+        if (!PostRetrievalService::has_access($user_id)) {
+            $query->where('is_public', true);
         }
 
-        return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
-        ->whereHas('owner', fn($query) => $query->where('user_id', $user_id))
-        ->where('is_public', true)    // get public posts
-        ->orderBy('created_at')
-        ->get();
+        return $query->get()->map(function ($post) use ($user) {
+            $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
+            unset($post->liked_by);
+            return $post;
+        });
     }
-
     // returns posts to show at /group page
     public function get_group_images($group_id)
     {
+        $user = Auth::user() ?? (object) ['id' => -1];
+
         return Post::with('owner', 'comments', 'comments.user')
         ->whereHas('groups', fn($query) => $query->where('groups.id', $group_id))
-        ->get();
+        ->get()
+        ->map(function ($post) use ($user) { // Use through for pagination-aware mapping
+            // Add an attribute to each post indicating if the user liked it
+            $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
+            unset($post->liked_by); // Ensure liked_by relationship is not included in the response
+            return $post;
+        });
     }
 
     private function has_access($user_id): bool

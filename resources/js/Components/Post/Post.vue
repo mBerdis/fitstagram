@@ -81,7 +81,7 @@ const canRemoveFromGroup = () => {
       <UserListView :user="post.owner" />
     </div>
     <!-- Like Button (Bottom-Right Corner) -->
-    <div class="absolute bottom-4 right-4">
+    <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <Like :post="post" />
       </div>
   </div>
@@ -137,6 +137,10 @@ const canRemoveFromGroup = () => {
             <UserListView :user="post.owner" />
           <p class="text-gray-700 dark:text-gray-300 mt-2">{{ post.description }}</p>
           <p class="text-gray-500 dark:text-gray-400 text-sm">{{ post.created_at }}</p>
+            <div class="absolute top-4 right-4 flex items-center space-x-2">
+                <p class="text-gray-700 dark:text-gray-300 mt-2">{{ post.like_count }}</p>
+                <Like :post="post" />
+            </div>
         </div>
         <div class="comments-section">
           <CommentsSection :post="post" />
