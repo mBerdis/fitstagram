@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Searchbar;
 
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -54,13 +55,25 @@ class SearchBarController extends Controller
 
     public function showPostsByTag(Request $request, Tag $tag)
     {
-        $posts = $tag->posts()->with('owner', 'comments', 'tags')->paginate(10);
+        $user = Auth::user() ?? (object) ['id' => -1];
+
+        // Retrieve posts related to the tag
+        $posts = $tag->posts()->with('owner', 'comments', 'tags', 'comments.user')->paginate(10);
+
+        // Map over the posts collection after retrieving the paginated results
+        $posts->getCollection()->transform(function ($post) use ($user) {
+            // Add an attribute to each post indicating if the user liked it
+            $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
+            unset($post->liked_by); // Ensure liked_by relationship is not included in the response
+            return $post;
+        });
 
         return Inertia::render('TagPosts', [
             'tag' => $tag->name,
             'posts' => $posts,
         ]);
     }
+
 }
 
 
