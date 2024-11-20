@@ -5,6 +5,7 @@ import UserListView from '../Generic/UserListView.vue';
 import Tag from '../Generic/TagListView.vue';
 import CommentsSection from './CommentSection.vue';
 import Like from './Like.vue';
+import AddTag from './AddTag.vue';
 import { Link, usePage,useForm } from '@inertiajs/vue3';
 
 const data = defineProps({
@@ -192,6 +193,7 @@ const editDescription = () => {
             </div>
 
             <div class="scroll-container">
+                <AddTag v-if="canDelete()" :post_id="post.id" ></AddTag>
                 <Tag v-for="tag in post.tags" :tag="tag" :can_delete=canDelete() />
             </div>
 

@@ -42,6 +42,7 @@ Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->n
 Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
 Route::get('/tag/{tag:name}', [SearchBarController::class, 'showPostsByTag'])->name('tag.posts');
 
+Route::post('/post/add_tag', [PostController::class, 'add_tag'])->middleware(['auth', 'verified'])->name('post.addTag');
 Route::post('/post/delete_tag', [PostController::class, 'delete_tag'])->middleware(['auth', 'verified'])->name('post.delete_tag');
 Route::post('/post/toggle_like', [PostController::class, 'toggle_like'])->middleware(['auth', 'verified'])->name('post.toggle_like');
 Route::post('/post/edit_description', [PostController::class, 'edit_description'])->middleware(['auth', 'verified'])->name('post.editDescription');
