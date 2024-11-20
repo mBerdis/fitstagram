@@ -39,9 +39,9 @@ const addComment = () => {
 
 <template>
   <div class="comments-section mt-2 p-4 bg-white rounded-lg shadow-md dark:bg-gray-800 h-full flex flex-col">
-    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Comments</h3>
+    <!-- <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Comments</h3>
 
-    <!-- Scrollable comments container -->
+     Scrollable comments container -->
     <div v-if="post.comments && post.comments.length > 0" class="comments-container flex-1 overflow-y-auto custom-scrollbar space-y-2">
       <div v-for="(comment, index) in [...post.comments].reverse()" :key="index" class="pb-0 mt-2 border-b border-gray-200 dark:border-gray-600">
         <Comment :comment="comment" />

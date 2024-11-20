@@ -164,4 +164,25 @@ class PostController extends Controller
 
         return back()->with('success', 'Post removed.');
     }
+
+    public function edit_description(Request $request,UserAuthenticationService $authService)
+    {
+        $validated = $request->validate([
+            'content' => 'nullable|string|max:255',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $post = Post::find($validated['post_id']);
+        $user = auth()->user();
+
+        if ( !($post->owner->id === $user->id) )
+        {
+            return back()->with('error', 'User has unsufficient edit rights.');
+        }
+
+        $post->description = $validated['content'];
+        $post->save();
+
+        return back();
+    }
 }
