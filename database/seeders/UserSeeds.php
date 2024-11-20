@@ -32,6 +32,32 @@ class UserSeeds extends Seeder
             'last_name' => 'Berdis'
         ]);
 
+        $admin_model = User::factory()->create([
+            'username' => 'admin',
+            'email' => 'admin@example.com',
+            'password' => 'admin',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'role' => 4
+        ]);
+
+        $mod_model = User::factory()->create([
+            'username' => 'moderator',
+            'email' => 'moderator@example.com',
+            'password' => 'moderator',
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+            'role' => 3
+        ]);
+
+        $user_model = User::factory()->create([
+            'username' => 'user',
+            'email' => 'user@example.com',
+            'password' => 'user',
+            'first_name' => 'John',
+            'last_name' => 'Smith',
+        ]);
+
         $generatedUsers = User::factory()->count(8)->create();
     }
 }
