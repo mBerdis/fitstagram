@@ -1,17 +1,21 @@
 <script setup>
 import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router,Link } from '@inertiajs/vue3';
 
-// Props for dynamic data
+
 const data = defineProps({
     tag: {
         type: Object
-    }
+    },
+    can_delete: {
+        type: Boolean
+    },
 });
 
 const handleClick = () => {
     router.visit(`/tag/${data.tag.name}`);
 };
+
 </script>
 
 <style scoped>
@@ -23,6 +27,18 @@ const handleClick = () => {
     @click="handleClick"
    >
         <p class="text-gray-700 text-sm font-medium">{{ data.tag.name }}</p>
+        <Link
+            v-if="can_delete"
+            class="text-gray-700 ml-1 text-lg leading-none relative hover:text-red-500 transition"
+            href="/post/delete_tag"
+            as="button"
+            method="post"
+            :data="{ post_id: data.tag.pivot.post_id, tag_id: data.tag.id }"
+            :preserve-scroll="true"
+            @click.stop
+        >
+            &times;
+        </Link>
     </div>
   </template>
 

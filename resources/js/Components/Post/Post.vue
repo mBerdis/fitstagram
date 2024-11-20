@@ -192,7 +192,7 @@ const editDescription = () => {
             </div>
 
             <div class="scroll-container">
-                <Tag v-for="tag in post.tags" :tag="tag" />
+                <Tag v-for="tag in post.tags" :tag="tag" :can_delete=canDelete() />
             </div>
 
             <p class="text-gray-500 dark:text-gray-400 text-sm">{{ post.created_at }}</p>

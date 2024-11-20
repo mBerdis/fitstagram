@@ -1,37 +1,34 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { Link } from '@inertiajs/vue3'; // Import Link
+import { Link } from '@inertiajs/vue3';
 
-// Props
 const props = defineProps({
   post: {
     type: Object,
   },
 });
 
-// Reactive State
-const liked = ref(props.post.liked_by_user); // Initialize with prop value
 
-// Watch for Prop Updates
+const liked = ref(props.post.liked_by_user);
+
 watch(
   () => props.post.liked_by_user,
   (newValue) => {
-    liked.value = newValue; // Update local state if prop changes
+    liked.value = newValue;
   }
 );
 
-// Toggle Like State Locally
+
 function toggleLike(event) {
   event.preventDefault();
 
-  // Optimistic UI Update
+
   liked.value = !liked.value;
 }
 </script>
 
 <template>
   <div class="flex items-center space-x-2">
-    <!-- Like Button using <Link> -->
     <Link
       class="px-1 py-0.5 rounded-md"
       :class="liked ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700'"
