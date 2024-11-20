@@ -20,7 +20,7 @@ class PostRetrievalService
             $friendIds = $user->friends->pluck('user2');
             $groupIds = $user->groupsMember->pluck('id');
 
-            return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
+            return Post::with('owner', 'comments', 'comments.user','tags') // include comments and comments author
             ->where('is_public', true)                                                      // get public posts
             ->orWhereHas('owner', fn($query) => $query->whereIn('users.id', $friendIds))    // get posts from friends
             ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))   // get posts from groups
@@ -34,7 +34,7 @@ class PostRetrievalService
                 return $post;
             });
         }
-        return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
+        return Post::with('owner', 'comments', 'comments.user','tags') // include comments and comments author
             ->where('is_public', true)->orderBy('created_at')->paginate(20);
 
     }
@@ -44,7 +44,7 @@ class PostRetrievalService
     {
         $user = Auth::user() ?? (object) ['id' => -1]; // Assign a dummy user object with id -1 for unsigned users
 
-        $query = Post::with('owner', 'comments', 'comments.user')
+        $query = Post::with('owner', 'comments', 'comments.user','tags')
             ->whereHas('owner', fn($query) => $query->where('id', $user_id))
             ->orderBy('created_at');
 
@@ -63,7 +63,7 @@ class PostRetrievalService
     {
         $user = Auth::user() ?? (object) ['id' => -1];
 
-        return Post::with('owner', 'comments', 'comments.user')
+        return Post::with('owner', 'comments', 'comments.user','tags')
         ->whereHas('groups', fn($query) => $query->where('groups.id', $group_id))
         ->get()
         ->map(function ($post) use ($user) { // Use through for pagination-aware mapping

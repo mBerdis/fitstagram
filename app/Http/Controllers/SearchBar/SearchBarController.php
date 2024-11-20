@@ -23,13 +23,13 @@ class SearchBarController extends Controller
 
         if (!empty($tagTerms)) {
             $postsQuery = Post::query();
-        
+
             foreach ($tagTerms as $term) {
                 $postsQuery->whereHas('tags', fn($q) => $q->where('name', 'like',  $term ));
             }
-        
+
             $posts = $postsQuery->with('owner', 'comments', 'tags')->paginate(10);
-        
+
             return Inertia::render('TagPosts', [
                 'tag' => implode(', ', $tagTerms), // Zobrazí hľadané tagy
                 'posts' => $posts,
@@ -58,7 +58,7 @@ class SearchBarController extends Controller
         $user = Auth::user() ?? (object) ['id' => -1];
 
         // Retrieve posts related to the tag
-        $posts = $tag->posts()->with('owner', 'comments', 'tags', 'comments.user')->paginate(10);
+        $posts = $tag->posts()->with('owner', 'comments', 'tags', 'comments.user','tags')->paginate(10);
 
         // Map over the posts collection after retrieving the paginated results
         $posts->getCollection()->transform(function ($post) use ($user) {

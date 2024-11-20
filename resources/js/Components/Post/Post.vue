@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 
 import UserListView from '../Generic/UserListView.vue';
+import Tag from '../Generic/TagListView.vue';
 import CommentsSection from './CommentSection.vue';
 import Like from './Like.vue';
 import { Link, usePage } from '@inertiajs/vue3';
@@ -136,6 +137,9 @@ const canRemoveFromGroup = () => {
         <div class="image-details mt-4">
             <UserListView :user="post.owner" />
           <p class="text-gray-700 dark:text-gray-300 mt-2">{{ post.description }}</p>
+            <div class="scroll-container">
+                <Tag v-for="tag in post.tags" :tag="tag" />
+            </div>
           <p class="text-gray-500 dark:text-gray-400 text-sm">{{ post.created_at }}</p>
             <div class="absolute top-4 right-4 flex items-center space-x-2">
                 <p class="text-gray-700 dark:text-gray-300 mt-2">{{ post.like_count }}</p>
@@ -155,5 +159,25 @@ const canRemoveFromGroup = () => {
 
 <style scoped>
 
+.scroll-container {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  padding: 10px 0;
+  gap: 8px; /* Space between tags */
+  scrollbar-width: thin; /* Firefox scrollbar width */
+}
+
+.scroll-container::-webkit-scrollbar {
+  height: 6px; /* Scrollbar height */
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Scrollbar thumb color */
+  border-radius: 3px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #f1f5f9; /* Scrollbar track color */
+}
 
 </style>
