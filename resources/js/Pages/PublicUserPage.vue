@@ -7,14 +7,19 @@ defineProps({
   user: Object,
   posts: Array,
   isFriend: Number,
+
+  // filled if has access
+  friends: Array,
+  groups: Array,
+  friendRequests: Array
 });
+
 </script>
 
 
 <template>
-    <Head title="My Page" />
+    <Head :title="user.username" />
 
-    <UserPage :user="user" :posts="posts" :isFriend="isFriend"></UserPage>
-
+    <UserPage :user="user" :posts="posts" :isFriend="isFriend" :friends="friends" :groups="groups" :friendRequests="friendRequests"></UserPage>
   </template>
 

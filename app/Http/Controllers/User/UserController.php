@@ -9,6 +9,7 @@ use App\Services\UserAuthenticationService;
 use App\Models\Post;
 use App\Models\User;
 use App\Enums\UserRole;
+use App\Enums\FriendStatus;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,39 +17,43 @@ class UserController extends Controller
 {
     public function create(Request $request,PostRetrievalService $postService,UserAuthenticationService $authService)
     {
+        $user = auth()->user();
 
+        return redirect()->route('user', $user->username);
+    }
+
+    public function detail(Request $request, PostRetrievalService $postService, UserAuthenticationService $authService)
+    {
         if (!$authService->role_access(UserRole::SILENCED)) {
             return back();
         }
 
-        $user = auth()->user();
+        $user = User::where('username', $request->username)->firstOrFail();
+        $loggedUserID   = Auth()->check() ? Auth()->user()->id : -1;
+
         $sort = $request->get('sort', 'newest');
         $posts = $postService->get_user_images($user->id, $sort);
-        $groups = $user->groupsMember;
-        $friends = $user->friends;
-        $friendRequests = $user->receivedFriendRequests()->get();
-
-        return Inertia::render('MyPage', [
-            'user' => $user,
-            'posts' => $posts,
-            'friends' => $friends,
-            'groups' => $groups,
-            'friendRequests' => $friendRequests,
-            'query' => ['sort' => $sort]
-        ]);
-    }
-
-    public function detail(Request $request, PostRetrievalService $postService)
-    {
-        $user = User::where('username', $request->username)->firstOrFail();
-        $sort = $request->get('sort', 'newest'); // Predvolené triedenie
-        $posts = $postService->get_user_images($user->id, $sort);
         $isFriend = $postService->get_friend_status($user->id);
+
+        $groups         = null;
+        $friends        = null;
+        $friendRequests = null;
+
+        if (($user->id === $loggedUserID) ||
+            $authService->role_access(UserRole::MODERATOR))
+        {
+            $groups = $user->groupsMember;
+            $friends = $user->friends;
+            $friendRequests = $user->receivedFriendRequests()->get();
+        }
 
         return Inertia::render('PublicUserPage', [
             'user' => $user,
             'posts' => $posts,
             'isFriend' => $isFriend,
+            'friends' => $friends,
+            'groups' => $groups,
+            'friendRequests' => $friendRequests,
             'query' => ['sort' => $sort]
         ]);
     }
