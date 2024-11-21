@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             $group->members()->attach($group->owner);
 
             // non owner users
-            $randomUsers = $users->where('id', '!=', $group->owner)->random(rand(1, 5));
+            $randomUsers = $users->where('id', '!=', $group->owner->id)->random(rand(1, 5));
             $group->members()->attach($randomUsers);
         }
 

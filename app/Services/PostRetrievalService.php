@@ -16,13 +16,13 @@ class PostRetrievalService
   
     public function get_personal_feed($sort = 'newest')
     {
-        if (Auth::check())
-        {
+        if (Auth::check()) {
             $user = Auth::user();
             $friendIds = $user->friends->pluck('user2');
             $groupIds = $user->groupsMember->pluck('id');
 
-            $query = Post::with('owner', 'comments', 'comments.user')
+            // Start with the query for posts
+            $query = Post::with('owner', 'comments', 'comments.user', 'tags')
                 ->where('is_public', true)
                 ->orWhereHas('owner', fn($query) => $query->whereIn('users.id', $friendIds))
                 ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))
@@ -34,20 +34,32 @@ class PostRetrievalService
                 default => $query->orderBy('created_at', 'desc'),
             };
 
-            return $query->paginate(20);
+            // Paginate the posts
+            $posts = $query->paginate(20);
+
+            // Map over the posts to add the `liked_by_user` attribute
+            $posts->getCollection()->transform(function ($post) use ($user) {
+                $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
+                unset($post->liked_by); // Ensure liked_by relationship is not included in the response
+                return $post;
+            });
+
+            return $posts;
         }
 
-        return Post::with('owner', 'comments', 'comments.user')
+        // Return public posts when the user is not authenticated
+        return Post::with('owner', 'comments', 'comments.user', 'tags')
             ->where('is_public', true)
             ->orderBy($sort === 'rating' ? 'like_count' : 'created_at', 'desc')
             ->paginate(20);
     }
 
+
     public function get_user_images($user_id, $sort = 'newest')
     {
         $user = Auth::user() ?? (object) ['id' => -1]; // Assign a dummy user object with id -1 for unsigned users
 
-        $query = Post::with('owner', 'comments', 'comments.user')
+        $query = Post::with('owner', 'comments', 'comments.user','tags')
             ->whereHas('owner', fn($query) => $query->where('id', $user_id));
 
         if (!PostRetrievalService::has_access($user_id)) {
@@ -72,7 +84,7 @@ class PostRetrievalService
     {
         $user = Auth::user() ?? (object) ['id' => -1];
 
-        $query = Post::with('owner', 'comments', 'comments.user')
+        $query = Post::with('owner', 'comments', 'comments.user', 'tags')
             ->whereHas('groups', fn($query) => $query->where('groups.id', $group_id));
 
         if ($sort === 'rating') {

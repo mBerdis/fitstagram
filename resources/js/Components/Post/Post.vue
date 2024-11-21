@@ -1,10 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue';
-
+import TextInput from '@/Components/TextInput.vue';
 import UserListView from '../Generic/UserListView.vue';
+import Tag from '../Generic/TagListView.vue';
 import CommentsSection from './CommentSection.vue';
 import Like from './Like.vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import AddTag from './AddTag.vue';
+import { Link, usePage,useForm } from '@inertiajs/vue3';
 
 const data = defineProps({
   post: Object, // Expecting the post object as a prop
@@ -53,6 +55,10 @@ const canDelete = () => {
     || data.post.user_id === props.auth?.user?.id;
 }
 
+const canEdit = () => {
+    return data.post.user_id === props.auth?.user?.id;
+}
+
 const canRemoveFromGroup = () => {
     const isViewedFromGroup = data.viewed_from_group !== undefined;
     const isGroupOwner = data.group_role === MembershipStatus.OWNER;
@@ -61,6 +67,36 @@ const canRemoveFromGroup = () => {
 
     return isViewedFromGroup && (isGroupOwner || isPostOwner || isAtLeastMod);
 }
+
+let form;
+if (!!usePage().props.auth.user) {
+  const user = usePage().props.auth.user;
+
+  form = useForm({
+    content: data.post.description,
+    post_id: data.post.id
+  });
+}
+
+const editDescription = () => {
+  if (form.content.trim()) {
+    form.post(route('post.editDescription'), {
+      onSuccess: () => {
+        form = useForm({
+            content: data.post.description,
+            post_id: data.post.id
+        });
+      },
+      onError: (errors) => {
+        console.log('Form submission error:', errors);
+      },
+
+      preserveScroll: true
+    });
+  }
+};
+
+
 
 </script>
 
@@ -131,17 +167,43 @@ const canRemoveFromGroup = () => {
         <img :src="selectedImage" alt="Expanded Post Photo" class="w-full rounded-lg" />
       </div>
 
-      <!-- Comments section -->
+       <!-- Description -->
       <div class="w-full md:w-1/2 md:ml-4 mt-4 md:mt-0">
         <div class="image-details mt-4">
             <UserListView :user="post.owner" />
-          <p class="text-gray-700 dark:text-gray-300 mt-2">{{ post.description }}</p>
-          <p class="text-gray-500 dark:text-gray-400 text-sm">{{ post.created_at }}</p>
+
+            <p v-if="!canEdit()" class="text-gray-700 dark:text-gray-300 mt-2">{{ post.description }}</p>
+            <div v-if="canEdit()" class="flex items-center space-x-2 mt-4">
+                <TextInput
+                id="editableDescription"
+                type="text"
+                class="block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
+                v-model="form.content"
+                required
+                autofocus
+                />
+
+                <button
+                @click="editDescription"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600"
+                :disabled="form.processing"
+                >
+                    Save
+                </button>
+            </div>
+
+            <div class="scroll-container">
+                <AddTag v-if="canDelete()" :post_id="post.id" ></AddTag>
+                <Tag v-for="tag in post.tags" :tag="tag" :can_delete=canDelete() />
+            </div>
+
+            <p class="text-gray-500 dark:text-gray-400 text-sm">{{ post.created_at }}</p>
             <div class="absolute top-4 right-4 flex items-center space-x-2">
                 <p class="text-gray-700 dark:text-gray-300 mt-2">{{ post.like_count }}</p>
                 <Like :post="post" />
             </div>
         </div>
+        <!-- Comments section -->
         <div class="comments-section">
           <CommentsSection :post="post" />
         </div>
@@ -155,5 +217,25 @@ const canRemoveFromGroup = () => {
 
 <style scoped>
 
+.scroll-container {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  padding: 10px 0;
+  gap: 8px; /* Space between tags */
+  scrollbar-width: thin; /* Firefox scrollbar width */
+}
+
+.scroll-container::-webkit-scrollbar {
+  height: 6px; /* Scrollbar height */
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Scrollbar thumb color */
+  border-radius: 3px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #f1f5f9; /* Scrollbar track color */
+}
 
 </style>

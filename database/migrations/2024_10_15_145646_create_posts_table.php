@@ -25,8 +25,8 @@ return new class extends Migration
 
         Schema::create('post_user', function (Blueprint $table) { // liked posts
             $table->id(); // Primary key
-            $table->foreignId('user_id');
-            $table->foreignId('post_id');
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('post_id')->constrained();
             $table->timestamps();
         });
     }
@@ -37,6 +37,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('posts');
-        Schema::dropIfExists('post_liked');
+        Schema::dropIfExists('post_user');
     }
 };

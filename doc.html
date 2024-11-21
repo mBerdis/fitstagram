@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0064)https://www.fit.vut.cz/study/course/IIS/private/projekt/doc.html -->
+<html><link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style lang="en" type="text/css" id="dark-mode-custom-style"></style><style lang="en" type="text/css" id="dark-mode-native-style"></style><style lang="en" type="text/css" id="dark-mode-native-sheet"></style><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2">
+
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu
+     podle použitého editoru -->
+
+<h1>FITstagram</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autoři</dt>
+	<dd>Matej Koscelník <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xkosce01@stud.fit.vutbr.cz">xkosce01@stud.fit.vutbr.cz</a> -
+		príspevky, komentáre, pridávanie príspevkov
+	</dd>
+	<dd>Filip Halčišák <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xhalci02@stud.fit.vutbr.cz">xhalci02@stud.fit.vutbr.cz</a> -
+		vyhľadávanie skupín, užívateľov a tagov
+	</dd>
+  <dd>Maroš Berdis <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xberdi01@stud.fit.vutbr.cz">xberdi01@stud.fit.vutbr.cz</a> -
+		správa a zobrazenie skupín a priateľov
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="https://www.stud.fit.vutbr.cz/~xberdi01">https://www.stud.fit.vutbr.cz/~xberdi01</a></dd>
+	<dd>(pokud má aplikace více vstupních stránek, napište obdobně další URL)</dd>
+</dl>
+
+<h2>Uživatelé systému pro testování</h2>
+<table>
+<tbody><tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin@example.com</td><td>admin</td><td>Administrátor</td></tr>
+<tr><td>moderator@example.com</td><td>moderator</td><td>Moderátor</td></tr>
+<tr><td>user@example.com</td><td>user</td><td>Registrovaný uživateľ</td></tr>
+</tbody></table>
+
+<h3>Video</h3>
+
+<p>Přiložte odkaz na komentované video demostrující použití informačního systému. Zaměřte se na případy užití definované zadáním (např. registrace uživatele, správa uživatelů a činnosti jednotlivých rolí). Video nahrajte například na VUT Google Drive, kde ho bude možné přímo spustit z odkazu.</p>
+
+<h2>Implementace</h2>
+<p>Aplikácia je vytvorená pomocou technologií <b>Laravel, Vue.js a Inertia</b> (rieši routing, "náhrada za API").
+    <ul>
+        <li>
+            <b>Prihlásenie a správu učtu sme prevzali z <a href="https://laravel.com/docs/11.x/starter-kits#breeze-and-inertia">Laravel Breeze Starter Kit</a>.</b>
+            To je implementované v priečinkoch <b>app/Http/Controllers/Auth/</b>, <b>app/Http/Controllers/ProfileController.php</b> a <b>app/Http/Requests/</b>
+        </li>
+
+        <li> app/Http/<strong>Controllers</strong>
+            <ul>
+                <li> /Group
+                    <ul>
+                        <li>
+                            <b>/GroupController.php</b>
+                            Správa skupín
+                        </li>
+                        <li>
+                            <b>/GroupJoinController.php</b>
+                            Správa členov skupiny, žiadosti o vstup
+                        </li>
+                    </ul>
+                </li>
+
+                <li> /Post
+                    <ul>
+                        <li>
+                            <b>/CommentController.php</b>
+                            Správa komentárov
+                        </li>
+                        <li>
+                            <b>/PostController.php</b>
+                            Správa príspevkov
+                        </li>
+                    </ul>
+                </li>
+
+                <li> /SearchBar
+                    <ul>
+                        <li>
+                            <b>/SearchBarController.php</b>
+                            Správa vyhľadavania
+                        </li>
+                    </ul>
+                </li>
+
+                <li> /User
+                    <ul>
+                        <li>
+                            <b>/FriendRequestController.php</b>
+                            Správa priateľstiev a žiadosti o ne.
+                        </li>
+                        <li>
+                            <b>/UserController.php</b>
+                            Správa použivateských rolí a mazanie účtu.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+        <li> app/Http/<strong>Services</strong>
+            <ul>
+                <li>
+                    <b>/GroupManagmentService.php</b>
+                    Funkcie na správu skupín
+                </li>
+                <li>
+                    <b>/PostRetrievalService.php</b>
+                    Funkcie na ziskávanie príspevkov
+                </li>
+                <li>
+                    <b>/UserAuthenticationService.php</b>
+                    Funkcie k roliam
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            Front End aplikácie sa nachádza v priečinku <b>resources/</b>
+        </li>
+        <li>
+            Inertia Routes sú definované v súbore <b>routes/web.php</b>, priradzujú metódy controlleru k ceste
+        </li>
+
+        <li>
+            Testovacie dáta (seeds) sú náhodne generované pomocou kódu v <b>database/seeders/</b> a <b>database/factories/</b>
+            <ul>
+                <li>
+                    komentáre, popisky príspevkov a mená uživateľov, skupín, tagov pomocou knižnice FakerPHP
+                </li>
+                <li>
+                    profilové obrázky uživateľov sa sťahujú zo stránky <a href="https://thispersondoesnotexist.com/">https://thispersondoesnotexist.com/</a>
+                </li>
+                <li>
+                    profilové obrázky skupín a fotky v príspevkoch sa sťahujú zo stránky <a href="https://picsum.photos/">https://picsum.photos/</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+
+    Stručná dokumentace k implementaci, která popisuje, které části projektu (např. PHP skripty) implementují jednotlivé případy použití.</p>
+
+<h3>Databáze - MySQL</h3>
+
+Zde vložte grafické schéma relační databáze (tabulek v databázi).
+
+<h2>Instalace</h2>
+<ul>
+<li>postup jednoduchej inštalácie na server:</li>
+<ol>
+    <li>
+        Rozbaliť archív projektu do verejného priečinku webového servera (napr. <b>WWW/</b> alebo <b>htdocs/</b>)
+    </li>
+    <li>
+        V súbore <b>.env</b> definovať db connection udáje
+    </li>
+    <li>
+        V súbore <b>vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php</b> zmeniť cestu k index.php na riadku 23 na "/../index.php" (kvôli kompatibilite so serverom Eva)
+    </li>
+    <li>
+        V priečinku projektu spustiť príkazy:
+    </li>
+    <ol>
+        <li>
+            <b>npm install</b>, ktorý stiahne .js balíčky
+        </li>
+        <li>
+            <b>php artisan storage:link</b>, ktorý vytvorí symbolický odkaz na uložisko obrázkov (priečinok <b>/public/storage/uploads/</b>)
+        </li>
+        <li>
+            <b>php artisan serve</b>, ktorý spustí server
+        </li>
+    </ol>
+
+
+</ol>
+
+<li>softwarové požiadavky: </li>
+    <ul>
+        <li>
+            PHP version > 81
+        </li>
+        <li>
+            Nainštalovaný Laravel v. 11.x, Composer, npm
+        </li>
+    </ul>
+<li>Inicializácia MySQL databázi:
+    <ol>
+        <li>
+            Vytvoriť prazdnú db, napr. cez <b>phpmyadmin</b>
+        </li>
+        <li>
+            V súbore <b>.env</b> definovať db connection udáje
+        </li>
+        <li>
+            V priečinku projektu spusiť príkaz <b>php artisan migrate:fresh  --seed</b>, ktorý z migrácií vytvorí tabuľky a vloží seed dáta
+        </li>
+    </ol>
+
+</li>
+</ul>
+
+<h2>Známé problémy</h2>
+<p>Zde popište, které body zadání nejsou implementovány a z jakého důvodu. Např. &#8222;Z časových důvodů nebyla implementována správa uživatelů.&#8221; Pomůžete tím zrychlit hodnocení, když neimplementované funkce nebudeme muset dlouze hledat.</p>
+
+
+
+</body></html>

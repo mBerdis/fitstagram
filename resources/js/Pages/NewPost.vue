@@ -1,24 +1,25 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const form = useForm({
     photo: null,
     photoUrl: '',
     description: '',
     group_ids: [],
+    tags: [], // Store tags
     is_public: true,
 });
 
 defineProps({
-  groups: Array
+    groups: Array,
 });
 
 const useUrl = ref(false);
 const photoPreview = ref(null);
 
-// Function to handle file upload and preview
+// Handle file upload and preview
 const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
     form.photo = file;
@@ -35,7 +36,7 @@ const handlePhotoUpload = (event) => {
     }
 };
 
-// Function to update preview when URL is used
+// Update photo preview for URL
 const updatePhotoPreview = () => {
     form.photo = null;
     photoPreview.value = form.photoUrl || null;
@@ -51,20 +52,48 @@ const closeDropdown = (event) => {
 };
 document.addEventListener('click', closeDropdown);
 
+// Add a new tag
+const newTag = ref('');
+const addTag = () => {
+    const input = newTag.value.trim();
 
-// Form submission handler
-const submitPost = () => {
-    form.post(route('post.store'), {
-      onSuccess: () => {
-        form.reset();
-      },
-      onError: (errors) => {
-        console.log('Form submission error:', errors);
-      },
+    if (!input) {
+        newTag.value = '';
+        return;
+    }
+
+    const processedTags = input.split('#')
+        .map(tag => tag.trim().replace(/ /g, '_'))
+        .filter(tag => tag !== '' && !form.tags.includes(tag));
+
+    processedTags.forEach(tag => {
+        if (!form.tags.includes(tag)) {
+            form.tags.push(tag);
+        }
     });
+
+    newTag.value = '';
 };
 
+
+// Remove a tag
+const removeTag = (tagToRemove) => {
+    form.tags = form.tags.filter(tag => tag !== tagToRemove); // Filter out the tag
+};
+
+// Submit form
+const submitPost = () => {
+    form.post(route('post.store'), {
+        onSuccess: () => {
+            form.reset();
+        },
+        onError: (errors) => {
+            console.log('Form submission error:', errors);
+        },
+    });
+};
 </script>
+
 
 <template>
     <Head title="New post" />
@@ -117,6 +146,42 @@ const submitPost = () => {
                     <textarea v-model="form.description" class="mt-2 w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-gray-200" rows="4" placeholder="Write a description..."></textarea>
                 </div>
 
+                 <!-- Tags -->
+                 <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label>
+                    <div class="flex items-center space-x-2 mt-4">
+                        <input
+                            v-model="newTag"
+                            type="text"
+                            placeholder="Enter a tag..."
+                            class="block w-full p-2 border rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-indigo-600"
+                        />
+                        <button
+                            type="button"
+                            @click="addTag"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none"
+                        >
+                            Add
+                        </button>
+                    </div>
+                    <div class="scroll-container mt-4">
+                        <div
+                            v-for="tag in form.tags"
+                            :key="tag"
+                            class="flex items-center space-x-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-1 rounded-full"
+                        >
+                            <span>{{ tag }}</span>
+                            <button
+                                type="button"
+                                @click="removeTag(tag)"
+                                class="text-red-500 hover:text-red-700"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Group Selection -->
                 <div class="mb-4 relative">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Groups</label>
@@ -162,3 +227,30 @@ const submitPost = () => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+
+<style scoped>
+
+.scroll-container {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  padding: 10px 0;
+  gap: 8px; /* Space between tags */
+  scrollbar-width: thin; /* Firefox scrollbar width */
+}
+
+.scroll-container::-webkit-scrollbar {
+  height: 6px; /* Scrollbar height */
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Scrollbar thumb color */
+  border-radius: 3px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #f1f5f9; /* Scrollbar track color */
+}
+
+</style>
+

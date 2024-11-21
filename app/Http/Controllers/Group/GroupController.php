@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Group;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use App\Services\PostRetrievalService;
 use App\Models\Group;
 use App\Models\Post;
@@ -36,10 +37,20 @@ class GroupController extends Controller
         ]);
     }
 
-    public function detail(Request $request, PostRetrievalService $postService, GroupManagmentService $groupService, UserAuthenticationService $authService): Response
+    public function detail( Request $request, string $name, PostRetrievalService $postService, GroupManagmentService $groupService, UserAuthenticationService $authService)
     {
         $groupName  = $request->groupName;
         $sort       = $request->get('sort', 'newest');
+
+        $validator = Validator::make(['name' => $name], [
+            'name' => 'required|exists:groups,name',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors('Wrong group name');
+        }
+
+        $groupName  = $name;
         $group      = Group::firstWhere('name', $groupName);
         $posts      = $postService->get_group_images($group->id, $sort); // Prenášame typ zoradenia
         $status     = $groupService->get_membership_status($group->id);

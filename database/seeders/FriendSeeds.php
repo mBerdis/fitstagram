@@ -13,16 +13,12 @@ class FriendSeeds extends Seeder
      */
     public function run(): void
     {
-        // Získame všetkých používateľov
         $users = User::all();
 
-        // Pre každý pár používateľov vytvoríme priateľstvo alebo žiadosť o priateľstvo
         foreach ($users as $user) {
-            // Vyberieme náhodných priateľov pre každého používateľa
             $friends = $users->random(rand(1, 3))->whereNotIn('id', [$user->id]);
 
             foreach ($friends as $friend) {
-                // Skontrolujeme, či už priateľstvo existuje
                 $friendshipExists = DB::table('friends')
                     ->where(function ($query) use ($user, $friend) {
                         $query->where('user1', $user->id)
@@ -35,24 +31,31 @@ class FriendSeeds extends Seeder
                     ->exists();
 
                 if (!$friendshipExists) {
-                    // Vytvoríme obojsmerné priateľstvo
                     $user->friends()->attach($friend->id);
                     $friend->friends()->attach($user->id);
                 }
             }
 
-            // Pridáme niekoľko žiadostí o priateľstvo
-            $potentialRequests = $users->random(rand(1, 2))->whereNotIn('id', [$user->id]);
-            
+            $potentialRequests = $users->random(rand(1, 3))->whereNotIn('id', [$user->id]);
+
             foreach ($potentialRequests as $requester) {
-                // Kontrola na existenciu opačnej žiadosti
                 $reverseRequestExists = DB::table('friend_requests')
                     ->where('user1', $user->id)
                     ->where('user2', $requester->id)
                     ->exists();
 
-                if (!$reverseRequestExists) {
-                    // Pridáme jednostrannú žiadosť o priateľstvo, ak opačná žiadosť neexistuje
+                $alreadyFriends = DB::table('friends')
+                    ->where(function ($query) use ($user, $requester) {
+                        $query->where('user1', $user->id)
+                            ->where('user2', $requester->id);
+                    })
+                    ->orWhere(function ($query) use ($user, $requester) {
+                        $query->where('user1', $requester->id)
+                            ->where('user2', $user->id);
+                    })
+                    ->exists();
+
+                if (!$reverseRequestExists && !$alreadyFriends) {
                     $requester->friendRequests()->attach($user->id);
                 }
             }
