@@ -28,12 +28,12 @@ class UserController extends Controller
             return back();
         }
 
-        $user = User::where('username', $request->username)->firstOrFail();
+        $user           = User::where('username', $request->username)->firstOrFail();
         $loggedUserID   = Auth()->check() ? Auth()->user()->id : -1;
 
-        $sort = $request->get('sort', 'newest');
-        $posts = $postService->get_user_images($user->id, $sort);
-        $isFriend = $postService->get_friend_status($user->id);
+        $sort       = $request->get('sort', 'newest');
+        $posts      = $postService->get_user_images($user->id, $sort);
+        $isFriend   = $postService->get_friend_status($user->id);
 
         $groups         = null;
         $friends        = null;
