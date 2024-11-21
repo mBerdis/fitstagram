@@ -24,7 +24,7 @@ defineProps({
       </template>
 
 
-      <GenericFeed :posts="posts" />
+      <GenericFeed :posts="posts" :viewed_from_user="user.username" />
     </AuthenticatedLayout>
 
 

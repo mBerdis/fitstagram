@@ -6,13 +6,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Group;
 use App\Models\User;
+use App\Models\Tag;
 use App\Enums\UserRole;
+
 use App\Enums\FriendStatus;
 
 class PostRetrievalService
 {
-    // returns posts to show at /feed page
-    public function get_personal_feed()
+  
+    public function get_personal_feed($sort = 'newest')
     {
         if (Auth::check())
         {
@@ -20,36 +22,43 @@ class PostRetrievalService
             $friendIds = $user->friends->pluck('user2');
             $groupIds = $user->groupsMember->pluck('id');
 
-            return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
-            ->where('is_public', true)                                                      // get public posts
-            ->orWhereHas('owner', fn($query) => $query->whereIn('users.id', $friendIds))    // get posts from friends
-            ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))   // get posts from groups
-            ->orWhereHas('owner', fn($query) => $query->where('users.id', $user->id))       // get logged users private posts
-            ->orderBy('created_at')
-            ->paginate(20)
-            ->through(function ($post) use ($user) { // Use `through` for pagination-aware mapping
-                // Add an attribute to each post indicating if the user liked it
-                $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
-                unset($post->liked_by); // Ensure liked_by relationship is not included in the response
-                return $post;
-            });
-        }
-        return Post::with('owner', 'comments', 'comments.user') // include comments and comments author
-            ->where('is_public', true)->orderBy('created_at')->paginate(20);
+            $query = Post::with('owner', 'comments', 'comments.user')
+                ->where('is_public', true)
+                ->orWhereHas('owner', fn($query) => $query->whereIn('users.id', $friendIds))
+                ->orWhereHas('groups', fn($query) => $query->whereIn('groups.id', $groupIds))
+                ->orWhereHas('owner', fn($query) => $query->where('users.id', $user->id));
 
+            // Apply sorting
+            $query = match ($sort) {
+                'rating' => $query->orderBy('like_count', 'desc'),
+                default => $query->orderBy('created_at', 'desc'),
+            };
+
+            return $query->paginate(20);
+        }
+
+        return Post::with('owner', 'comments', 'comments.user')
+            ->where('is_public', true)
+            ->orderBy($sort === 'rating' ? 'like_count' : 'created_at', 'desc')
+            ->paginate(20);
     }
 
-    // returns posts to show at /profile page
-    public function get_user_images($user_id)
+    public function get_user_images($user_id, $sort = 'newest')
     {
         $user = Auth::user() ?? (object) ['id' => -1]; // Assign a dummy user object with id -1 for unsigned users
 
         $query = Post::with('owner', 'comments', 'comments.user')
-            ->whereHas('owner', fn($query) => $query->where('id', $user_id))
-            ->orderBy('created_at');
+            ->whereHas('owner', fn($query) => $query->where('id', $user_id));
 
         if (!PostRetrievalService::has_access($user_id)) {
             $query->where('is_public', true);
+        }
+
+        // Dynamické triedenie
+        if ($sort === 'rating') {
+            $query->orderByDesc('like_count'); // Triedenie podľa počtu lajkov
+        } else {
+            $query->orderByDesc('created_at'); // Predvolené triedenie podľa dátumu
         }
 
         return $query->get()->map(function ($post) use ($user) {
@@ -58,20 +67,52 @@ class PostRetrievalService
             return $post;
         });
     }
-    // returns posts to show at /group page
-    public function get_group_images($group_id)
+
+    public function get_group_images($group_id, $sort = 'newest')
     {
         $user = Auth::user() ?? (object) ['id' => -1];
 
-        return Post::with('owner', 'comments', 'comments.user')
-        ->whereHas('groups', fn($query) => $query->where('groups.id', $group_id))
-        ->get()
-        ->map(function ($post) use ($user) { // Use through for pagination-aware mapping
-            // Add an attribute to each post indicating if the user liked it
+        $query = Post::with('owner', 'comments', 'comments.user')
+            ->whereHas('groups', fn($query) => $query->where('groups.id', $group_id));
+
+        if ($sort === 'rating') {
+            $query->orderByDesc('like_count'); // Zoradenie podľa hodnotenia
+        } else {
+            $query->orderByDesc('created_at'); // Predvolené zoradenie
+        }
+
+        return $query->get()
+            ->map(function ($post) use ($user) {
+                $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
+                unset($post->liked_by);
+                return $post;
+            });
+    }
+
+    public function get_tag_images(Tag $tag, $sort = 'newest')
+    {
+        $user = Auth::user() ?? (object) ['id' => -1];
+
+        // Create the base query for the posts
+        $query = $tag->posts()->with('owner', 'comments', 'tags', 'comments.user');
+
+        // Apply sorting logic
+        $query = match ($sort) {
+            'rating' => $query->orderBy('like_count', 'desc'),
+            default => $query->orderBy('created_at', 'desc'),
+        };
+
+        // Paginate the posts
+        $posts = $query->paginate(10);
+
+        // Transform the posts (add liked_by_user flag)
+        $posts->getCollection()->transform(function ($post) use ($user) {
             $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
             unset($post->liked_by); // Ensure liked_by relationship is not included in the response
             return $post;
         });
+
+        return $posts;
     }
 
     private function has_access($user_id): bool

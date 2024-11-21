@@ -19,7 +19,7 @@ const props = defineProps({
       </h2>
     </template>
 
-    <GenericFeed :posts="posts.data" />
+    <GenericFeed :posts="posts.data" :viewed_tag="tag"/>
 
     <!-- Pagination Controls -->
     <div class="pagination">

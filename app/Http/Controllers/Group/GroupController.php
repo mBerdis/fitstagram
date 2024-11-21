@@ -39,8 +39,9 @@ class GroupController extends Controller
     public function detail(Request $request, PostRetrievalService $postService, GroupManagmentService $groupService, UserAuthenticationService $authService): Response
     {
         $groupName  = $request->groupName;
+        $sort       = $request->get('sort', 'newest');
         $group      = Group::firstWhere('name', $groupName);
-        $posts      = $postService->get_group_images($group->id);
+        $posts      = $postService->get_group_images($group->id, $sort); // Prenášame typ zoradenia
         $status     = $groupService->get_membership_status($group->id);
         $loggedUserID = Auth()->check() ? Auth()->user()->id : -1;
 
@@ -66,7 +67,8 @@ class GroupController extends Controller
             'posts' => $posts,
             'membership_status' => $status->value,
             'logged_user_id' => $loggedUserID,
-            'join_requests' => $joinRequests
+            'join_requests' => $joinRequests,
+            'query' => ['sort' => $sort]
         ]);
     }
 

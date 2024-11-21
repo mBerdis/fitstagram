@@ -34,6 +34,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // Pridáme parameter 'sort' do zdieľaných údajov
+            
         ];
     }
 }

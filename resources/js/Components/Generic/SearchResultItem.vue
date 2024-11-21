@@ -20,7 +20,13 @@ const handleClick = () => {
       router.visit(`/groups/${data.name}`);
       break;
     case 'tag':
-      router.visit(`/tag/${data.name}`);
+    router.visit(`/tag/${data.name}`, {
+  method: 'get',  // Default is 'get', but can specify if needed
+  params: {
+    tag: data.name, // Pass the tag name to the new page
+    posts: data.posts, // Pass the posts
+  }
+});
       break;
     default:
       console.error('Invalid type provided to CardItem component.');

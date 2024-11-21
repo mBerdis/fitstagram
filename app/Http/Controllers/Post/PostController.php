@@ -20,14 +20,19 @@ use App\Services\UserAuthenticationService;
 
 class PostController extends Controller
 {
-    public function create(Request $request, PostRetrievalService $postService): Response
+    public function create(Request $request, PostRetrievalService $postService)
     {
-        $posts = $postService->get_personal_feed();
+        $sort = $request->query('sort', 'newest');
+        $posts = $postService->get_personal_feed($sort);
 
         return Inertia::render('Feed', [
-            'posts' => $posts
+            'posts' => $posts,
+            'query' => ['sort' => $sort]
         ]);
+        
+        
     }
+
 
     public function toggle_like(Request $request, UserAuthenticationService $authService)
     {

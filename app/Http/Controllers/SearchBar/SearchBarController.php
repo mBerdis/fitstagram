@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Group;
 use App\Models\Tag;
 use App\Models\Post;
+use App\Services\PostRetrievalService;
 
 class SearchBarController extends Controller
 {
@@ -53,24 +54,19 @@ class SearchBarController extends Controller
         ]);
     }
 
-    public function showPostsByTag(Request $request, Tag $tag)
+    public function showPostsByTag(Request $request, Tag $tag, PostRetrievalService $postService)
     {
-        $user = Auth::user() ?? (object) ['id' => -1];
+        // Get the sorting option from the request, default to 'newest'
+        $sort = $request->query('sort', 'newest');
 
-        // Retrieve posts related to the tag
-        $posts = $tag->posts()->with('owner', 'comments', 'tags', 'comments.user')->paginate(10);
+        // Get the posts using the TagPostRetrievalService
+        $posts = $postService->get_tag_images($tag, $sort);
 
-        // Map over the posts collection after retrieving the paginated results
-        $posts->getCollection()->transform(function ($post) use ($user) {
-            // Add an attribute to each post indicating if the user liked it
-            $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
-            unset($post->liked_by); // Ensure liked_by relationship is not included in the response
-            return $post;
-        });
-
+        // Return the Inertia response
         return Inertia::render('TagPosts', [
             'tag' => $tag->name,
             'posts' => $posts,
+            'query' => ['sort' => $sort] // Pass the sorting option to the frontend
         ]);
     }
 

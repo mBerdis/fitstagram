@@ -156,7 +156,7 @@ const canDelete = () => {
     </template>
 
 
-      <GenericFeed :posts="posts" :viewed_from_group="group.id" :group_role="membership_status" />
+      <GenericFeed :posts="posts" :viewed_from_group="group.name" :group_role="membership_status" />
 
     </AuthenticatedLayout>
   </template>

@@ -14,7 +14,7 @@ use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function create(PostRetrievalService $postService,UserAuthenticationService $authService)
+    public function create(Request $request,PostRetrievalService $postService,UserAuthenticationService $authService)
     {
 
         if (!$authService->role_access(UserRole::SILENCED)) {
@@ -22,7 +22,8 @@ class UserController extends Controller
         }
 
         $user = auth()->user();
-        $posts = $postService->get_user_images($user->id);
+        $sort = $request->get('sort', 'newest');
+        $posts = $postService->get_user_images($user->id, $sort);
         $groups = $user->groupsMember;
         $friends = $user->friends;
         $friendRequests = $user->receivedFriendRequests()->get();
@@ -32,22 +33,26 @@ class UserController extends Controller
             'posts' => $posts,
             'friends' => $friends,
             'groups' => $groups,
-            'friendRequests' => $friendRequests
+            'friendRequests' => $friendRequests,
+            'query' => ['sort' => $sort]
         ]);
     }
 
     public function detail(Request $request, PostRetrievalService $postService)
     {
         $user = User::where('username', $request->username)->firstOrFail();
-        $posts = $postService->get_user_images($user->id);
+        $sort = $request->get('sort', 'newest'); // Predvolené triedenie
+        $posts = $postService->get_user_images($user->id, $sort);
         $isFriend = $postService->get_friend_status($user->id);
 
         return Inertia::render('PublicUserPage', [
             'user' => $user,
             'posts' => $posts,
-            'isFriend' => $isFriend
+            'isFriend' => $isFriend,
+            'query' => ['sort' => $sort]
         ]);
     }
+
 
     public function updateRole(Request $request,UserAuthenticationService $authService)
     {
