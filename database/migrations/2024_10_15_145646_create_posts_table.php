@@ -37,6 +37,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('posts');
-        Schema::dropIfExists('post_liked');
+        Schema::dropIfExists('post_user');
     }
 };

@@ -160,12 +160,11 @@ class PostController extends Controller
             'group_ids' => 'nullable|array',
             'group_ids.*' => 'integer',
             'is_public' => 'boolean',
+            'tags' => 'nullable|array',
+            'tags.*' => 'string|max:50'
         ]);
 
-        if ($request->description == null) {
-            $request->description = "";
-        }
-
+        $description = $request->description ?? "";
         $imagePath = null;
 
         if ($request->filled('photoUrl') && filter_var($request->photoUrl, FILTER_VALIDATE_URL)) {
@@ -183,7 +182,7 @@ class PostController extends Controller
             'user_id' => $user->id,
             'photo' => $imagePath,
             'is_public' => $request->is_public,
-            'description' => $request->description,
+            'description' => $description,
             'like_count' => 0
         ]);
 
@@ -196,18 +195,18 @@ class PostController extends Controller
             }
         }
 
+        $tags = $request->tags ?? [];
 
-        preg_match_all('/#(\w+)/', $request->description, $matches);
-        $tags = array_unique($matches[1]);
-        $tags = array_map('trim', $tags);
+        preg_match_all('/#(\w+)/', $description, $matches);
+        $tagsFromDescription = $matches[1] ?? [];
+        $tags = array_merge($tags, $tagsFromDescription);
+
+        $tags = array_map(fn($tag) => str_replace(' ', '_', trim($tag)), $tags);
+        $tags = array_filter($tags, fn($tag) => !empty($tag));
+        $tags = array_unique($tags);
 
         foreach ($tags as $tag_name) {
-            $db_tag = Tag::where('name', $tag_name)->first();
-            if ($db_tag === null) {
-                $db_tag = Tag::create([
-                    'name' => $tag_name,
-                ]);
-            }
+            $db_tag = Tag::firstOrCreate(['name' => $tag_name]);
             $db_tag->posts()->attach($post->id);
         }
 
