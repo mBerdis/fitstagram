@@ -44,6 +44,7 @@ class RegisteredUserController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'profile_picture' => 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png'
         ]);
 
         event(new Registered($user));

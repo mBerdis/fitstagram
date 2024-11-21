@@ -95,7 +95,7 @@ class GroupController extends Controller
             'description' => 'nullable|string|max:255',
         ]);
 
-        $imagePath = null;
+        $imagePath = 'https://cdn-icons-png.flaticon.com/512/615/615075.png'; // default group image
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
             $imageName = uniqid();
@@ -114,7 +114,7 @@ class GroupController extends Controller
 
         $group->members()->attach($user);
 
-        return Inertia::location(route('group', ['groupName' => $group->name]));
+        return Inertia::location(route('group', $group->name));
     }
 
     public function delete_group(Request $request, UserAuthenticationService $authService, GroupManagmentService $groupService)
