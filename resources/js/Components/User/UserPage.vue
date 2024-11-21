@@ -8,7 +8,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 defineProps({
   user: Object,
-  posts: Array,
+  posts: Object,
   isFriend: Number,
   friends: Array,
   groups: Array,

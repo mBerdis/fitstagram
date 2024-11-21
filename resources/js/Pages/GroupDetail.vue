@@ -6,9 +6,7 @@ import GenericFeed from '@/Components/Generic/GenericFeed.vue';
 import { Link, usePage } from '@inertiajs/vue3'
 import PopupWindow from '@/Components/Generic/PopupWindow.vue';
 import GroupRequestsList from '@/Components/Group/GroupRequestsList.vue';
-import GroupIcon from '@/Components/Icons/GroupIcon.vue';
 import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
 import FriendsIcon from '@/Components/Icons/FriendsIcon.vue';
 import AddFriendIcon from '@/Components/Icons/AddFriendIcon.vue';
 import TrashIcon from '@/Components/Icons/TrashIcon.vue';

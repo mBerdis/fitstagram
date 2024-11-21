@@ -5,7 +5,7 @@ import UserPage from '@/Components/User/UserPage.vue';
 
 defineProps({
   user: Object,
-  posts: Array,
+  posts: Object,
   isFriend: Number,
 
   // filled if has access

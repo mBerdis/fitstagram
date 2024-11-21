@@ -32,6 +32,7 @@ Route::post('/groups/update', [GroupController::class, 'update'])->name('group.u
 
 Route::get('/MyPage', [UserController::class, 'create'])->middleware(['auth', 'verified'])->name('MyPage');
 Route::get('/user/{username}', [UserController::class, 'detail'])->name('user');
+Route::post('/user/update', [UserController::class, 'update'])->name('user.update');
 Route::post('/user/update-role', [UserController::class, 'updateRole'])->name('user.updateRole');
 Route::post('/user/delete', [UserController::class, 'delete'])->name('user.delete');
 Route::get('/user/friendRequest/{username}', [FriendRequestController::class, 'send'])->middleware(['auth', 'verified'])->name('user.friendRequest');

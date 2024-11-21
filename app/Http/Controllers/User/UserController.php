@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Services\PostRetrievalService;
 use App\Services\UserAuthenticationService;
 use App\Models\Post;
@@ -77,6 +78,29 @@ class UserController extends Controller
             $user->save();
         }
         return;
+    }
+
+    public function update(Request $request, UserAuthenticationService $authService)
+    {
+        if (!Auth()->check())
+            return back()->with('error', 'Not logged in.');
+
+        $user = Auth()->user();
+
+        $imagePath = null;
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $imageName = uniqid();
+            Storage::disk('public')->put('uploads/' . $imageName, file_get_contents($photo));
+            $imagePath = '/storage/uploads/' . $imageName;
+        }
+
+        if($imagePath)
+            $user->profile_picture = $imagePath;
+
+        $user->update();
+
+        return back()->with('success', 'User updated.');
     }
 
     public function delete(Request $request,UserAuthenticationService $authService)
