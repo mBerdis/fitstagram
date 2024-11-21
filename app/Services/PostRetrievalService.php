@@ -138,6 +138,39 @@ class PostRetrievalService
         return $posts;
     }
 
+    public function get_tags_images(array $tags, $sort = 'newest')
+    {
+        $user = Auth::user() ?? (object) ['id' => -1];
+
+        // Získaj ID tagov z databázy
+        $tagModels = Tag::whereIn('name', $tags)->pluck('id');
+
+        if ($tagModels->isEmpty()) {
+            return collect(); // Ak nie sú žiadne tagy, vráť prázdnu kolekciu
+        }
+
+        // Vyhľadaj príspevky s aspoň jedným z tagov
+        $query = Post::with('owner', 'comments', 'tags', 'comments.user')
+            ->whereHas('tags', fn($query) => $query->whereIn('tags.id', $tagModels));
+
+        // Triedenie
+        $query = match ($sort) {
+            'rating' => $query->orderBy('like_count', 'desc'),
+            default => $query->orderBy('created_at', 'desc'),
+        };
+
+        // Načítaj a transformuj príspevky
+        $posts = $query->paginate(8);
+
+        $posts->getCollection()->transform(function ($post) use ($user) {
+            $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
+            unset($post->liked_by); // Odstráň reláciu liked_by
+            return $post;
+        });
+
+        return $posts;
+    }
+
     private function has_access($user_id): bool
     {
         if (!Auth::check())

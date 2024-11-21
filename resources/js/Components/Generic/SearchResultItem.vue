@@ -14,24 +14,24 @@ const data = defineProps({
 const handleClick = () => {
   switch (data.type) {
     case 'user':
-      router.visit(`/user/${data.name}`);
-      break;
+        router.visit(`/user/${data.name}`);
+        break;
     case 'group':
-      router.visit(`/groups/${data.name}`);
-      break;
+        router.visit(`/groups/${data.name}`);
+        break;
     case 'tag':
-    router.visit(`/tag/${data.name}`, {
-  method: 'get',  // Default is 'get', but can specify if needed
-  params: {
-    tag: data.name, // Pass the tag name to the new page
-    posts: data.posts, // Pass the posts
-  }
-});
-      break;
+        router.visit(`/tag/${data.name}`, {
+            method: 'get',  // Default is 'get', but can specify if needed
+            params: {
+                tag: data.name, // Pass the tag name to the new page
+            }
+        });
+        break;
     default:
       console.error('Invalid type provided to CardItem component.');
   }
 };
+
 </script>
 
 <style scoped>

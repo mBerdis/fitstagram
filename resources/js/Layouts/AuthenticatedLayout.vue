@@ -14,17 +14,47 @@ const isAuthenticated = !!props.auth.user;
 
 const search = ref(''); 
 
-const submitSearch = () =>
-{
-    if (search.value && search.value != "#")
-    {
+const submitSearch = () => {
+    if (!search.value || search.value === "#") {
+        
+        return;
+    }
+
+    const searchText = search.value.trim(); 
+    if (!searchText.startsWith("#")) {
+       
         router.visit('/search', {
             method: 'get',
-            data: { query: search.value },
+            data: { query: searchText },
             replace: false,
             preserveState: false,
             preserveScroll: false,
         });
+    } else {
+        
+        const tags = searchText.split(' ').filter(tag => tag.startsWith('#'));
+        console.log("Lenght", tags.length);
+
+        if (tags.length === 1) {
+            const tagName = tags[0].substring(1);
+
+            router.visit(`/tag/${tagName}`, {
+                method: 'get',
+                replace: false, // Nezamení aktuálnu históriu
+                preserveState: false, // Neponechá stav stránky
+                preserveScroll: false, // Neponechá pozíciu stránky
+            });
+            
+        } else if (tags.length > 1) {
+            const tagQuery = tags.map(tag => tag.substring(1)).join('+');
+            
+            router.visit(`/tags/${tagQuery}`, {
+                method: 'get',
+                replace: false,
+                preserveState: false,
+                preserveScroll: false,
+            });
+        }
     }
 };
 </script>

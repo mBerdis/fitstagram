@@ -10,7 +10,7 @@ const data = defineProps({
     viewed_from_group: String,
     group_role: Number,
     viewed_from_user: String,
-    viewed_tag: String,
+    viewed_tag: Array,
 });
 
 const sortBy = ref('rating');
@@ -19,7 +19,6 @@ const sortBy = ref('rating');
 onMounted(() => {
     const { query } = usePage().props;
     console.log("Aktuálne query:", query);
-
 
     if (!query.sort) {
         console.log("neni sort, ukladám predvolený do localStorage");
@@ -33,26 +32,52 @@ onMounted(() => {
 });
 
 
-
-
 const changeSortOrder = (order) => {
-    console.log("CHANGED SORT")
+    console.log("CHANGED SORT");
     sortBy.value = order;
     localStorage.setItem('sort', order);
 
-
     if (data.viewed_from_group) {
-        router.get(route('group', { groupName: data.viewed_from_group, sort: order }), { only: ['posts'] });
-    } else if (data.viewed_from_user) {
-        router.get(route('user', { username: data.viewed_from_user, sort: order }), { only: ['posts'] });
+        console.log(data.viewed_from_group);
+        router.get(
+            route('group', data.viewed_from_group, { groupName: data.viewed_from_group, sort: order }),
+            { only: ['posts'] }
+        );
+    } 
+    else if (data.viewed_from_user) {
+        router.get(
+            route('user', { username: data.viewed_from_user, sort: order }),
+            { only: ['posts'] }
+        );
+    } 
+    else if (data.viewed_from_myPage) {
+        router.get(
+            route('user', { username: data.viewed_from_user, sort: order }),
+            { only: ['posts'] }
+        );
+    } 
+    else if(data.viewed_tag){
+        if (data.viewed_tag.length === 1) {
+            router.get(
+                route('tag.posts', { tag: data.viewed_tag, sort: order }), // Použite existujúcu routu pre jeden tag
+                { only: ['posts'] }
+            );
+        } 
+        else if (data.viewed_tag.length > 1) {
+            router.get(
+                route('tags.posts', { tags: data.viewed_tag.join('+'), sort: order }), // Použite existujúcu routu pre viac tagov
+                { only: ['posts'] }
+            );
+        } 
     }
-     else if (data.viewed_tag) {
-        //router.get(route('user', { username: data.viewed_from_user, sort: order }), { only: ['posts'] });
-    }
-     else {
-        router.get(route('feed', { sort: order }), { only: ['posts'] });
+    else {
+        router.get(
+            route('feed', { sort: order }),
+            { only: ['posts'] }
+        );
     }
 };
+
 </script>
 
 <template>
