@@ -19,31 +19,7 @@ const props = defineProps({
       </h2>
     </template>
 
-    <GenericFeed :posts="posts.data" :viewed_tag="tag"/>
+    <GenericFeed :posts="posts" :viewed_tag="tag"/>
 
-    <!-- Pagination Controls -->
-    <div class="pagination">
-      <Link
-        v-if="posts.prev_page_url"
-        class="flex items-center space-x-2 cursor-pointer bg-blue"
-        :href="posts.prev_page_url"
-        :only="['posts']"
-        as="button"
-        type="button"
-      >
-        Previous
-      </Link>
-
-      <Link
-        v-if="posts.next_page_url"
-        class="flex items-center space-x-2 cursor-pointer bg-blue"
-        :href="posts.next_page_url"
-        :only="['posts']"
-        as="button"
-        type="button"
-      >
-        Next
-      </Link>
-    </div>
   </AuthenticatedLayout>
 </template>

@@ -159,4 +159,41 @@ class GroupController extends Controller
 
         return back()->with('success', 'Post removed from the group.');
     }
+
+    public function update(Request $request, UserAuthenticationService $authService, GroupManagmentService $groupService)
+    {
+        $request->validate([
+            'group_id' => 'required|exists:groups,id',
+            'name' => 'required|string|max:255|unique:groups,name,' . $request->group_id, // Ignore current group ID
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $group          = Group::findOrFail($request->group_id);
+
+        $status         = $groupService->get_membership_status($group->id);
+        $loggedUserID   = Auth()->check() ? Auth()->user()->id : -1;
+
+        if (! ($status->value === GroupMembership::OWNER->value) &&
+            !$authService->role_access(UserRole::MODERATOR))
+            return back()->with('error', 'Insufficient rights.');
+
+        $imagePath = null;
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $imageName = uniqid();
+            Storage::disk('public')->put('uploads/' . $imageName, file_get_contents($photo));
+            $imagePath = '/storage/uploads/' . $imageName;
+        }
+
+        if($imagePath)
+            $group->profile_picture = $imagePath;
+
+        $group->name            = $request->name;
+        $group->description     = $request->description;
+
+        $group->update();
+
+        return redirect()->route('group', ['name' => $group->name])
+        ->with('success', 'Group updated.');
+    }
 }

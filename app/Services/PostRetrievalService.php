@@ -13,7 +13,7 @@ use App\Enums\FriendStatus;
 
 class PostRetrievalService
 {
-  
+
     public function get_personal_feed($sort = 'newest')
     {
         if (Auth::check()) {
@@ -35,7 +35,7 @@ class PostRetrievalService
             };
 
             // Paginate the posts
-            $posts = $query->paginate(20);
+            $posts = $query->paginate(8);
 
             // Map over the posts to add the `liked_by_user` attribute
             $posts->getCollection()->transform(function ($post) use ($user) {
@@ -51,7 +51,7 @@ class PostRetrievalService
         return Post::with('owner', 'comments', 'comments.user', 'tags')
             ->where('is_public', true)
             ->orderBy($sort === 'rating' ? 'like_count' : 'created_at', 'desc')
-            ->paginate(20);
+            ->paginate(8);
     }
 
 
@@ -73,11 +73,17 @@ class PostRetrievalService
             $query->orderByDesc('created_at'); // Predvolené triedenie podľa dátumu
         }
 
-        return $query->get()->map(function ($post) use ($user) {
+        // Use pagination
+        $paginatedPosts = $query->paginate(8);
+
+        // Map through the paginated items to add additional data
+        $paginatedPosts->getCollection()->transform(function ($post) use ($user) {
             $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
             unset($post->liked_by);
             return $post;
         });
+
+        return $paginatedPosts;
     }
 
     public function get_group_images($group_id, $sort = 'newest')
@@ -93,12 +99,17 @@ class PostRetrievalService
             $query->orderByDesc('created_at'); // Predvolené zoradenie
         }
 
-        return $query->get()
-            ->map(function ($post) use ($user) {
-                $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
-                unset($post->liked_by);
-                return $post;
-            });
+        // Use pagination
+        $paginatedPosts = $query->paginate(8);
+
+        // Map through the paginated items to add additional data
+        $paginatedPosts->getCollection()->transform(function ($post) use ($user) {
+            $post->liked_by_user = $post->liked_by()->where('user_id', $user->id)->exists();
+            unset($post->liked_by);
+            return $post;
+        });
+
+        return $paginatedPosts;
     }
 
     public function get_tag_images(Tag $tag, $sort = 'newest')
@@ -115,7 +126,7 @@ class PostRetrievalService
         };
 
         // Paginate the posts
-        $posts = $query->paginate(10);
+        $posts = $query->paginate(8);
 
         // Transform the posts (add liked_by_user flag)
         $posts->getCollection()->transform(function ($post) use ($user) {

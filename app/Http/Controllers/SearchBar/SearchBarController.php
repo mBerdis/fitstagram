@@ -29,7 +29,7 @@ class SearchBarController extends Controller
                 $postsQuery->whereHas('tags', fn($q) => $q->where('name', 'like',  $term ));
             }
 
-            $posts = $postsQuery->with('owner', 'comments', 'tags')->paginate(10);
+            $posts = $postsQuery->with('owner', 'comments', 'tags')->paginate(8);
 
             return Inertia::render('TagPosts', [
                 'tag' => implode(', ', $tagTerms), // Zobrazí hľadané tagy
