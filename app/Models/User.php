@@ -94,4 +94,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Post::class , 'post_user');
     }
+
+    /**
+     * Get the search history of the user.
+     *
+     * @return HasMany
+     */
+    public function searchHistory(): HasMany
+    {
+        return $this->hasMany(SearchHistory::class);
+    }
 }
