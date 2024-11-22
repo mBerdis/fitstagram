@@ -53,6 +53,7 @@ Route::delete('/tags/delete', [TagController::class, 'delete_more_tags'])->middl
 Route::post('/post/add_tag', [PostController::class, 'add_tag'])->middleware(['auth', 'verified'])->name('post.addTag');
 Route::post('/post/delete_tag', [PostController::class, 'delete_tag'])->middleware(['auth', 'verified'])->name('post.delete_tag');
 Route::post('/post/toggle_like', [PostController::class, 'toggle_like'])->middleware(['auth', 'verified'])->name('post.toggle_like');
+Route::post('/post/toggle_is_public', [PostController::class, 'toggle_is_public'])->middleware(['auth', 'verified'])->name('post.toggle_is_public');
 Route::post('/post/edit_description', [PostController::class, 'edit_description'])->middleware(['auth', 'verified'])->name('post.editDescription');
 Route::delete('/post/delete', [PostController::class, 'delete_post'])->middleware(['auth', 'verified'])->name('post.delete');
 Route::delete('/comment/delete', [CommentController::class, 'delete_comment'])->middleware(['auth', 'verified'])->name('comment.delete');

@@ -161,6 +161,21 @@ const editDescription = () => {
             Remove from group
     </Link>
 
+    <Link v-if="canEdit()"
+            class="px-3 py-1 bg-red-500 text-white rounded-md"
+            method="post"
+            href="/post/toggle_is_public"
+            :data="{
+                post_id: post.id
+            }"
+            :only="['posts']"
+            :preserveScroll="true"
+            as="button"
+            type="button"
+        >
+            {{ post.is_public ? 'Make Private' : 'Make Public' }}
+    </Link>
+
     <div class="flex flex-col md:flex-row">
       <!-- Image section -->
       <div class="">
