@@ -2,11 +2,41 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import GenericFeed from '@/Components/Generic/GenericFeed.vue';
+import { Link, usePage} from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 
-const props = defineProps({
+const data = defineProps({
   tags: Array, // Informácie o tagu
   posts: Object, // Paginované príspevky
 });
+
+const { props } = usePage();
+
+const loggedUserRole = computed(() => {
+    return props.auth?.user?.role ?? null; // Return null if role is not available
+});
+
+const canDelete = () => {
+  return loggedUserRole.value !== null && loggedUserRole.value >= 3;
+};
+
+const roleOptions = [
+  { label: 'Banned', value: 0 },
+  { label: 'Silent', value: 1 },
+  { label: 'User', value: 2 },
+  { label: 'Mod', value: 3 },
+  { label: 'Admin', value: 4 },
+];
+
+const deleteRoute = () => {
+  if (data.tags.length === 1) {
+    return `/tag/delete/`;
+  } else {
+    return `/tags/delete`;
+  }
+};
+
+
 </script>
 
 <template>
@@ -18,6 +48,22 @@ const props = defineProps({
         Search Results for tag "{{ tags.join(', ') }}"
       </h2>
     </template>
+
+    <div v-if="canDelete()">
+        <Link
+        v-if="canDelete"
+        class="px-3 py-1 bg-red-500 text-white rounded-md"
+        :href="deleteRoute()"
+        method="delete"
+        :data="{ tags: data.tags }"
+        :only="['posts']"
+        :preserveScroll="true"
+        as="button"
+        type="button"
+      >
+        Delete "{{ tags.join(', ') }}"
+      </Link>
+    </div>
 
     <GenericFeed :posts="posts" :viewed_tag="tags"/>
 

@@ -11,6 +11,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Searchbar\SearchBarController;
+use App\Http\Controllers\Tag\TagController;
+
 
 Route::get('/', [PostController::class, 'create']);
 
@@ -44,6 +46,9 @@ Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->n
 Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
 Route::get('/tag/{tag:name}', [SearchBarController::class, 'showPostsByTag'])->name('tag.posts');
 Route::get('/tags/{tags}', [SearchBarController::class, 'showPostsByTags'])->name('tags.posts');
+Route::delete('/tag/delete', [TagController::class, 'delete_one_tag'])->middleware(['auth', 'verified'])->name('tag.delete');
+Route::delete('/tags/delete', [TagController::class, 'delete_more_tags'])->middleware(['auth', 'verified'])->name('tags.delete');
+
 
 Route::post('/post/add_tag', [PostController::class, 'add_tag'])->middleware(['auth', 'verified'])->name('post.addTag');
 Route::post('/post/delete_tag', [PostController::class, 'delete_tag'])->middleware(['auth', 'verified'])->name('post.delete_tag');
