@@ -29,8 +29,8 @@ class PostController extends Controller
             'posts' => $posts,
             'query' => ['sort' => $sort]
         ]);
-        
-        
+
+
     }
 
 
@@ -57,6 +57,32 @@ class PostController extends Controller
         } else {
             $post->liked_by()->attach($user->id);
             $post->like_count++;
+        }
+        $post->save();
+
+        return;
+    }
+
+    public function toggle_is_public(Request $request, UserAuthenticationService $authService)
+    {
+
+        $validated = $request->validate([
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $post = Post::find($validated['post_id']);
+        $user = auth()->user();
+
+        // verify user has rights
+        if ( !($post->owner->id === $user->id))
+        {
+            return back()->with('error', 'User has unsufficient edit rights.');
+        }
+
+        if ($post->is_public) {
+            $post->is_public = false;
+        } else {
+            $post->is_public = true;
         }
         $post->save();
 
