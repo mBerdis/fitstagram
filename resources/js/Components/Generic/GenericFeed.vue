@@ -43,32 +43,32 @@ const changeSortOrder = (order) => {
             route('group',data.viewed_from_group, { sort: order }), // Ensure `order` is passed here
             { only: ['posts'] }
         );
-    } 
+    }
     else if (data.viewed_from_user) {
         router.get(
             route('user', { username: data.viewed_from_user, sort: order }),
             { only: ['posts'] }
         );
-    } 
+    }
     else if (data.viewed_from_myPage) {
         router.get(
             route('user', { username: data.viewed_from_user, sort: order }),
             { only: ['posts'] }
         );
-    } 
+    }
     else if(data.viewed_tag){
         if (data.viewed_tag.length === 1) {
             router.get(
                 route('tag.posts', { tag: data.viewed_tag, sort: order }), // Použite existujúcu routu pre jeden tag
                 { only: ['posts'] }
             );
-        } 
+        }
         else if (data.viewed_tag.length > 1) {
             router.get(
                 route('tags.posts', { tags: data.viewed_tag.join('+'), sort: order }), // Použite existujúcu routu pre viac tagov
                 { only: ['posts'] }
             );
-        } 
+        }
     }
     else {
         router.get(
@@ -116,35 +116,41 @@ const changeSortOrder = (order) => {
             <Post :post="post" :viewed_from_group="viewed_from_group" :group_role="group_role" />
           </div>
         </div>
-      </div>
-    </div>
 
     <!-- Pagination Controls -->
-    <div class="pagination">
+    <div
+        :class="{
+        'flex justify-between': posts.prev_page_url && posts.next_page_url,
+        'flex justify-start': posts.prev_page_url && !posts.next_page_url,
+        'flex justify-end': !posts.prev_page_url && posts.next_page_url
+    }"
+    >
         <Link
             v-if="posts.prev_page_url"
-            class="flex items-center space-x-2 cursor-pointer bg-blue"
+            class="inline-flex items-center rounded-md border border-gray-300 m-2 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-800"
+            as="button" type="button"
 
             :href="posts.prev_page_url"
             :only="['posts']"
-            as="button"
-            type="button"
         >
-            Previous
+            Previous Page
         </Link>
 
       <Link
             v-if="posts.next_page_url"
-            class="flex items-center space-x-2 cursor-pointer bg-blue"
+            class="inline-flex items-center rounded-md border border-gray-300 m-2 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-800"
+            as="button" type="button"
 
             :href="posts.next_page_url"
             :only="['posts']"
-            as="button"
-            type="button"
         >
-            Next
+            Next Page
         </Link>
+
+        </div>
+      </div>
     </div>
+
   </div>
 </template>
 

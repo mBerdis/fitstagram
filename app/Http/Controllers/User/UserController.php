@@ -25,7 +25,7 @@ class UserController extends Controller
 
     public function detail(Request $request, PostRetrievalService $postService, UserAuthenticationService $authService)
     {
-        if (!$authService->role_access(UserRole::SILENCED)) {
+        if (!$authService->role_access(UserRole::SILENCED) && Auth()->check()) {
             return back();
         }
 
