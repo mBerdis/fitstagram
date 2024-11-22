@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Post;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
@@ -185,15 +186,28 @@ class PostController extends Controller
         }
         $user = auth()->user();
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'description' => 'nullable|string|max:255',
             'photoUrl' => 'nullable|url',
+            'photo' => 'nullable|file|image|max:5120', // Ensure 'photo' is an image file (max 5MB)
             'group_ids' => 'nullable|array',
             'group_ids.*' => 'integer',
             'is_public' => 'boolean',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50'
         ]);
+
+        // Add a custom validation rule to ensure either 'photo' or 'photoUrl' is provided
+        $validator->after(function ($validator) use ($request) {
+            if (!$request->filled('photoUrl') && !$request->hasFile('photo')) {
+                $validator->errors()->add('photo', 'You must provide either a photo file or a photo URL.');
+            }
+        });
+
+        // Check for validation errors
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
         $description = $request->description ?? "";
         $imagePath = null;
