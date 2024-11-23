@@ -26,14 +26,11 @@ const submitSearch = () => {
     if (query.startsWith('#')) {
         const tags = query.split(' ').filter(tag => tag.startsWith('#')).map(tag => tag.slice(1));
         if (tags.length > 1) {
-            // Pomenovaná routa pre viac tagov
             router.visit(route('tags.posts', { tags: tags.join('+') }), { method: 'get', data: { query }, replace: false });
         } else {
-            // Pomenovaná routa pre jeden tag
             router.visit(route('tag.posts', { name: tags[0] }), { method: 'get', data: { query }, replace: false });
         }
     } else {
-        // Pomenovaná routa pre všeobecné vyhľadávanie
         router.visit(route('search.results'), { method: 'get', data: { query }, replace: false });
     }
     historyVisible.value = false;
@@ -49,14 +46,13 @@ const selectHistory = (selectedQuery) => {
 const fetchSearchHistory = async () => {
     if (isAuthenticated) {
         try {
-            const response = await axios.get('/search-history');
+            const response = await axios.get(route('search.history'));
             history.value = response.data;
             historyVisible.value = true;
         } catch (error) {
             console.error('Error fetching search history:', error);
         }
     }
-    
 };
 
 const handleClickOutside = (event) => {
@@ -148,7 +144,7 @@ onUnmounted(() => {
                                 </template>
 
                                 <template #content>
-                                    <DropdownLink :href="route('profile.edit')">Profile</DropdownLink>
+                                    <DropdownLink :href="route('profile.edit')">Settings</DropdownLink>
                                     <DropdownLink :href="route('logout')" method="post" as="button">Log Out</DropdownLink>
                                 </template>
                             </Dropdown>
