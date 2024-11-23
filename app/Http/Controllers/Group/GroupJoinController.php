@@ -95,6 +95,7 @@ class GroupJoinController extends Controller
 
         // verify user has rights
         if ( !($status === GroupMembership::OWNER)              // is not owner and
+            && !($loggedUserID === $user->id)                   // is not modifying himself
             && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
         {
             return back()->with('error', 'User has unsufficient edit rights.');
