@@ -13,7 +13,7 @@ const data = defineProps({
 });
 
 const handleClick = () => {
-    router.visit(route('tag.posts', { tag: data.tag.name }), {
+    router.visit(route('tag.posts', { name: data.tag.name }), {
         method: 'get', // Optional: GET is the default HTTP method
     });
 };
