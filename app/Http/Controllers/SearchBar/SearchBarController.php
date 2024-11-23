@@ -11,6 +11,13 @@ use App\Models\Group;
 use App\Models\Tag;
 use App\Models\Post;
 use App\Services\PostRetrievalService;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\RedirectResponse;
+use App\Models\Comment;
+use Inertia\Response;
+use App\Enums\UserRole;
+use App\Services\UserAuthenticationService;
 
 class SearchBarController extends Controller
 {
@@ -50,9 +57,18 @@ class SearchBarController extends Controller
         ]);
     }
 
-    public function showPostsByTag(Request $request, Tag $tag, PostRetrievalService $postService)
+    public function showPostsByTag(Request $request, $name, PostRetrievalService $postService)
     {
-        $query = $request->input('query', null);
+        
+        $tag = Tag::where('name', $name)->first();
+
+        if (!$tag) {
+            
+            return redirect()->route('search.results')
+                ->with('error', 'The specified tag does not exist.');
+        }
+
+        $query = $request->query('query', null);
 
         $user = auth()->user();
         if ($user && $query) {

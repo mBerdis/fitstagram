@@ -18,19 +18,27 @@ const history = ref([]);
 const historyVisible = ref(false);
 const searchForm = ref(null);
 
+
 const submitSearch = () => {
     if (!search.value || search.value === '#') return;
     const query = search.value.trim();
 
     if (query.startsWith('#')) {
         const tags = query.split(' ').filter(tag => tag.startsWith('#')).map(tag => tag.slice(1));
-        const tagPath = tags.length > 1 ? `/tags/${tags.join('+')}` : `/tag/${tags[0]}`;
-        router.visit(tagPath, { method: 'get', data: { query }, replace: false });
+        if (tags.length > 1) {
+            // Pomenovaná routa pre viac tagov
+            router.visit(route('tags.posts', { tags: tags.join('+') }), { method: 'get', data: { query }, replace: false });
+        } else {
+            // Pomenovaná routa pre jeden tag
+            router.visit(route('tag.posts', { name: tags[0] }), { method: 'get', data: { query }, replace: false });
+        }
     } else {
-        router.visit('/search', { method: 'get', data: { query }, replace: false });
+        // Pomenovaná routa pre všeobecné vyhľadávanie
+        router.visit(route('search.results'), { method: 'get', data: { query }, replace: false });
     }
     historyVisible.value = false;
 };
+
 
 const selectHistory = (selectedQuery) => {
     search.value = selectedQuery;

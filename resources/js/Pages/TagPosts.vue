@@ -50,10 +50,23 @@ const deleteRoute = () => {
     </template>
 
     <div v-if="canDelete()">
-        <Link
-        v-if="canDelete"
+      <Link
+        v-if="tags.length === 1"
         class="px-3 py-1 bg-red-500 text-white rounded-md"
-        :href="deleteRoute()"
+        :href="route('tag.delete')"
+        method="delete"
+        :data="{ tags: data.tags }"
+        :only="['posts']"
+        :preserveScroll="true"
+        as="button"
+        type="button"
+      >
+        Delete "{{ tags[0] }}"
+      </Link>
+      <Link
+        v-else
+        class="px-3 py-1 bg-red-500 text-white rounded-md"
+        :href="route('tags.delete')"
         method="delete"
         :data="{ tags: data.tags }"
         :only="['posts']"

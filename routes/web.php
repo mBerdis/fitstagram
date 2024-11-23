@@ -47,7 +47,7 @@ Route::post('/unfriend', [FriendRequestController::class, 'unfriend'])->name('un
 
 Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');
 
-Route::get('/tag/{tag:name}', [SearchBarController::class, 'showPostsByTag'])->name('tag.posts');
+Route::get('/tag/{name}', [SearchBarController::class, 'showPostsByTag'])->name('tag.posts');
 Route::get('/tags/{tags}', [SearchBarController::class, 'showPostsByTags'])->name('tags.posts');
 Route::delete('/tag/delete', [TagController::class, 'delete_one_tag'])->middleware(['auth', 'verified'])->name('tag.delete');
 Route::delete('/tags/delete', [TagController::class, 'delete_more_tags'])->middleware(['auth', 'verified'])->name('tags.delete');
