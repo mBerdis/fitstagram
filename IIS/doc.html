@@ -127,8 +127,13 @@
         <li>
             Front End aplikácie sa nachádza v prieèinku <b>resources/</b>
         </li>
+
         <li>
             Inertia Routes sú definované v súbore <b>routes/web.php</b>, priradzujú metódy controlleru k ceste
+        </li>
+
+        <li>
+            Pre prácu s DB pou¾ívame ORM, ktorého modely sú v prieèinku <b>app/Models/</b> a databáza sa tvorí z migrácií v prieèinku <b>database/migrations/</b>
         </li>
 
         <li>
@@ -171,6 +176,10 @@
     </li>
     <ol>
         <li>
+            <b>composer install</b>, ktorý stiahne vendor súbory
+        </li>
+
+        <li>
             <b>npm install</b>, ktorý stiahne .js balíèky
         </li>
         <li>
@@ -210,8 +219,11 @@
 </ul>
 
 <h2>Známé problémy</h2>
-<p>Zde popi¹te, které body zadání nejsou implementovány a z jakého dùvodu. Napø. &#8222;Z èasových dùvodù nebyla implementována správa u¾ivatelù.&#8221; Pomù¾ete tím zrychlit hodnocení, kdy¾ neimplementované funkce nebudeme muset dlouze hledat.</p>
 
+<ul>
+    <li>Admin vie zmaza» vlastný úèet a zmeni» si rolu.</li>
+    <li>Prida» príspevok do skupín je mo¾né iba pri jeho tvorbe. Av¹ak odstráni» ho zo skupiny sa dá kedykoµvek.</li>
+</ul>
 
 
 </body></html>
