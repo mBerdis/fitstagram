@@ -10,7 +10,7 @@ import { Link, usePage,useForm } from '@inertiajs/vue3';
 
 const data = defineProps({
   post: Object, // Expecting the post object as a prop
-  viewed_from_group: Number, // group ID, present if post was viewed though group detail page, used for removing post from group
+  viewed_from_group: String, // group name, present if post was viewed though group detail page, used for removing post from group
   group_role: Number         // group role, present if post was viewed though group detail page, used for removing post from group
 });
 
@@ -145,11 +145,11 @@ const editDescription = () => {
 
     <Link v-if="canRemoveFromGroup()"
             class="px-3 py-1 bg-red-500 text-white rounded-md"
-            :href="route('group.post.remove', { post_id: post.id, group_id: viewed_from_group})"
+            :href="route('group.post.remove', { post_id: post.id, group_name: viewed_from_group})"
             method="delete"
             :data="{
                 post_id: post.id,
-                group_id: viewed_from_group
+                group_name: viewed_from_group
             }"
             :only="['posts']"
             :preserveScroll="true"

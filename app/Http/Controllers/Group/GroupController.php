@@ -141,11 +141,11 @@ class GroupController extends Controller
     public function remove_post(Request $request, UserAuthenticationService $authService, GroupManagmentService $groupService)
     {
         $request->validate([
-            'group_id' => 'required|exists:groups,id',
+            'group_name' => 'required|exists:groups,name',
             'post_id' => 'required|exists:posts,id',
         ]);
 
-        $group          = Group::findOrFail($request->group_id);
+        $group          = Group::where('name', $request->group_name)->firstOrFail();
         $post           = Post::findOrFail($request->post_id);
 
         $status         = $groupService->get_membership_status($group->id);
