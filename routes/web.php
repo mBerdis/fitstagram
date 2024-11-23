@@ -53,6 +53,8 @@ Route::delete('/tag/delete', [TagController::class, 'delete_one_tag'])->middlewa
 Route::delete('/tags/delete', [TagController::class, 'delete_more_tags'])->middleware(['auth', 'verified'])->name('tags.delete');
 Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
 Route::middleware(['auth', 'verified'])->get('/search-history', [SearchBarController::class, 'showSearchHistory'])->name('search.history');
+Route::middleware(['auth', 'verified'])->delete('/search-history/{id}', [SearchBarController::class, 'removeSearchHistory'])->name('search.history.remove');
+
 
 
 

@@ -119,6 +119,18 @@ class SearchBarController extends Controller
         return response()->json($searchHistory);
     }
 
+    public function removeSearchHistory($id)
+    {
+        $history = auth()->user()->searchHistory()->find($id);
+
+        if ($history) {
+            $history->delete();
+            return response()->json(['message' => 'Search history removed successfully']);
+        }
+
+        return response()->json(['message' => 'History not found'], 404);
+    }
+
 }
 
 

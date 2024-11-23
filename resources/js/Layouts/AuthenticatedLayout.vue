@@ -19,6 +19,21 @@ const historyVisible = ref(false);
 const searchForm = ref(null);
 
 
+const selectHistory = async (selectedQuery, id) => {
+    search.value = selectedQuery;
+    historyVisible.value = false;
+    
+    if (isAuthenticated) {
+        try {
+            await axios.delete(route('search.history.remove', { id }));
+        } catch (error) {
+            console.error('Error removing old search history:', error);
+        }
+    }
+
+    submitSearch();
+};
+
 const submitSearch = () => {
     if (!search.value || search.value === '#') return;
     const query = search.value.trim();
@@ -34,26 +49,39 @@ const submitSearch = () => {
         router.visit(route('search.results'), { method: 'get', data: { query }, replace: false });
     }
     historyVisible.value = false;
+
+    
 };
 
-
-const selectHistory = (selectedQuery) => {
-    search.value = selectedQuery;
-    historyVisible.value = false;
-    submitSearch();
-};
 
 const fetchSearchHistory = async () => {
     if (isAuthenticated) {
         try {
             const response = await axios.get(route('search.history'));
-            history.value = response.data;
+            history.value = response.data.map(item => ({
+                ...item,
+                showRemoveButton: false,
+            }));
             historyVisible.value = true;
         } catch (error) {
             console.error('Error fetching search history:', error);
         }
     }
 };
+
+const removeHistory = async (id) => {
+    try {
+        await axios.delete(route('search.history.remove', { id }));
+
+        history.value = history.value.filter(item => item.id !== id);
+
+        fetchSearchHistory();
+
+    } catch (error) {
+        console.error('Error removing search history:', error);
+    }
+};
+
 
 const handleClickOutside = (event) => {
     if (searchForm.value && !searchForm.value.contains(event.target)) {
@@ -108,19 +136,32 @@ onUnmounted(() => {
 
                         <!-- Search History Dropdown -->
                         <ul
-                            v-if="historyVisible"
+                            v-if="historyVisible && history.length != 0"
                             class="absolute left-0 search-history top-full mt-1 w-full max-h-100 bg-white border border-gray-300 rounded-md shadow-lg overflow-y-auto dark:bg-gray-700 dark:border-gray-600"
                         >
                             <li
                                 v-for="item in history"
                                 :key="item.id"
-                                @click="selectHistory(item.query)"
-                                class="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                                @mouseenter="item.showRemoveButton = true" 
+                                @mouseleave="item.showRemoveButton = false" 
+                                class="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 relative"
+                                @click="selectHistory(item.query, item.id)"
                             >
                                 {{ item.query }}
+                                <!-- Remove Button -->
+                                <button
+                                    v-if="item.showRemoveButton"
+                                    @click.stop="removeHistory(item.id)"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                                >
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
                             </li>
                         </ul>
                     </form>
+
 
                 </div>
 

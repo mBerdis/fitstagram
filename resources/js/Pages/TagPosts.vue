@@ -20,13 +20,6 @@ const canDelete = () => {
   return loggedUserRole.value !== null && loggedUserRole.value >= 3;
 };
 
-const roleOptions = [
-  { label: 'Banned', value: 0 },
-  { label: 'Silent', value: 1 },
-  { label: 'User', value: 2 },
-  { label: 'Mod', value: 3 },
-  { label: 'Admin', value: 4 },
-];
 
 const deleteRoute = () => {
   if (data.tags.length === 1) {
