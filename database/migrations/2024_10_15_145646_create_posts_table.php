@@ -25,8 +25,8 @@ return new class extends Migration
 
         Schema::create('post_user', function (Blueprint $table) { // liked posts
             $table->id(); // Primary key
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('post_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

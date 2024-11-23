@@ -36,7 +36,7 @@ const canDelete = () => {
       <Link v-if="canDelete()"
             class="px-3 py-1 bg-red-500 text-white rounded-md"
 
-            href="/comment/delete"
+            :href="route('comment.delete', { id: comment.id })"
             method="delete"
             :data="{
                 comment_id: comment.id

@@ -130,8 +130,7 @@ const editDescription = () => {
 
     <Link v-if="canDelete()"
             class="px-3 py-1 bg-red-500 text-white rounded-md"
-
-            href="/post/delete"
+            :href="route('post.delete', { post_id: post.id })"
             method="delete"
             :data="{
                 post_id: post.id
@@ -146,8 +145,7 @@ const editDescription = () => {
 
     <Link v-if="canRemoveFromGroup()"
             class="px-3 py-1 bg-red-500 text-white rounded-md"
-
-            href="/groups/post/remove"
+            :href="route('group.post.remove', { post_id: post.id, group_id: viewed_from_group})"
             method="delete"
             :data="{
                 post_id: post.id,
@@ -164,7 +162,7 @@ const editDescription = () => {
     <Link v-if="canEdit()"
             class="px-3 py-1 bg-red-500 text-white rounded-md"
             method="post"
-            href="/post/toggle_is_public"
+            :href="route('post.toggle_is_public', { post_id: post.id})"
             :data="{
                 post_id: post.id
             }"

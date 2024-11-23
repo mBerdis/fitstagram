@@ -32,7 +32,7 @@ function toggleLike(event) {
     <Link
       class="px-1 py-0.5 rounded-md"
       :class="liked ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700'"
-      href="/post/toggle_like"
+    :href="route('post.toggle_like', { post_id: props.post.id })"
       method="post"
       :data="{ post_id: props.post.id }"
       :preserve-scroll="true"

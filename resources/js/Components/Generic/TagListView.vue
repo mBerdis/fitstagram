@@ -13,7 +13,12 @@ const data = defineProps({
 });
 
 const handleClick = () => {
-    router.visit(`/tag/${data.tag.name}`);
+    router.visit(`/tag/${data.tag.name}`, {
+            method: 'get',  // Default is 'get', but can specify if needed
+            params: {
+                tag: data.tag.name, // Pass the tag name to the new page
+            }
+        });
 };
 
 </script>
@@ -30,7 +35,7 @@ const handleClick = () => {
         <Link
             v-if="can_delete"
             class="text-gray-700 ml-1 text-lg leading-none relative hover:text-red-500 transition"
-            href="/post/delete_tag"
+            :href="route('post.delete_tag', { post_id: data.tag.pivot.post_id, tag_id: data.tag.id })"
             as="button"
             method="post"
             :data="{ post_id: data.tag.pivot.post_id, tag_id: data.tag.id }"
