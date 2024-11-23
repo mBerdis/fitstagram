@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Searchbar;
+namespace App\Http\Controllers\SearchBar;
 
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -21,7 +21,7 @@ use App\Services\UserAuthenticationService;
 
 class SearchBarController extends Controller
 {
-    
+
 
     public function showResults(Request $request)
     {
@@ -29,7 +29,7 @@ class SearchBarController extends Controller
         $request->validate([
             'query' => 'required|string|max:255',
         ]);
-    
+
         $user = auth()->user();
         if ($user) {
             $user->searchHistory()->create(['query' => $request->input('query')]);
@@ -39,7 +39,7 @@ class SearchBarController extends Controller
 
         $terms = explode(' ', $query);
 
-        
+
         $results = [
             'users' => User::where('username', 'like', '%' . $query . '%')->get(),
             'groups' => Group::where('name', 'like', '%' . $query . '%')->get(),
@@ -49,7 +49,7 @@ class SearchBarController extends Controller
                 return $tag;
             }),
         ];
-        
+
 
         return Inertia::render('SearchResults', [
             'initialQuery' => $query,
@@ -59,11 +59,11 @@ class SearchBarController extends Controller
 
     public function showPostsByTag(Request $request, $name, PostRetrievalService $postService)
     {
-        
+
         $tag = Tag::where('name', $name)->first();
 
         if (!$tag) {
-            
+
             return redirect()->route('search.results')
                 ->with('error', 'The specified tag does not exist.');
         }
@@ -77,10 +77,10 @@ class SearchBarController extends Controller
 
         $sort = $request->query('sort', 'newest');
 
-        
+
         $posts = $postService->get_tag_images($tag, $sort);
 
-       
+
         return Inertia::render('TagPosts', [
             'tags' => [$tag->name],
             'posts' => $posts,
@@ -93,7 +93,7 @@ class SearchBarController extends Controller
         $request->validate([
             'query' => 'required|string|max:255',
         ]);
-    
+
         $user = auth()->user();
         if ($user) {
             $user->searchHistory()->create(['query' => $request->input('query')]);
@@ -104,7 +104,7 @@ class SearchBarController extends Controller
         $sort = $request->query('sort', 'newest');
         $posts = $postService->get_tags_images($tagArray, $sort);
 
-        
+
         return Inertia::render('TagPosts', [
             'tags' => $tagArray,
             'posts' => $posts,

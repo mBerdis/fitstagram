@@ -10,7 +10,7 @@ use App\Http\Controllers\User\FriendRequestController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\Searchbar\SearchBarController;
+use App\Http\Controllers\SearchBar\SearchBarController;
 use App\Http\Controllers\Tag\TagController;
 
 
