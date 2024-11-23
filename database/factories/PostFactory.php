@@ -28,7 +28,7 @@ class PostFactory extends Factory
         Storage::disk('public')->put('uploads/' . $imageName, $imageContent);
 
         // Return the image path (or you can save this path in your database)
-        $imagePath = '/storage/uploads/' . $imageName;
+        $imagePath = env('DB_STORAGE_PATH') . $imageName;
 
         return [
             'user_id' => User::inRandomOrder()->first()->id,

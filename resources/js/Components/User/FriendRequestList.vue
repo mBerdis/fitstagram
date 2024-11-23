@@ -24,8 +24,8 @@ const props = defineProps({
                 class="px-2 py-0.5 text-black rounded-md h-11 flex items-center justify-center
                 border border-black hover:bg-red-500 transition duration-300 ease-in-out hover:text-white"
 
-                href="friendRequest/decline"
-                method="post"
+                :href="route('friendRequest.decline')"
+                :method="'post'"
                 :data="{
                     id: request.id,
                 }"
@@ -40,8 +40,8 @@ const props = defineProps({
                 class="px-2 py-0.5 text-black rounded-md h-11 flex items-center justify-center
                 border border-black hover:bg-green-500 transition duration-300 ease-in-out hover:text-white hover:fill-green-500"
 
-                href="friendRequest/accept"
-                method="post"
+                :href="route('friendRequest.accept')"
+                :method="'post'"
                 :data="{
                     id: request.id,
                 }"

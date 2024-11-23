@@ -37,9 +37,12 @@ Route::get('/user/{username}', [UserController::class, 'detail'])->name('user');
 Route::post('/user/update', [UserController::class, 'update'])->name('user.update');
 Route::post('/user/update-role', [UserController::class, 'updateRole'])->name('user.updateRole');
 Route::post('/user/delete', [UserController::class, 'delete'])->name('user.delete');
-Route::get('/user/friendRequest/{username}', [FriendRequestController::class, 'send'])->middleware(['auth', 'verified'])->name('user.friendRequest');
-Route::post('/friendRequest/accept', [FriendRequestController::class, 'accept'])->name('friendRequest.accept')->middleware(['auth', 'verified']);
-Route::post('/friendRequest/decline', [FriendRequestController::class, 'decline'])->name('friendRequest.decline')->middleware(['auth', 'verified']);
+
+
+Route::get('/user/addFriend/{username}', [FriendRequestController::class, 'send'])->middleware(['auth', 'verified'])->name('user.add.friend');
+
+Route::post('/user/friendRequest/accept', [FriendRequestController::class, 'accept'])->name('friendRequest.accept')->middleware(['auth', 'verified']);
+Route::post('/user/friendRequest/decline', [FriendRequestController::class, 'decline'])->name('friendRequest.decline')->middleware(['auth', 'verified']);
 Route::post('/unfriend', [FriendRequestController::class, 'unfriend'])->name('unfriend')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');

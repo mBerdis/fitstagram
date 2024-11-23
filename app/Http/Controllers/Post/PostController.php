@@ -220,7 +220,7 @@ class PostController extends Controller
             $photo = $request->file('photo');
             $imageName = uniqid();
             Storage::disk('public')->put('uploads/' . $imageName, file_get_contents($photo));
-            $imagePath = '/storage/uploads/' . $imageName;
+            $imagePath = env('DB_STORAGE_PATH') . $imageName;
         }
 
         $post = Post::create([
