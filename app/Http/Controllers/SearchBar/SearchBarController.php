@@ -18,6 +18,16 @@ class SearchBarController extends Controller
 
     public function showResults(Request $request)
     {
+
+        $request->validate([
+            'query' => 'required|string|max:255',
+        ]);
+    
+        $user = auth()->user();
+        if ($user) {
+            $user->searchHistory()->create(['query' => $request->input('query')]);
+        }
+
         $query = $request->query('query', '');
 
         $terms = explode(' ', $query);
@@ -42,7 +52,15 @@ class SearchBarController extends Controller
 
     public function showPostsByTag(Request $request, Tag $tag, PostRetrievalService $postService)
     {
-       
+        $request->validate([
+            'query' => 'required|string|max:255',
+        ]);
+    
+        $user = auth()->user();
+        if ($user) {
+            $user->searchHistory()->create(['query' => $request->input('query')]);
+        }
+
         $sort = $request->query('sort', 'newest');
 
         
@@ -58,6 +76,15 @@ class SearchBarController extends Controller
 
     public function showPostsByTags(Request $request, $tags, PostRetrievalService $postService)
     {
+        $request->validate([
+            'query' => 'required|string|max:255',
+        ]);
+    
+        $user = auth()->user();
+        if ($user) {
+            $user->searchHistory()->create(['query' => $request->input('query')]);
+        }
+
         $tagArray = explode('+', $tags);
 
         $sort = $request->query('sort', 'newest');
@@ -69,6 +96,13 @@ class SearchBarController extends Controller
             'posts' => $posts,
             'query' => ['sort' => $sort]
         ]);
+    }
+
+    public function showSearchHistory(Request $request)
+    {
+        $searchHistory = $request->user()->searchHistory()->latest()->take(8)->get();
+
+        return response()->json($searchHistory);
     }
 
 }

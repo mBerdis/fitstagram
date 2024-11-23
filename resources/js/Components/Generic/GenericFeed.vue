@@ -38,9 +38,9 @@ const changeSortOrder = (order) => {
     localStorage.setItem('sort', order);
 
     if (data.viewed_from_group) {
-        console.log(data.viewed_from_group);
+        console.log("Vieveed:", data.viewed_from_group);
         router.get(
-            route('group', data.viewed_from_group, { groupName: data.viewed_from_group, sort: order }),
+            route('group',data.viewed_from_group, { sort: order }), // Ensure `order` is passed here
             { only: ['posts'] }
         );
     }

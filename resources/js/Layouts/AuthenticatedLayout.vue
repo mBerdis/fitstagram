@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -7,56 +7,64 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import { Link } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3';
+import axios from 'axios';
 
 const showingNavigationDropdown = ref(false);
 const { props } = usePage();
 const isAuthenticated = !!props.auth.user; 
 
-const search = ref(''); 
+const search = ref('');
+const history = ref([]);
+const historyVisible = ref(false);
+const searchForm = ref(null);
 
 const submitSearch = () => {
-    if (!search.value || search.value === "#") {
-        
-        return;
-    }
+    if (!search.value || search.value === '#') return;
+    const query = search.value.trim();
 
-    const searchText = search.value.trim(); 
-    if (!searchText.startsWith("#")) {
-       
-        router.visit('/search', {
-            method: 'get',
-            data: { query: searchText },
-            replace: false,
-            preserveState: false,
-            preserveScroll: false,
-        });
+    if (query.startsWith('#')) {
+        const tags = query.split(' ').filter(tag => tag.startsWith('#')).map(tag => tag.slice(1));
+        const tagPath = tags.length > 1 ? `/tags/${tags.join('+')}` : `/tag/${tags[0]}`;
+        router.visit(tagPath, { method: 'get', data: { query }, replace: false });
     } else {
-        
-        const tags = searchText.split(' ').filter(tag => tag.startsWith('#'));
-        console.log("Lenght", tags.length);
+        router.visit('/search', { method: 'get', data: { query }, replace: false });
+    }
+    historyVisible.value = false;
+};
 
-        if (tags.length === 1) {
-            const tagName = tags[0].substring(1);
+const selectHistory = (selectedQuery) => {
+    search.value = selectedQuery;
+    historyVisible.value = false;
+    submitSearch();
+};
 
-            router.visit(`/tag/${tagName}`, {
-                method: 'get',
-                replace: false, // Nezamení aktuálnu históriu
-                preserveState: false, // Neponechá stav stránky
-                preserveScroll: false, // Neponechá pozíciu stránky
-            });
-            
-        } else if (tags.length > 1) {
-            const tagQuery = tags.map(tag => tag.substring(1)).join('+');
-            
-            router.visit(`/tags/${tagQuery}`, {
-                method: 'get',
-                replace: false,
-                preserveState: false,
-                preserveScroll: false,
-            });
+const fetchSearchHistory = async () => {
+    if (isAuthenticated) {
+        try {
+            const response = await axios.get('/search-history');
+            history.value = response.data;
+            historyVisible.value = true;
+        } catch (error) {
+            console.error('Error fetching search history:', error);
         }
     }
+    
 };
+
+const handleClickOutside = (event) => {
+    if (searchForm.value && !searchForm.value.contains(event.target)) {
+        historyVisible.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
+
+
 </script>
 
 <template>
@@ -76,21 +84,43 @@ const submitSearch = () => {
                     </div>
 
                     <!-- Center: Search Bar -->
-                    <div class="flex-grow flex justify-center">
-                        <form @submit.prevent="submitSearch" class="relative w-full  m-20">
-                            <input
-                                v-model="search"
-                                type="text"
-                                placeholder="Search..."
-                                class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            />
-                            <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1111 5a6 6 0 016 6z" />
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
+                <div class="flex-grow flex justify-center">
+                    <form @submit.prevent="submitSearch" class="relative w-full m-20" ref="searchForm">
+                        <input
+                            v-model="search"
+                            type="text"
+                            placeholder="Search..."
+                            @focus="fetchSearchHistory"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        />
+                        <button
+                            type="submit"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                        >
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1111 5a6 6 0 016 6z" />
+                            </svg>
+                        </button>
+
+                        <!-- Search History Dropdown -->
+                        <ul
+                            v-if="historyVisible"
+                            class="absolute left-0 search-history top-full mt-1 w-full max-h-100 bg-white border border-gray-300 rounded-md shadow-lg overflow-y-auto dark:bg-gray-700 dark:border-gray-600"
+                        >
+                            <li
+                                v-for="item in history"
+                                :key="item.id"
+                                @click="selectHistory(item.query)"
+                                class="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                            >
+                                {{ item.query }}
+                            </li>
+                        </ul>
+                    </form>
+
+                </div>
+
+
 
                     <!-- Right: Profile dropdown or Login/Register tabs -->
                     <div class="flex items-center space-x-6">
@@ -140,3 +170,15 @@ const submitSearch = () => {
         </div>
     </div>
 </template>
+
+<style scoped>
+
+.search-history {
+    z-index: 50;
+}
+.search-history li {
+    transition: background-color 0.2s ease;
+}
+
+
+</style>

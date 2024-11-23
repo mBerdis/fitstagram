@@ -37,11 +37,13 @@ class GroupController extends Controller
         ]);
     }
 
-    public function detail( Request $request, string $name, PostRetrievalService $postService, GroupManagmentService $groupService, UserAuthenticationService $authService)
+    public function detail(Request $request, string $name, PostRetrievalService $postService, GroupManagmentService $groupService, UserAuthenticationService $authService)
     {
-        $groupName  = $request->groupName;
-        $sort       = $request->get('sort', 'newest');
+        //$groupName  = $request->query(groupName);
+        $sort       = $request->query('sort', 'rating');
 
+        \Log::info('Sort parameter:', ['sort' => $request->get('sort')]);
+        \Log::info('Sort parameterc:', ['groupName' => $request->get('groupName')]);
         $validator = Validator::make(['name' => $name], [
             'name' => 'required|exists:groups,name',
         ]);

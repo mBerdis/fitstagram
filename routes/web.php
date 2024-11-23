@@ -46,11 +46,14 @@ Route::post('/user/friendRequest/decline', [FriendRequestController::class, 'dec
 Route::post('/unfriend', [FriendRequestController::class, 'unfriend'])->name('unfriend')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->post('/feed', [CommentController::class, 'store'])->name('comments.store');
-Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
+
 Route::get('/tag/{tag:name}', [SearchBarController::class, 'showPostsByTag'])->name('tag.posts');
 Route::get('/tags/{tags}', [SearchBarController::class, 'showPostsByTags'])->name('tags.posts');
 Route::delete('/tag/delete', [TagController::class, 'delete_one_tag'])->middleware(['auth', 'verified'])->name('tag.delete');
 Route::delete('/tags/delete', [TagController::class, 'delete_more_tags'])->middleware(['auth', 'verified'])->name('tags.delete');
+Route::get('/search', [SearchBarController::class, 'showResults'])->name('search.results');
+Route::middleware(['auth', 'verified'])->get('/search-history', [SearchBarController::class, 'showSearchHistory'])->name('search.history');
+
 
 
 Route::post('/post/add_tag', [PostController::class, 'add_tag'])->middleware(['auth', 'verified'])->name('post.addTag');
