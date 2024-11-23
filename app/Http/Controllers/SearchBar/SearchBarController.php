@@ -52,13 +52,11 @@ class SearchBarController extends Controller
 
     public function showPostsByTag(Request $request, Tag $tag, PostRetrievalService $postService)
     {
-        $request->validate([
-            'query' => 'required|string|max:255',
-        ]);
-    
+        $query = $request->input('query', null);
+
         $user = auth()->user();
-        if ($user) {
-            $user->searchHistory()->create(['query' => $request->input('query')]);
+        if ($user && $query) {
+            $user->searchHistory()->create(['query' => $query]);
         }
 
         $sort = $request->query('sort', 'newest');
