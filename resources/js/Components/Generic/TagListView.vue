@@ -13,12 +13,9 @@ const data = defineProps({
 });
 
 const handleClick = () => {
-    router.visit(`/tag/${data.tag.name}`, {
-            method: 'get',  // Default is 'get', but can specify if needed
-            params: {
-                tag: data.tag.name, // Pass the tag name to the new page
-            }
-        });
+    router.visit(route('tag.posts', { tag: data.tag.name }), {
+        method: 'get', // Optional: GET is the default HTTP method
+    });
 };
 
 </script>
