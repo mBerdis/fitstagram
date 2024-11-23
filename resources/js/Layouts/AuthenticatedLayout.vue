@@ -11,7 +11,7 @@ import axios from 'axios';
 
 const showingNavigationDropdown = ref(false);
 const { props } = usePage();
-const isAuthenticated = !!props.auth.user; 
+const isAuthenticated = !!props.auth.user;
 
 const search = ref('');
 const history = ref([]);
@@ -78,7 +78,7 @@ onUnmounted(() => {
                 <div class="w-full flex h-16 justify-between items-center px-4 sm:px-6 lg:px-8">
                     <!-- Left: Logo and Feed, New Post tabs -->
                     <div class="flex items-center space-x-6">
-                        <Link href="/" class="flex items-center">
+                        <Link :href="route('feed')" class="flex items-center">
                             <ApplicationLogo class="block h-10 w-auto fill-current text-gray-800 dark:text-gray-200" />
                             <span class="ml-2 font-bold text-xl text-gray-800 dark:text-gray-200 m-5">Fitstagram</span>
                         </Link>
@@ -137,7 +137,7 @@ onUnmounted(() => {
                                 <template #trigger>
                                     <span class="inline-flex rounded-md ">
                                         <button type="button" class="inline-flex items-center font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300">
-                                            <span class=" font-bold text-xl text-gray-800 dark:text-gray-200 m-1">{{ $page.props.auth.user.first_name }} {{ $page.props.auth.user.last_name }} </span> 
+                                            <span class=" font-bold text-xl text-gray-800 dark:text-gray-200 m-1">{{ $page.props.auth.user.first_name }} {{ $page.props.auth.user.last_name }} </span>
                                             <img :src="props.auth.user.profile_picture" alt="User Photo" class="w-11 h-11 rounded-full"/>
                                         </button>
                                     </span>
