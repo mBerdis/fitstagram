@@ -210,8 +210,7 @@ const submit = () => {
                                 v-if="membership_status === MembershipStatus.MEMBER"
                                 class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:focus:bg-white dark:focus:ring-offset-gray-800 dark:active:bg-gray-300"
                                 as="button" type="button"
-
-                                href="/groups/leave"
+                                :href="route('group.leave', { group_id: group.id, user_id: logged_user_id })"
                                 method="post"
                                 :data="{
                                     group_id: group.id,
@@ -226,8 +225,7 @@ const submit = () => {
                                 v-else-if="membership_status === MembershipStatus.NONE"
                                 class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:focus:bg-white dark:focus:ring-offset-gray-800 dark:active:bg-gray-300"
                                 as="button" type="button"
-
-                                href="/groups/join"
+                                :href="route('group.join', { group_id: group.id })"
                                 method="post"
                                 :data="{
                                     group_id: group.id,
@@ -272,7 +270,7 @@ const submit = () => {
                                         as="button" type="button"
 
                                         method="post"
-                                        href="/groups/leave"
+                                        :href="route('group.leave', { group_id: group.id, user_id: user.id })"
                                         :data="{
                                             group_id: group.id,
                                             user_id: user.id,
@@ -297,7 +295,7 @@ const submit = () => {
                                 as="button" type="button"
 
                                 method="delete"
-                                href="/groups/delete"
+                                :href="route('group.delete', { group_id: group.id })"
                                 :data="{
                                     group_id: group.id,
                                 }"

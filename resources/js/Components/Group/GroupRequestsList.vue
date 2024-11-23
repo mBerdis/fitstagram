@@ -26,7 +26,7 @@ const props = defineProps({
                 as="button" type="button"
 
                 method="post"
-                href="/groups/requests/decline"
+                :href="route('group.request.decline', { group_id: request.pivot.group_id, user_id: request.pivot.user_id })"
                 :data="{
                     group_id: request.pivot.group_id,
                     user_id: request.pivot.user_id
@@ -42,7 +42,7 @@ const props = defineProps({
                 as="button" type="button"
 
                 method="post"
-                href="/groups/requests/accept"
+                :href="route('group.request.accept', { group_id: request.pivot.group_id, user_id: request.pivot.user_id })"
                 :data="{
                     group_id: request.pivot.group_id,
                     user_id: request.pivot.user_id
