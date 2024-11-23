@@ -59,58 +59,70 @@ class SearchBarController extends Controller
 
     public function showPostsByTag(Request $request, $name, PostRetrievalService $postService)
     {
-
         $tag = Tag::where('name', $name)->first();
-
+    
         if (!$tag) {
-
-            return redirect()->route('search.results')
-                ->with('error', 'The specified tag does not exist.');
+            return Inertia::render('TagPosts', [
+                'tags' => [$name],
+                'posts' => [],
+                'query' => ['sort' => $request->query('sort', 'newest')],
+                'errorMessage' => "No results found for the tag '{$name}'."
+            ]);
         }
-
+    
         $query = $request->query('query', null);
-
+    
         $user = auth()->user();
         if ($user && $query) {
             $user->searchHistory()->create(['query' => $query]);
         }
-
+    
         $sort = $request->query('sort', 'newest');
-
-
         $posts = $postService->get_tag_images($tag, $sort);
-
-
+    
         return Inertia::render('TagPosts', [
             'tags' => [$tag->name],
             'posts' => $posts,
-            'query' => ['sort' => $sort]
+            'query' => ['sort' => $sort],
+            'errorMessage' => null
         ]);
     }
+    
 
     public function showPostsByTags(Request $request, $tags, PostRetrievalService $postService)
     {
         $request->validate([
             'query' => 'required|string|max:255',
         ]);
-
+    
         $user = auth()->user();
         if ($user) {
             $user->searchHistory()->create(['query' => $request->input('query')]);
         }
-
+    
         $tagArray = explode('+', $tags);
-
+        $existingTags = Tag::whereIn('name', $tagArray)->pluck('name')->toArray();
+    
+        if (empty($existingTags)) {
+            return Inertia::render('TagPosts', [
+                'tags' => $tagArray,
+                'posts' => [],
+                'query' => ['sort' => $request->query('sort', 'newest')],
+                'errorMessage' => "No results found for the tags: " . implode(', ', $tagArray) . "."
+            ]);
+        }
+    
         $sort = $request->query('sort', 'newest');
-        $posts = $postService->get_tags_images($tagArray, $sort);
-
-
+        $posts = $postService->get_tags_images($existingTags, $sort);
+    
         return Inertia::render('TagPosts', [
-            'tags' => $tagArray,
+            'tags' => $existingTags,
             'posts' => $posts,
-            'query' => ['sort' => $sort]
+            'query' => ['sort' => $sort],
+            'errorMessage' => null
         ]);
     }
+    
 
     public function showSearchHistory(Request $request)
     {
