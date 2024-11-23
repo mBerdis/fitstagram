@@ -176,7 +176,7 @@ const submit = () => {
                             as="button" type="button"
 
                             method="post"
-                            href="/unfriend"
+                            :href="route('unfriend')"
                             :data="{ id: user.id }"
                             :only="['isFriend']"
                         >
@@ -247,7 +247,7 @@ const submit = () => {
                                 as="button" type="button"
 
                                 method="post"
-                                href="/unfriend"
+                                :href="route('unfriend')"
                                 :data="{
                                     id: user.id,
                                 }"
