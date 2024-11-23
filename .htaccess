@@ -20,3 +20,8 @@ AddHandler application/x-httpd-php82 .php
     # Allow access to public storage folder
     RewriteCond %{REQUEST_URI} !^/~xberdi01/public/storage/
 </IfModule>
+
+# Apply ForceType to doc.html only
+<Files "doc.html">
+    ForceType 'text/html; charset=ISO-8859-2'
+</Files>

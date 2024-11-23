@@ -177,7 +177,10 @@ const submit = () => {
 
                             method="post"
                             :href="route('unfriend')"
-                            :data="{ id: user.id }"
+                            :data="{
+                                user_id: props.auth?.user?.id,
+                                friend_id: user.id,
+                            }"
                             :only="['isFriend']"
                         >
                             Unfriend
@@ -202,7 +205,10 @@ const submit = () => {
 
                             :method="'post'"
                             :href="route('friendRequest.accept')"
-                            :data="{ id: user.id }"
+                            :data="{
+                                user_id: props.auth?.user?.id,
+                                requestee_id: user.id,
+                            }"
                             :only="['isFriend']"
                         >
                             Accept Friend Request
@@ -249,7 +255,8 @@ const submit = () => {
                                 method="post"
                                 :href="route('unfriend')"
                                 :data="{
-                                    id: user.id,
+                                    user_id: user.pivot.user1,
+                                    friend_id: user.pivot.user2,
                                 }"
                                 :only="['friends']"
                             >

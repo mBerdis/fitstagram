@@ -27,7 +27,8 @@ const props = defineProps({
                 :href="route('friendRequest.decline')"
                 :method="'post'"
                 :data="{
-                    id: request.id,
+                    user_id: request.pivot.user2,
+                    requestee_id: request.pivot.user1,
                 }"
                 :only="['friendRequests']"
                 as="button"
@@ -43,7 +44,8 @@ const props = defineProps({
                 :href="route('friendRequest.accept')"
                 :method="'post'"
                 :data="{
-                    id: request.id,
+                    user_id: request.pivot.user2,
+                    requestee_id: request.pivot.user1,
                 }"
                 :only="['friendRequests', 'friends']"
                 as="button"

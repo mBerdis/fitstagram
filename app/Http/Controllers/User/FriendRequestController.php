@@ -15,29 +15,37 @@ use App\Enums\FriendStatus;
 
 class FriendRequestController extends Controller
 {
-    public function accept(Request $request)
+    public function accept(Request $request, UserAuthenticationService $authService)
     {
         $request->validate([
-            'id' => 'required|exists:users,id',
+            'user_id' => 'required|exists:users,id',        // decides to accept/decline
+            'requestee_id' => 'required|exists:users,id',   // asks for friendship
         ]);
 
-        $id = $request->input('id');
-        $loggedUser = auth()->user();
-        $user = User::findOrFail($id);
+        $user         = User::findOrFail($request->input('user_id'));
+        $requestee    = User::findOrFail($request->input('requestee_id'));
+        $loggedUserID = Auth()->check() ? Auth()->user()->id : -1;
 
-        $friends = $loggedUser->friends->pluck('user_id')->toArray();
+        $friends = $user->friends->pluck('user_id')->toArray();
 
-        if (in_array($user->id, $friends))
+        if (in_array($requestee->id, $friends))
         {
             return back()->with('error', 'Already friends.');
         }
 
+        // verify user has rights
+        if (!($loggedUserID === $user->id)                      // is not modifying himself
+            && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
+        {
+            return back()->with('error', 'User has unsufficient rights.');
+        }
+
         // Create bothways friendship
-        $loggedUser->friends()->attach($user->id);
-        $user->friends()->attach($loggedUser->id);
+        $requestee->friends()->attach($user->id);
+        $user->friends()->attach($requestee->id);
 
         // Remove friend request
-        $loggedUser->receivedFriendRequests()->detach($user->id);
+        $user->receivedFriendRequests()->detach($requestee->id);
 
         return back()->with([
             'success' => 'Friend request accepted.',
@@ -45,18 +53,26 @@ class FriendRequestController extends Controller
         ]);
     }
 
-    public function decline(Request $request)
+    public function decline(Request $request, UserAuthenticationService $authService)
     {
         $request->validate([
-            'id' => 'required|exists:users,id',
+            'user_id' => 'required|exists:users,id',        // decides to accept/decline
+            'requestee_id' => 'required|exists:users,id',   // asks for friendship
         ]);
 
-        $id = $request->input('id');
-        $loggedUser = auth()->user();
-        $user = User::findOrFail($id);
+        $user         = User::findOrFail($request->input('user_id'));
+        $requestee    = User::findOrFail($request->input('requestee_id'));
+        $loggedUserID = Auth()->check() ? Auth()->user()->id : -1;
+
+        // verify user has rights
+        if (!($loggedUserID === $user->id)                      // is not modifying himself
+            && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
+        {
+            return back()->with('error', 'User has unsufficient rights.');
+        }
 
         // Remove friend request
-        $loggedUser->receivedFriendRequests()->detach($user->id);
+        $user->receivedFriendRequests()->detach($requestee->id);
 
         return back()->with('success', 'Friend request declined.');
     }
@@ -70,15 +86,13 @@ class FriendRequestController extends Controller
         $loggedUser = auth()->user();
         $userToAdd = User::where('username', $request->username)->firstOrFail();
 
-        
         $receivedRequests = $loggedUser->receivedFriendRequests->pluck('id')->toArray();
 
-        if (in_array($userToAdd->id, $receivedRequests)) {
-            
+        if (in_array($userToAdd->id, $receivedRequests))
+        {
             $loggedUser->friends()->attach($userToAdd->id);
             $userToAdd->friends()->attach($loggedUser->id);
 
-            
             $loggedUser->receivedFriendRequests()->detach($userToAdd->id);
 
             return back()->with([
@@ -87,33 +101,38 @@ class FriendRequestController extends Controller
             ]);
         }
 
-        
         $sentRequests = $loggedUser->friendRequests->pluck('id')->toArray();
         if (in_array($userToAdd->id, $sentRequests)) {
             return back()->with('error', 'Friend request already sent.');
         }
 
-        
         $loggedUser->friendRequests()->attach($userToAdd->id);
 
         return back()->with('success', 'Friend request sent.');
     }
 
 
-    public function unfriend(Request $request)
+    public function unfriend(Request $request, UserAuthenticationService $authService)
     {
         $request->validate([
-            'id' => 'required|exists:users,id',
+            'user_id' => 'required|exists:users,id',        // wants to remove friend
+            'friend_id' => 'required|exists:users,id',      // friend to remove
         ]);
 
-        $id = $request->input('id');
+        $user         = User::findOrFail($request->input('user_id'));
+        $friend       = User::findOrFail($request->input('friend_id'));
+        $loggedUserID = Auth()->check() ? Auth()->user()->id : -1;
 
-        $loggedUser = auth()->user();
-        $user = User::findOrFail($id);
+        // verify user has rights
+        if (!($loggedUserID === $user->id)                      // is not modifying himself
+            && !$authService->role_access(UserRole::MODERATOR)) // is not atleast mod
+        {
+            return back()->with('error', 'User has unsufficient rights.');
+        }
 
         // Remove bothways friendship
-        $loggedUser->friends()->detach($user->id);
-        $user->friends()->detach($loggedUser->id);
+        $user->friends()->detach($friend->id);
+        $friend->friends()->detach($user->id);
 
         return back()->with('success', 'Unfriended.');
     }
