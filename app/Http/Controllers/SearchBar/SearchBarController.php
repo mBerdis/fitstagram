@@ -91,14 +91,13 @@ class SearchBarController extends Controller
 
     public function showPostsByTags(Request $request, $tags, PostRetrievalService $postService)
     {
-        $request->validate([
-            'query' => 'required|string|max:255',
-        ]);
-    
+
+        $query = $request->query('query', null);
         $user = auth()->user();
-        if ($user) {
-            $user->searchHistory()->create(['query' => $request->input('query')]);
+        if ($user && $query) {
+            $user->searchHistory()->create(['query' => $query]);
         }
+    
     
         $tagArray = explode('+', $tags);
         $existingTags = Tag::whereIn('name', $tagArray)->pluck('name')->toArray();
@@ -112,7 +111,12 @@ class SearchBarController extends Controller
             ]);
         }
     
+        $validSortOptions = ['newest', 'rating']; 
         $sort = $request->query('sort', 'newest');
+        if (!in_array($sort, $validSortOptions)) {
+            $sort = 'newest';
+        }
+    
         $posts = $postService->get_tags_images($existingTags, $sort);
     
         return Inertia::render('TagPosts', [
@@ -122,6 +126,7 @@ class SearchBarController extends Controller
             'errorMessage' => null
         ]);
     }
+    
     
 
     public function showSearchHistory(Request $request)

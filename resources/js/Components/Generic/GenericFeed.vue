@@ -13,7 +13,7 @@ const data = defineProps({
     viewed_tag: Array,
 });
 
-const sortBy = ref('rating');
+const sortBy = ref('newest');
 
 
 onMounted(() => {
@@ -40,7 +40,7 @@ const changeSortOrder = (order) => {
     if (data.viewed_from_group) {
         console.log("Vieveed:", data.viewed_from_group);
         router.get(
-            route('group',data.viewed_from_group, { sort: order }), // Ensure `order` is passed here
+            route('group', {name: data.viewed_from_group,  sort: order }), // Ensure `order` is passed here
             { only: ['posts'] }
         );
     }
@@ -57,18 +57,22 @@ const changeSortOrder = (order) => {
         );
     }
     else if(data.viewed_tag){
-        if (data.viewed_tag.length === 1) {
+
+        if (data.viewed_tag.length === 1)
+        {
             router.get(
-                route('tag.posts', { tag: data.viewed_tag, sort: order }), // Použite existujúcu routu pre jeden tag
+                route('tag.posts', { name: data.viewed_tag[0], sort: order }), 
                 { only: ['posts'] }
             );
         }
-        else if (data.viewed_tag.length > 1) {
-            router.get(
-                route('tags.posts', { tags: data.viewed_tag.join('+'), sort: order }), // Použite existujúcu routu pre viac tagov
-                { only: ['posts'] }
-            );
-        }
+        else if (data.viewed_tag.length > 1)
+        {
+        router.get(
+            route('tags.posts', { tags: data.viewed_tag.join('+'), sort: order }),
+            { only: ['posts'] }
+        );
+    }
+
     }
     else {
         router.get(
