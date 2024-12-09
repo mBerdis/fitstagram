@@ -78,8 +78,12 @@ if (!!usePage().props.auth.user) {
   });
 }
 
+
+let isEditMenuOpen = ref(false);
 const editDescription = () => {
   if (form.content.trim()) {
+    data.post.description = form.content;
+    isEditMenuOpen.value  = false;
     form.post(route('post.editDescription'), {
       onSuccess: () => {
         form = useForm({
@@ -90,10 +94,73 @@ const editDescription = () => {
       onError: (errors) => {
         console.log('Form submission error:', errors);
       },
-
       preserveScroll: true
     });
   }
+};
+const enableDescriptionEdit = () => {
+    isEditMenuOpen.value  = !isEditMenuOpen.value ;
+};
+
+
+const deletePost = () => {
+  //if (confirm('Are you sure you want to delete this post?')) {
+    form.delete(route('post.delete', { post_id: data.post.id }), {
+      onSuccess: () => {
+        closeOverlay();
+      },
+      onError: (errors) => {
+        console.error('Error deleting the post:', errors);
+      },
+      preserveScroll: true,
+    });
+};
+
+const isRollMenuOpen = ref(false);
+
+const toggleRollMenu = () => {
+  isRollMenuOpen.value = !isRollMenuOpen.value;
+};
+
+const getPostAge = computed(() => {
+    if (!data.post.created_at) return '';
+  const createdAt = new Date(data.post.created_at);
+  const now = new Date();
+  const diff = now - createdAt;
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+
+  const minutes = Math.floor(diff / (1000 * 60));
+  return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+});
+
+const togglePrivacy = () => {
+    data.post.is_public = !data.post.is_public
+    form.post(route('post.toggle_is_public', { post_id: data.post.id }), {
+        onError: (errors) => {
+        console.error('Error toggling post privacy:', errors);
+        },
+        preserveScroll: true,
+    });
+};
+
+const removePostFromGroup = () => {
+  //if (confirm('Are you sure you want to remove this post from the group?')) {
+    form.delete(route('group.post.remove', {
+      post_id: data.post.id,
+      group_name: data.viewed_from_group
+    }), {
+      onSuccess: () => {
+      },
+      onError: (errors) => {
+        console.error('Error removing post from group:', errors);
+      },
+      preserveScroll: true,
+    });
 };
 
 
@@ -128,51 +195,49 @@ const editDescription = () => {
   <div class="relative w-11/12 max-w-7xl  bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg" @click.stop>
     <button class="absolute top-2 right-3 text-white text-3xl" @click="closeOverlay">&times;</button>
 
-    <Link v-if="canDelete()"
-            class="px-3 py-1 bg-red-500 text-white rounded-md"
-            :href="route('post.delete', { post_id: post.id })"
-            method="delete"
-            :data="{
-                post_id: post.id
-            }"
-            :only="['posts']"
-            :preserveScroll="true"
-            as="button"
-            type="button"
+    <!-- Roll Menu -->
+    <div class="absolute px-0 py-0">
+        <button v-if="canDelete() || canRemoveFromGroup() || canEdit()"
+            class="px-3 py-1 bg-gray-700 text-white rounded-md"
+            @click="toggleRollMenu"
         >
-            Delete
-    </Link>
+            Options
+        </button>
+        <div
+            v-if="isRollMenuOpen"
+            class="absolute mt-0 left-0 bg-gray-100 bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90 shadow-md rounded-md py-2 w-48 z-50"
+        >
+            <button
+                v-if="canDelete()"
+                class="block w-full text-left px-4 py-2 hover:bg-red-100 dark:hover:bg-red-500 dark:hover:text-white"
+                @click="deletePost"
+            >
+                Delete
+            </button>
+            <button
+                v-if="canRemoveFromGroup()"
+                class="block w-full text-left px-4 py-2 hover:bg-red-100 dark:hover:bg-red-500 dark:hover:text-white"
+                @click="removePostFromGroup"
+            >
+                Remove from Group
+            </button>
+            <button
+                v-if="canEdit()"
+                class="block w-full text-left px-4 py-2 hover:bg-blue-100 dark:hover:bg-blue-500 dark:hover:text-white"
+                @click="togglePrivacy"
+            >
+                {{ post.is_public ? 'Make Private' : 'Make Public' }}
+            </button>
+            <button
+                v-if="canEdit()"
+                class="block w-full text-left px-4 py-2 hover:bg-yellow-100 dark:hover:bg-yellow-500 dark:hover:text-white"
+                @click="enableDescriptionEdit"
+            >
+                Edit Description
+            </button>
+        </div>
+    </div>
 
-    <Link v-if="canRemoveFromGroup()"
-            class="px-3 py-1 bg-red-500 text-white rounded-md"
-            :href="route('group.post.remove', { post_id: post.id, group_name: viewed_from_group})"
-            method="delete"
-            :data="{
-                post_id: post.id,
-                group_name: viewed_from_group
-            }"
-            :only="['posts']"
-            :preserveScroll="true"
-            as="button"
-            type="button"
-        >
-            Remove from group
-    </Link>
-
-    <Link v-if="canEdit()"
-            class="px-3 py-1 bg-red-500 text-white rounded-md"
-            method="post"
-            :href="route('post.toggle_is_public', { post_id: post.id})"
-            :data="{
-                post_id: post.id
-            }"
-            :only="['posts']"
-            :preserveScroll="true"
-            as="button"
-            type="button"
-        >
-            {{ post.is_public ? 'Make Private' : 'Make Public' }}
-    </Link>
 
     <div class="flex flex-col md:flex-row">
       <!-- Image section -->
@@ -185,8 +250,8 @@ const editDescription = () => {
         <div class="image-details mt-4">
             <UserListView :user="post.owner" />
 
-            <p v-if="!canEdit()" class="text-gray-700 dark:text-gray-300 mt-2">{{ post.description }}</p>
-            <div v-if="canEdit()" class="flex items-center space-x-2 mt-4">
+            <p v-if="!isEditMenuOpen" class="text-gray-700 dark:text-gray-300 mt-2">{{ post.description }}</p>
+            <div v-if="isEditMenuOpen" class="flex items-center space-x-2 mt-4">
                 <TextInput
                 id="editableDescription"
                 type="text"
@@ -210,7 +275,7 @@ const editDescription = () => {
                 <Tag v-for="tag in post.tags" :tag="tag" :can_delete=canDelete() />
             </div>
 
-            <p class="text-gray-500 dark:text-gray-400 text-sm">{{ post.created_at }}</p>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">{{ getPostAge }}</p>
             <div class="absolute top-4 right-4 flex items-center space-x-2">
                 <p class="text-gray-700 dark:text-gray-300 mt-2">{{ post.like_count }}</p>
                 <Like :post="post" />
