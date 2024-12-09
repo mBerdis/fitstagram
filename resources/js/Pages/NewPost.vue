@@ -2,25 +2,28 @@
 import InputError from '@/Components/InputError.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue'; // Ensure 'watch' is imported
 
+
+// Form setup
 const form = useForm({
     photo: null,
     photoUrl: '',
     description: '',
     group_ids: [],
-    tags: [], // Store tags
+    tags: [],
     is_public: true,
 });
 
+// Props
 defineProps({
     groups: Array,
 });
 
+// Preview and photo handling
 const useUrl = ref(false);
 const photoPreview = ref(null);
 
-// Handle file upload and preview
 const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
     form.photo = file;
@@ -37,15 +40,14 @@ const handlePhotoUpload = (event) => {
     }
 };
 
-// Update photo preview for URL
 const updatePhotoPreview = () => {
     form.photo = null;
     photoPreview.value = form.photoUrl || null;
 };
 
+// Dropdown and tags
 const dropdownOpen = ref(false);
 
-// Close dropdown when clicking outside
 const closeDropdown = (event) => {
     if (!event.target.closest('.relative')) {
         dropdownOpen.value = false;
@@ -53,33 +55,52 @@ const closeDropdown = (event) => {
 };
 document.addEventListener('click', closeDropdown);
 
-// Add a new tag
 const newTag = ref('');
 const addTag = () => {
     const input = newTag.value.trim();
-
     if (!input) {
         newTag.value = '';
         return;
     }
-
     const processedTags = input.split('#')
-        .map(tag => tag.trim().replace(/ /g, '_'))
-        .filter(tag => tag !== '' && !form.tags.includes(tag));
-
-    processedTags.forEach(tag => {
-        if (!form.tags.includes(tag)) {
-            form.tags.push(tag);
-        }
-    });
-
+        .map((tag) => tag.trim().replace(/ /g, '_'))
+        .filter((tag) => tag !== '' && !form.tags.includes(tag));
+    form.tags.push(...processedTags);
     newTag.value = '';
 };
 
-
-// Remove a tag
 const removeTag = (tagToRemove) => {
-    form.tags = form.tags.filter(tag => tag !== tagToRemove); // Filter out the tag
+    form.tags = form.tags.filter((tag) => tag !== tagToRemove);
+};
+
+// Save and load form data from cookies
+const saveFormToCookies = () => {
+    document.cookie = `postForm=${encodeURIComponent(
+        JSON.stringify({
+            photoUrl: form.photoUrl,
+            description: form.description,
+            tags: form.tags,
+            group_ids: form.group_ids,
+            is_public: form.is_public,
+        })
+    )}; path=/; max-age=86400`;
+};
+
+const loadFormFromCookies = () => {
+    const cookies = document.cookie.split('; ');
+    const cookie = cookies.find((row) => row.startsWith('postForm='));
+    if (cookie) {
+        const data = JSON.parse(decodeURIComponent(cookie.split('=')[1]));
+        Object.assign(form, data);
+
+        if (data.photoUrl) {
+            useUrl.value = true;
+            photoPreview.value = data.photoUrl;
+        } else {
+            useUrl.value = false;
+            photoPreview.value = null;
+        }
+    }
 };
 
 // Submit form
@@ -87,13 +108,32 @@ const submitPost = () => {
     form.post(route('post.store'), {
         onSuccess: () => {
             form.reset();
+            document.cookie = 'postForm=; path=/; max-age=0'; // Clear cookie
         },
         onError: (errors) => {
-            console.log('Form submission error:', errors);
+            console.error('Form submission error:', errors);
         },
     });
 };
+
+// Load form data on mount
+onMounted(loadFormFromCookies);
+
+// Watch for changes and save to cookies
+watch(
+    () => ({
+        photo: form.photo,
+        photoUrl: form.photoUrl,
+        description: form.description,
+        tags: form.tags,
+        group_ids: form.group_ids,
+        is_public: form.is_public,
+    }),
+    saveFormToCookies,
+    { deep: true }
+);
 </script>
+
 
 
 <template>
