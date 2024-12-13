@@ -6,6 +6,9 @@ const props = defineProps({
   post: {
     type: Object,
   },
+  userRole:{
+    type: Number
+  }
 });
 
 
@@ -21,9 +24,11 @@ watch(
 
 function toggleLike(event) {
   event.preventDefault();
+  if (props.userRole >= 2){
+    liked.value = !liked.value;
+  }
 
-
-  liked.value = !liked.value;
+  
 }
 </script>
 

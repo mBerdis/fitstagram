@@ -116,7 +116,7 @@ onUnmounted(() => {
                             <span class="ml-2 font-bold text-xl text-gray-800 dark:text-gray-200 m-5">Fitstagram</span>
                         </Link>
                         <NavLink :href="route('feed')" :active="route().current('feed')">Feed</NavLink>
-                        <span>|</span>
+                        <span v-if="isAuthenticated">|</span>
                         <NavLink v-if="isAuthenticated" :href="route('NewPost')" :active="route().current('NewPost')">New Post</NavLink>
                     </div>
 
@@ -175,7 +175,7 @@ onUnmounted(() => {
                     <!-- Right: Profile dropdown or Login/Register tabs -->
                     <div class="flex items-center space-x-6">
                         <NavLink v-if="isAuthenticated" :href="route('MyPage')" :active="route().current('MyPage')">My Page</NavLink>
-                        <p  class="font-italic">|</p>
+                        <span v-if="isAuthenticated">|</span>
                         <NavLink v-if="isAuthenticated" :href="route('groups')" :active="route().current('groups')">Groups</NavLink>
 
                         <div v-if="isAuthenticated" class="relative ms-3">

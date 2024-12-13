@@ -185,7 +185,7 @@ const removePostFromGroup = () => {
         </div>
         <!-- Like Button (Bottom-Right Corner) -->
         <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Like :post="post" />
+          <Like :post="post" :user="loggedUserRole"/>
         </div>
       </div>
 

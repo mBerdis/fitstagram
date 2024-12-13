@@ -60,7 +60,7 @@ resources
 │   │           UserPage.vue            // xberdi01
 │   │
 │   ├───Layouts
-│   │       AuthenticatedLayout.vue     // laravel project template
+│   │       AuthenticatedLayout.vue     // xhalci02
 │   │       GuestLayout.vue             // laravel project template
 │   │
 │   └───Pages
