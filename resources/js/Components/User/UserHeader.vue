@@ -35,12 +35,25 @@ const loggedUserRole = computed(() => {
   return props.auth?.user?.role ?? null; // Return null if role is not available
 });
 
-const roleOptions = [
+const roleOptionsAdmin = [
   { label: 'Banned', value: 0 },
   { label: 'Silent', value: 1 },
   { label: 'User', value: 2 },
   { label: 'Mod', value: 3 },
   { label: 'Admin', value: 4 },
+];
+
+const roleOptionsModeratorSelf = [
+  { label: 'Banned', value: 0 },
+  { label: 'Silent', value: 1 },
+  { label: 'User', value: 2 },
+  { label: 'Mod', value: 3 },
+];
+
+const roleOptionsModeratorOther = [
+  { label: 'Banned', value: 0 },
+  { label: 'Silent', value: 1 },
+  { label: 'User', value: 2 },
 ];
 
 function handleRoleChange(newRole) {
@@ -226,10 +239,20 @@ const submit = () => {
                         </button>
                     </div>
 
+                    <!-- Role Options -->
                     <div v-if="loggedUserRole !== null && loggedUserRole >= 3" class="pt-2">
-                        <label for="role-select" class="text-gray-400 font-semibold">User Role:</label>
-                        <select id="role-select" v-model="user.role" @change="handleRoleChange(user.role)" class="bg-gray-600 text-white rounded ml-1">
-                            <option v-for="option in roleOptions" :key="option.value" :value="option.value">
+                        <label v-if="user.role === 4 && user.username !== props.auth.user.username" for="role-select" class="text-gray-400 font-semibold">User Role: ADMIN</label>
+                        <label v-else class="text-gray-400 font-semibold">User Role:</label>
+
+                        <select v-else id="role-select" v-model="user.role" @change="handleRoleChange(user.role)" class="bg-gray-600 text-white rounded ml-1">
+                            
+                            <option v-if="loggedUserRole === 3 && user.username !== props.auth.user.username"  v-for="option in roleOptionsModeratorOther" :key="option.value" :value="option.value">
+                                {{ option.label }}
+                            </option>
+                            <option v-if="loggedUserRole === 3 && user.username === props.auth.user.username"  v-for="option in roleOptionsModeratorSelf" :key="option.value" :value="option.value">
+                                {{ option.label }}
+                            </option>
+                            <option v-if="loggedUserRole === 4"  v-for="option in roleOptionsAdmin" :key="option.value" :value="option.value">
                                 {{ option.label }}
                             </option>
                         </select>
@@ -278,7 +301,7 @@ const submit = () => {
                     </PopupWindow>
 
                     <button
-                        v-if="loggedUserRole !== null && loggedUserRole >= 4"
+                        v-if="loggedUserRole !== null && loggedUserRole >= 4 && user.username !== props.auth.user.username"
                         @click="handleDeleteUser"
                         class="px-2 py-2 h-14 text-black rounded-md flex items-center justify-center
                         border border-black hover:bg-red-500 transition duration-300 ease-in-out hover:text-white">

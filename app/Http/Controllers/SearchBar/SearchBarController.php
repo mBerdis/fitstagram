@@ -19,6 +19,7 @@ use Inertia\Response;
 use App\Enums\UserRole;
 use App\Services\UserAuthenticationService;
 
+
 class SearchBarController extends Controller
 {
 
@@ -31,24 +32,47 @@ class SearchBarController extends Controller
         ]);
 
         $user = auth()->user();
+        $query = $request->query('query', '');
+
         if ($user) {
+            $existingQuery = $user->searchHistory()->where('query', $query)->first();
+        
+            if ($existingQuery) {                
+                $existingQuery->delete();
+            }
             $user->searchHistory()->create(['query' => $request->input('query')]);
         }
 
-        $query = $request->query('query', '');
+        
 
         $terms = explode(' ', $query);
 
+        if ($user->role == UserRole::ADMIN || $user->role == UserRole::MODERATOR) {
+            $results = [
+                'users' => User::where('username', 'like', '%' . $query . '%')->get(),
+                'groups' => Group::where('name', 'like', '%' . $query . '%')->get(),
+                'tags' => Tag::where('name', 'like', '%' . $query . '%')->with('posts')->get()->map(function ($tag) {
+                    $post = $tag->posts()->first();
+                    $tag->picture = $post?->photo ?? '/default-tag-image.png';
+                    return $tag;
+                }),
+            ];
+        }
+        else {
+            $results = [
+                'users' => User::where('username', 'like', '%' . $query . '%')
+                    ->where('role', '!=', 0) 
+                    ->get(),
+                'groups' => Group::where('name', 'like', '%' . $query . '%')->get(),
+                'tags' => Tag::where('name', 'like', '%' . $query . '%')->with('posts')->get()->map(function ($tag) {
+                    $post = $tag->posts()->first();
+                    $tag->picture = $post?->photo ?? '/default-tag-image.png';
+                    return $tag;
+                }),
+            ];
+        }
 
-        $results = [
-            'users' => User::where('username', 'like', '%' . $query . '%')->get(),
-            'groups' => Group::where('name', 'like', '%' . $query . '%')->get(),
-            'tags' => Tag::where('name', 'like', '%' . $query . '%')->with('posts')->get()->map(function ($tag) {
-                $post = $tag->posts()->first();
-                $tag->picture = $post?->photo ?? '/default-tag-image.png';
-                return $tag;
-            }),
-        ];
+        
 
 
         return Inertia::render('SearchResults', [
@@ -60,6 +84,21 @@ class SearchBarController extends Controller
     public function showPostsByTag(Request $request, $name, PostRetrievalService $postService)
     {
         $tag = Tag::where('name', $name)->first();
+
+        $query = $request->query('query', null);
+    
+        $user = auth()->user();
+        if ($user && $query) {
+            
+            $existingQuery = $user->searchHistory()->where('query', $query)->first();
+        
+            if ($existingQuery) {                
+                $existingQuery->delete();
+            }
+        
+            $user->searchHistory()->create(['query' => $query]);
+        }
+        
     
         if (!$tag) {
             return Inertia::render('TagPosts', [
@@ -70,12 +109,7 @@ class SearchBarController extends Controller
             ]);
         }
     
-        $query = $request->query('query', null);
-    
-        $user = auth()->user();
-        if ($user && $query) {
-            $user->searchHistory()->create(['query' => $query]);
-        }
+        
     
         $sort = $request->query('sort', 'newest');
         $posts = $postService->get_tag_images($tag, $sort);
@@ -95,6 +129,12 @@ class SearchBarController extends Controller
         $query = $request->query('query', null);
         $user = auth()->user();
         if ($user && $query) {
+            $existingQuery = $user->searchHistory()->where('query', $query)->first();
+        
+            if ($existingQuery) {                
+                $existingQuery->delete();
+            }
+        
             $user->searchHistory()->create(['query' => $query]);
         }
     

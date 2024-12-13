@@ -72,7 +72,11 @@ class UserController extends Controller
                 return;
             }
 
+            
+
             $user = User::findOrFail($request->id);
+
+            
 
             $user->role = $request->role;
             $user->save();

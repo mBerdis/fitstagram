@@ -37,7 +37,8 @@ class PostController extends Controller
 
     public function toggle_like(Request $request, UserAuthenticationService $authService)
     {
-        if (!$authService->role_access(UserRole::SILENCED)) {
+        
+        if (!$authService->role_access(UserRole::USER)) {
             return;
         }
 

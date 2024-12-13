@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -12,6 +12,10 @@ import axios from 'axios';
 const showingNavigationDropdown = ref(false);
 const { props } = usePage();
 const isAuthenticated = !!props.auth.user;
+
+const loggedUserRole = computed(() => {
+  return props.auth?.user?.role ?? null; 
+});
 
 const search = ref('');
 const history = ref([]);
@@ -100,7 +104,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div>
+    <h1 v-if="loggedUserRole === 0">You are banned</h1>
+    <div v-else>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 w-full">
                 <div class="w-full flex h-16 justify-between items-center px-4 sm:px-6 lg:px-8">
