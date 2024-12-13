@@ -33,8 +33,10 @@ const canDelete = () => {
         {{ comment.message }}
       </p>
 
-      <Link v-if="canDelete()"
-            class="px-3 py-1 bg-red-500 text-white rounded-md"
+
+    </div>
+    <Link v-if="canDelete()"
+            class="text-gray-700 ml-1 text-xl leading-none relative hover:text-red-500 transition"
 
             :href="route('comment.delete', { id: comment.id })"
             method="delete"
@@ -46,9 +48,8 @@ const canDelete = () => {
             as="button"
             type="button"
         >
-            Remove
+        <b>&times;</b>
     </Link>
-    </div>
   </div>
 </template>
 
