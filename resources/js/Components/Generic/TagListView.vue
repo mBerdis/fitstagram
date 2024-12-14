@@ -1,4 +1,13 @@
 <script setup>
+/**
+ * File: TagListView.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component represents a tag element with optional delete functionality.
+ *  - Clicking the tag navigates to a page showing posts associated with the tag.
+ *  - If `can_delete` is true, a delete button is displayed to remove the tag from the post.
+ */
 import { ref } from 'vue';
 import { router,Link } from '@inertiajs/vue3';
 
@@ -14,7 +23,7 @@ const data = defineProps({
 
 const handleClick = () => {
     router.visit(route('tag.posts', { name: data.tag.name }), {
-        method: 'get', // Optional: GET is the default HTTP method
+        method: 'get',
     });
 };
 

@@ -1,4 +1,13 @@
 <script setup>
+/**
+ * File: CommentSection.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component renders a comment section for a post.
+ *  - Displays all comments with a scrollable interface.
+ *  - Allows authenticated users to add comments.
+ */
 import { ref } from 'vue';
 import Comment from './Comment.vue';
 import { useForm, usePage } from '@inertiajs/vue3';

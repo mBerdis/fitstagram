@@ -1,4 +1,11 @@
 <script setup>
+/**
+ * File: Feed.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component represents a feed of posts
+ */
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import Post from '@/Components/Post/Post.vue';

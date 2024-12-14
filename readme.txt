@@ -29,7 +29,7 @@ resources
 │   │   │       GroupListView.vue       // xberdi01
 │   │   │       PopupWindow.vue         // xberdi01
 │   │   │       SearchResultItem.vue    // xhalci02
-│   │   │       TagListView.vue         // xhalci02
+│   │   │       TagListView.vue         // xkosce01
 │   │   │       UserListView.vue        // xberdi01
 │   │   │
 │   │   ├───Group

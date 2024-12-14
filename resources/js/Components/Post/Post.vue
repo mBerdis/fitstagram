@@ -1,4 +1,12 @@
 <script setup>
+/**
+ * File: Post.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component provides a post view with a like button, user interaction options, and comments section.
+ *  - Includes functionality for viewing and editing post descriptions, adding/removing tags, and managing group posts.
+ */
 import { ref, computed } from 'vue';
 import TextInput from '@/Components/TextInput.vue';
 import UserListView from '../Generic/UserListView.vue';

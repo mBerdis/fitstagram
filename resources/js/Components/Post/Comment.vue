@@ -1,4 +1,12 @@
 <script setup>
+/**
+ * File: Comment.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component represents a single comment with user details and content.
+ *  - Provides delete functionality for authorized users (comment owner or roles >= Moderator).
+ */
 import { ref, computed } from 'vue';
 import UserListView from '../Generic/UserListView.vue';
 import { Link, usePage } from '@inertiajs/vue3';

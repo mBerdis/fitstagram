@@ -1,4 +1,14 @@
 <script setup>
+/**
+ * File: GenericFeed.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component represents a feed element displaying posts based on selected criteria.
+ *  - Users can sort the posts by "newest" or "rating".
+ *  - Pagination controls allow navigation through multiple pages of posts.
+ *  - Conditional rendering is used to show delete functionality for tags if the user has appropriate permissions.
+ */
 import { ref, onMounted } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
@@ -61,7 +71,7 @@ const changeSortOrder = (order) => {
         if (data.viewed_tag.length === 1)
         {
             router.get(
-                route('tag.posts', { name: data.viewed_tag[0], sort: order }), 
+                route('tag.posts', { name: data.viewed_tag[0], sort: order }),
                 { only: ['posts'] }
             );
         }

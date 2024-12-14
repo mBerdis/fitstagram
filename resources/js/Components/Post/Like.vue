@@ -1,4 +1,13 @@
 <script setup>
+/**
+ * File: Like.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component provides a like button for posts.
+ *  - The button toggles the like status visually and via the backend.
+ *  - Requires a authenticated user to toggle likes.
+ */
 import { ref, watch } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -28,7 +37,7 @@ function toggleLike(event) {
     liked.value = !liked.value;
   }
 
-  
+
 }
 </script>
 

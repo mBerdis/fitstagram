@@ -1,4 +1,13 @@
 <script setup>
+/**
+ * File: AddTag.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component provides functionality to add a tag to a post.
+ *  - Includes an overlay form triggered by a button.
+ *  - Handles form submission with validation.
+ */
 import { ref } from 'vue';
 import { useForm} from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';

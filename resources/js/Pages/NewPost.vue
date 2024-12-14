@@ -1,4 +1,13 @@
 <script setup>
+/**
+ * File: NewPost.vue
+ * Author: Matej Koscelník (xkosce01)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component represents the creation of a new post, allowing users to upload a photo, write a description, add tags, select groups, and set visibility.
+ *  - Supports both file upload and URL-based photo insertion.
+ *  - Includes form validation and persistence via cookies.
+ */
 import InputError from '@/Components/InputError.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
