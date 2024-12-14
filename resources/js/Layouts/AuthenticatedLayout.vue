@@ -1,4 +1,10 @@
 <script setup>
+/**
+ * File: AuthenticatedLayout.vue
+ * Author: Filip Halčišák (xhalci02)
+ * Project: Fitstagram (ITU/IIS)
+ */
+
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';

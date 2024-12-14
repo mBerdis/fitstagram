@@ -25,13 +25,13 @@ const data = defineProps({
 const handleClick = () => {
   switch (data.type) {
     case 'user':
-        router.visit(route('user', { username: data.name }), {  // Používame pomenovanú routu pre user
+        router.visit(route('user', { username: data.name }), { 
             method: 'get',
             replace: false
         });
         break;
     case 'group':
-        router.visit(route('group', { name: data.name }), {  // Používame pomenovanú routu pre group
+        router.visit(route('group', { name: data.name }), { 
             method: 'get',
             replace: false
         });
