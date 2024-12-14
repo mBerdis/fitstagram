@@ -1,3 +1,8 @@
+/**
+ * Author: Laravel
+ * Project: Laravel Breeze Starter Kit used in Fitstagram (ITU/IIS)
+ */
+
 import '../css/app.css';
 import './bootstrap';
 

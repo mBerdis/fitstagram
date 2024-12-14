@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Laravel
+ * Project: Laravel Breeze Starter Kit used in Fitstagram (ITU/IIS)
+ */
+
 import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';

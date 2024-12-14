@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Laravel
+ * Project: Laravel Breeze Starter Kit used in Fitstagram (ITU/IIS)
+ */
+
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
@@ -14,7 +20,7 @@ const { props } = usePage();
 const isAuthenticated = !!props.auth.user;
 
 const loggedUserRole = computed(() => {
-  return props.auth?.user?.role ?? null; 
+  return props.auth?.user?.role ?? null;
 });
 
 const search = ref('');
@@ -26,7 +32,7 @@ const searchForm = ref(null);
 const selectHistory = async (selectedQuery, id) => {
     search.value = selectedQuery;
     historyVisible.value = false;
-    
+
     if (isAuthenticated) {
         try {
             await axios.delete(route('search.history.remove', { id }));
@@ -54,7 +60,7 @@ const submitSearch = () => {
     }
     historyVisible.value = false;
 
-    
+
 };
 
 
@@ -147,8 +153,8 @@ onUnmounted(() => {
                             <li
                                 v-for="item in history"
                                 :key="item.id"
-                                @mouseenter="item.showRemoveButton = true" 
-                                @mouseleave="item.showRemoveButton = false" 
+                                @mouseenter="item.showRemoveButton = true"
+                                @mouseleave="item.showRemoveButton = false"
                                 class="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 relative"
                                 @click="selectHistory(item.query, item.id)"
                             >

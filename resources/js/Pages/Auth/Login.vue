@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Laravel
+ * Project: Laravel Breeze Starter Kit used in Fitstagram (ITU/IIS)
+ */
+
 import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';

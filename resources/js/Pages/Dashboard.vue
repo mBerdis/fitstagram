@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Laravel
+ * Project: Laravel Breeze Starter Kit used in Fitstagram (ITU/IIS)
+ */
+
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 </script>

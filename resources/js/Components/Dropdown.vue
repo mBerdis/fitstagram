@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Laravel
+ * Project: Laravel Breeze Starter Kit used in Fitstagram (ITU/IIS)
+ */
+
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 const props = defineProps({
