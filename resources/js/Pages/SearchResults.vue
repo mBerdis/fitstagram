@@ -1,4 +1,14 @@
 <script setup>
+/**
+ * File: SearchResults.vue
+ * Author: Filip Halčišák (xhalci02)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component displays the search results for a given query, categorized into users, groups, and tags.
+ *  - Each result is represented as a clickable item, allowing navigation to detailed views.
+ */
+
+
 import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
