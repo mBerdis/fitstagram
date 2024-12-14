@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Maroš Berdis (xberdi01)
+ * Project: Fitstagram (ITU/IIS)
+ */
+
 import GroupListView from '../Generic/GroupListView.vue';
 
 defineProps({

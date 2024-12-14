@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Maroš Berdis (xberdi01)
+ * Project: Fitstagram (ITU/IIS)
+ */
+
 import { ref } from 'vue';
 import UserListView from '../Generic/UserListView.vue';
 

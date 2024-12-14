@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Maroš Berdis (xberdi01)
+ * Project: Fitstagram (ITU/IIS)
+ */
+
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import GroupList from '@/Components/Group/GroupList.vue';
 import PopupWindow from '@/Components/Generic/PopupWindow.vue';

@@ -1,5 +1,10 @@
 <script setup>
 
+/**
+ * Author: Maroš Berdis (xberdi01)
+ * Project: Fitstagram (ITU/IIS)
+ */
+
 import { Link } from '@inertiajs/vue3'
 
 defineProps({

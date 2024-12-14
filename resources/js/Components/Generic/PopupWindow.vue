@@ -1,4 +1,10 @@
 <script>
+
+/**
+ * Author: Maroš Berdis (xberdi01)
+ * Project: Fitstagram (ITU/IIS)
+ */
+
 export default {
   data() {
     return {

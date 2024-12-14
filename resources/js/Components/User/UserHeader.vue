@@ -1,4 +1,10 @@
 <script setup>
+
+/**
+ * Author: Maroš Berdis (xberdi01)
+ * Project: Fitstagram (ITU/IIS)
+ */
+
 import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { router, useForm } from '@inertiajs/vue3'
@@ -242,12 +248,12 @@ const submit = () => {
                     <!-- Role Options -->
                     <div v-if="loggedUserRole !== null && loggedUserRole >= 3" class="pt-2">
                         <label v-if="user.role === 4 && user.username !== props.auth.user.username" for="role-select" class="text-gray-400 font-semibold">User Role: ADMIN</label>
-                        
+
                         <div v-else>
                         <label  class="text-gray-400 font-semibold">User Role:</label>
 
                         <select id="role-select" v-model="user.role" @change="handleRoleChange(user.role)" class="bg-gray-600 text-white rounded ml-1">
-                            
+
                             <option v-if="loggedUserRole === 3 && user.username !== props.auth.user.username"  v-for="option in roleOptionsModeratorOther" :key="option.value" :value="option.value">
                                 {{ option.label }}
                             </option>
