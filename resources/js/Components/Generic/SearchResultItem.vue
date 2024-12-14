@@ -1,4 +1,15 @@
 <script setup>
+/**
+ * File: SearchResultItem.vue
+ * Author: Filip Halčišák (xhalci02)
+ * Project: Fitstagram (ITU/IIS)
+ * Description:
+ *  - This component represents a single search result item.
+ *  - It supports dynamic content based on the type (user, group, or tag), displaying an image and name.
+ *  - Clicking the item navigates the user to the corresponding detailed page using named routes.
+ */
+
+
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 
